@@ -1,0 +1,182 @@
+{
+  "files": {
+    "Sales": "Week 0 - 2024-04-08 - Sales.csv",
+    "In Stock": "Week 0 - In Stock.csv",
+    "Master": "Week 0 - Master.csv",
+    "Initial State": "Week 0 - 2024-04-08 - Initial State.csv"
+  },
+  "time": {
+    "sales_weeks": 157,
+    "sales_first": "2021-04-12",
+    "sales_last": "2024-04-08",
+    "step_days_unique": [
+      7
+    ],
+    "instock_weeks": 165,
+    "instock_first": "2021-04-12",
+    "instock_last": "2024-06-03",
+    "instock_weeks_beyond_sales": 8
+  },
+  "hierarchy": {
+    "n_pairs": 599,
+    "n_stores": 67,
+    "n_products": 297,
+    "stores_per_product": {
+      "q05": 1.0,
+      "q25": 1.0,
+      "q50": 1.0,
+      "q75": 2.0,
+      "q95": 4.0
+    },
+    "products_per_store": {
+      "q05": 1.0,
+      "q25": 1.0,
+      "q50": 1.0,
+      "q75": 2.0,
+      "q95": 41.39999999999982
+    },
+    "products_in_ge3_stores": 62,
+    "master_nunique": {
+      "ProductGroup": 111,
+      "Division": 47,
+      "Department": 26,
+      "DepartmentGroup": 6,
+      "StoreFormat": 3,
+      "Format": 3
+    },
+    "master_index_matches_sales": true
+  },
+  "bundle_candidates": {
+    "store_x_Department": {
+      "n_groups": 171,
+      "groups_size_ge10": 13,
+      "groups_size_ge15": 8,
+      "size": {
+        "q05": 1.0,
+        "q25": 1.0,
+        "q50": 1.0,
+        "q75": 3.0,
+        "q95": 13.5
+      }
+    },
+    "store_x_DepartmentGroup": {
+      "n_groups": 89,
+      "groups_size_ge10": 13,
+      "groups_size_ge15": 10,
+      "size": {
+        "q05": 1.0,
+        "q25": 1.0,
+        "q50": 2.0,
+        "q75": 3.0,
+        "q95": 39.79999999999987
+      }
+    },
+    "store_x_Division": {
+      "n_groups": 219,
+      "groups_size_ge10": 12,
+      "groups_size_ge15": 6,
+      "size": {
+        "q05": 1.0,
+        "q25": 1.0,
+        "q50": 1.0,
+        "q75": 3.0,
+        "q95": 10.0
+      }
+    }
+  },
+  "sales": {
+    "min": 0.0,
+    "max": 494.0,
+    "nan_share": 0.0,
+    "never_sold": 0,
+    "zero_share_all_weeks": 0.4318662739385175,
+    "active_weeks": {
+      "q05": 94.0,
+      "q25": 150.0,
+      "q50": 156.0,
+      "q75": 157.0,
+      "q95": 157.0
+    },
+    "zero_share_active": {
+      "q05": 0.01910828025477707,
+      "q25": 0.2988382658359294,
+      "q50": 0.42857142857142855,
+      "q75": 0.5064518814518815,
+      "q95": 0.5874551124551124
+    },
+    "mean_weekly_active": {
+      "q05": 0.6129032258064516,
+      "q25": 0.8414347971840429,
+      "q50": 1.178343949044586,
+      "q75": 2.1984545135230067,
+      "q95": 10.270411498491455
+    },
+    "share_zero_share_active_lt_0_4": 0.4056761268781302
+  },
+  "in_stock": {
+    "flag_nan_share": 0.0,
+    "oos_share_all_weeks": 0.11183182161351722,
+    "oos_share_active_weeks": 0.046163228204213605,
+    "sales_positive_when_oos_share": 0.0,
+    "zero_sales_share_given_in_stock_active": 0.3554772790330169,
+    "per_series_oos_share_active": {
+      "q05": 0.0,
+      "q25": 0.0,
+      "q50": 0.025477707006369428,
+      "q75": 0.05732484076433121,
+      "q95": 0.1668831168831169
+    },
+    "share_series_never_oos": 0.25542570951585974,
+    "oos_run_length_weeks": {
+      "q05": 1.0,
+      "q25": 1.0,
+      "q50": 2.0,
+      "q75": 3.0,
+      "q95": 9.0
+    },
+    "oos_runs_total": 1352,
+    "note": "flag is weekly on-shelf availability (True/False); not a stock level"
+  },
+  "initial_state": {
+    "columns": [
+      "Start Inventory",
+      "Sales",
+      "Missed Sales",
+      "End Inventory",
+      "In Transit W+1",
+      "In Transit W+2",
+      "Holding Cost",
+      "Shortage Cost",
+      "Cumulative Holding Cost",
+      "Cumulative Shortage Cost"
+    ],
+    "end_inventory": {
+      "q05": 1.0,
+      "q25": 1.0,
+      "q50": 2.0,
+      "q75": 3.0,
+      "q95": 11.0
+    },
+    "in_transit_w1": {
+      "q05": 0.0,
+      "q25": 0.0,
+      "q50": 0.0,
+      "q75": 0.0,
+      "q95": 0.0
+    },
+    "in_transit_w2": {
+      "q05": 0.0,
+      "q25": 0.0,
+      "q50": 1.0,
+      "q75": 2.0,
+      "q95": 10.0
+    },
+    "end_inventory_over_mean_weekly": {
+      "q05": 0.8624824684431979,
+      "q25": 1.0991239533420454,
+      "q50": 1.3025210084033614,
+      "q75": 1.5735930735930737,
+      "q95": 2.0685128518971854
+    }
+  }
+}
