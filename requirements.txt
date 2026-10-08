@@ -3,4 +3,7 @@ torch
 cvxpy
 cvxpylayers
 ecos
-scs
+scsduckdb==1.5.6
+psycopg==3.3.6
+psycopg-binary==3.3.6
+PyYAML==6.0.3

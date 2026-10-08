@@ -1,0 +1,47 @@
+loader_version: "1a.0"
+
+db:
+  host_env: POSTGRES_HOST
+  port_env: POSTGRES_PORT
+  dbname_env: POSTGRES_DB
+  user_env: POSTGRES_USER
+  password_env: POSTGRES_PASSWORD
+
+datasets:
+  m5:
+    grain: day
+    raw_dir: data/raw/m5
+    files:
+      sales: sales_train_evaluation.csv
+      calendar: calendar.csv
+      prices: sell_prices.csv
+    subset_csv: data/processed/sku_subset_v2.csv
+    raw_sales_scope: subset_items_all_stores
+    series_id_format: "{item_id}__{store_id}"
+    group_id_source: sku_subset_v2.bundle_id
+    period_idx_source: calendar.d
+    period_date_source: calendar.date
+    price_source: sell_prices.sell_price via calendar.wm_yr_wk
+    in_stock_source: null
+    windows:
+      selection_end_idx: 1605
+      validation_weeks: 24
+      warmup_days: 14
+      folds_json: outputs/stage0e_m5_structure.json
+      folds_key: folds
+      retrain_folds: [1, 4, 7, 10]
+
+  vn2:
+    grain: week
+    raw_dir: data/raw/vn2
+    files:
+      sales: "Week 0 - 2024-04-08 - Sales.csv"
+      in_stock: "Week 0 - In Stock.csv"
+      master: "Week 0 - Master.csv"
+      initial_state: "Week 0 - 2024-04-08 - Initial State.csv"
+    series_id_format: "{store}__{product}"
+    group_id_source: "S{store}_D{department}"
+    period_idx_source: week ordinal from Sales file columns
+    price_source: null
+    in_stock_source: in_stock
+    status: loaded_for_stage9_only
