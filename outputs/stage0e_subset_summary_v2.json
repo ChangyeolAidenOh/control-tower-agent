@@ -1,0 +1,389 @@
+{
+  "seed": 20261008,
+  "selection_window": {
+    "last_d_used": "d_1605",
+    "n_days_used": 1605
+  },
+  "rules": {
+    "zero_share_max": 0.4,
+    "min_active_days": 365,
+    "trailing_zero_window": 28,
+    "target_sku_per_bundle": 16,
+    "state_category_quota": {
+      "CA": {
+        "FOODS": 2,
+        "HOUSEHOLD": 1,
+        "HOBBIES": 1
+      },
+      "TX": {
+        "FOODS": 1,
+        "HOUSEHOLD": 1,
+        "HOBBIES": 1
+      },
+      "WI": {
+        "FOODS": 1,
+        "HOUSEHOLD": 1,
+        "HOBBIES": 1
+      }
+    },
+    "item_eligibility": "passes R1 in all stores of the state"
+  },
+  "stores_per_state": {
+    "CA": 4,
+    "TX": 3,
+    "WI": 3
+  },
+  "eligible_items_by_state_cat_dept": [
+    {
+      "state_id": "CA",
+      "cat_id": "FOODS",
+      "dept_id": "FOODS_1",
+      "n_eligible": 19
+    },
+    {
+      "state_id": "CA",
+      "cat_id": "FOODS",
+      "dept_id": "FOODS_2",
+      "n_eligible": 8
+    },
+    {
+      "state_id": "CA",
+      "cat_id": "FOODS",
+      "dept_id": "FOODS_3",
+      "n_eligible": 158
+    },
+    {
+      "state_id": "CA",
+      "cat_id": "HOBBIES",
+      "dept_id": "HOBBIES_1",
+      "n_eligible": 21
+    },
+    {
+      "state_id": "CA",
+      "cat_id": "HOUSEHOLD",
+      "dept_id": "HOUSEHOLD_1",
+      "n_eligible": 61
+    },
+    {
+      "state_id": "CA",
+      "cat_id": "HOUSEHOLD",
+      "dept_id": "HOUSEHOLD_2",
+      "n_eligible": 1
+    },
+    {
+      "state_id": "TX",
+      "cat_id": "FOODS",
+      "dept_id": "FOODS_1",
+      "n_eligible": 20
+    },
+    {
+      "state_id": "TX",
+      "cat_id": "FOODS",
+      "dept_id": "FOODS_2",
+      "n_eligible": 41
+    },
+    {
+      "state_id": "TX",
+      "cat_id": "FOODS",
+      "dept_id": "FOODS_3",
+      "n_eligible": 189
+    },
+    {
+      "state_id": "TX",
+      "cat_id": "HOBBIES",
+      "dept_id": "HOBBIES_1",
+      "n_eligible": 14
+    },
+    {
+      "state_id": "TX",
+      "cat_id": "HOUSEHOLD",
+      "dept_id": "HOUSEHOLD_1",
+      "n_eligible": 112
+    },
+    {
+      "state_id": "TX",
+      "cat_id": "HOUSEHOLD",
+      "dept_id": "HOUSEHOLD_2",
+      "n_eligible": 3
+    },
+    {
+      "state_id": "WI",
+      "cat_id": "FOODS",
+      "dept_id": "FOODS_1",
+      "n_eligible": 27
+    },
+    {
+      "state_id": "WI",
+      "cat_id": "FOODS",
+      "dept_id": "FOODS_2",
+      "n_eligible": 35
+    },
+    {
+      "state_id": "WI",
+      "cat_id": "FOODS",
+      "dept_id": "FOODS_3",
+      "n_eligible": 186
+    },
+    {
+      "state_id": "WI",
+      "cat_id": "HOBBIES",
+      "dept_id": "HOBBIES_1",
+      "n_eligible": 9
+    },
+    {
+      "state_id": "WI",
+      "cat_id": "HOUSEHOLD",
+      "dept_id": "HOUSEHOLD_1",
+      "n_eligible": 80
+    },
+    {
+      "state_id": "WI",
+      "cat_id": "HOUSEHOLD",
+      "dept_id": "HOUSEHOLD_2",
+      "n_eligible": 1
+    }
+  ],
+  "bundles": [
+    {
+      "bundle_id": "B01_CA_FOODS_3",
+      "state_id": "CA",
+      "dept_id": "FOODS_3",
+      "cat_id": "FOODS",
+      "n_stores": 4,
+      "n_eligible_items": 158,
+      "n_items": 4,
+      "n_sku": 16,
+      "items": [
+        "FOODS_3_034",
+        "FOODS_3_226",
+        "FOODS_3_587",
+        "FOODS_3_131"
+      ],
+      "mean_daily_active_by_tercile": {
+        "low": 2.5567135025170615,
+        "mid": 4.766214399112685,
+        "high": 14.323181159484824
+      }
+    },
+    {
+      "bundle_id": "B02_CA_FOODS_1",
+      "state_id": "CA",
+      "dept_id": "FOODS_1",
+      "cat_id": "FOODS",
+      "n_stores": 4,
+      "n_eligible_items": 19,
+      "n_items": 4,
+      "n_sku": 16,
+      "items": [
+        "FOODS_1_183",
+        "FOODS_1_046",
+        "FOODS_1_218",
+        "FOODS_1_021"
+      ],
+      "mean_daily_active_by_tercile": {
+        "low": 3.550128974618263,
+        "mid": 5.948963221840946,
+        "high": 8.583883759780461
+      }
+    },
+    {
+      "bundle_id": "B03_CA_HOUSEHOLD_1",
+      "state_id": "CA",
+      "dept_id": "HOUSEHOLD_1",
+      "cat_id": "HOUSEHOLD",
+      "n_stores": 4,
+      "n_eligible_items": 61,
+      "n_items": 4,
+      "n_sku": 16,
+      "items": [
+        "HOUSEHOLD_1_048",
+        "HOUSEHOLD_1_179",
+        "HOUSEHOLD_1_334",
+        "HOUSEHOLD_1_171"
+      ],
+      "mean_daily_active_by_tercile": {
+        "low": 2.186134657335379,
+        "mid": 4.312932282928328,
+        "high": 8.275289514099391
+      }
+    },
+    {
+      "bundle_id": "B04_CA_HOBBIES_1",
+      "state_id": "CA",
+      "dept_id": "HOBBIES_1",
+      "cat_id": "HOBBIES",
+      "n_stores": 4,
+      "n_eligible_items": 21,
+      "n_items": 4,
+      "n_sku": 16,
+      "items": [
+        "HOBBIES_1_155",
+        "HOBBIES_1_370",
+        "HOBBIES_1_348",
+        "HOBBIES_1_337"
+      ],
+      "mean_daily_active_by_tercile": {
+        "low": 2.9342435540819136,
+        "mid": 5.633896030521545,
+        "high": 7.583510549528341
+      }
+    },
+    {
+      "bundle_id": "B05_TX_FOODS_3",
+      "state_id": "TX",
+      "dept_id": "FOODS_3",
+      "cat_id": "FOODS",
+      "n_stores": 3,
+      "n_eligible_items": 189,
+      "n_items": 5,
+      "n_sku": 15,
+      "items": [
+        "FOODS_3_002",
+        "FOODS_3_079",
+        "FOODS_3_491",
+        "FOODS_3_719",
+        "FOODS_3_809"
+      ],
+      "mean_daily_active_by_tercile": {
+        "low": 2.0859045687184614,
+        "mid": 3.9204035241259105,
+        "high": 13.989929213800126
+      }
+    },
+    {
+      "bundle_id": "B06_TX_HOUSEHOLD_1",
+      "state_id": "TX",
+      "dept_id": "HOUSEHOLD_1",
+      "cat_id": "HOUSEHOLD",
+      "n_stores": 3,
+      "n_eligible_items": 112,
+      "n_items": 5,
+      "n_sku": 15,
+      "items": [
+        "HOUSEHOLD_1_505",
+        "HOUSEHOLD_1_511",
+        "HOUSEHOLD_1_474",
+        "HOUSEHOLD_1_449",
+        "HOUSEHOLD_1_169"
+      ],
+      "mean_daily_active_by_tercile": {
+        "low": 1.6872549729253516,
+        "mid": 3.1617300083656437,
+        "high": 7.36481522098571
+      }
+    },
+    {
+      "bundle_id": "B07_TX_HOBBIES_1",
+      "state_id": "TX",
+      "dept_id": "HOBBIES_1",
+      "cat_id": "HOBBIES",
+      "n_stores": 3,
+      "n_eligible_items": 14,
+      "n_items": 5,
+      "n_sku": 15,
+      "items": [
+        "HOBBIES_1_201",
+        "HOBBIES_1_087",
+        "HOBBIES_1_323",
+        "HOBBIES_1_064",
+        "HOBBIES_1_337"
+      ],
+      "mean_daily_active_by_tercile": {
+        "low": 1.693379912818647,
+        "mid": 2.395901787849268,
+        "high": 3.8419699244830254
+      }
+    },
+    {
+      "bundle_id": "B08_WI_FOODS_3",
+      "state_id": "WI",
+      "dept_id": "FOODS_3",
+      "cat_id": "FOODS",
+      "n_stores": 3,
+      "n_eligible_items": 186,
+      "n_items": 5,
+      "n_sku": 15,
+      "items": [
+        "FOODS_3_194",
+        "FOODS_3_584",
+        "FOODS_3_688",
+        "FOODS_3_300",
+        "FOODS_3_327"
+      ],
+      "mean_daily_active_by_tercile": {
+        "low": 2.037794228052239,
+        "mid": 3.7687631818612517,
+        "high": 11.594122250590013
+      }
+    },
+    {
+      "bundle_id": "B09_WI_HOUSEHOLD_1",
+      "state_id": "WI",
+      "dept_id": "HOUSEHOLD_1",
+      "cat_id": "HOUSEHOLD",
+      "n_stores": 3,
+      "n_eligible_items": 80,
+      "n_items": 5,
+      "n_sku": 15,
+      "items": [
+        "HOUSEHOLD_1_217",
+        "HOUSEHOLD_1_262",
+        "HOUSEHOLD_1_277",
+        "HOUSEHOLD_1_039",
+        "HOUSEHOLD_1_294"
+      ],
+      "mean_daily_active_by_tercile": {
+        "low": 1.7714487631022293,
+        "mid": 3.2359059542665607,
+        "high": 6.965572262301869
+      }
+    },
+    {
+      "bundle_id": "B10_WI_HOBBIES_1",
+      "state_id": "WI",
+      "dept_id": "HOBBIES_1",
+      "cat_id": "HOBBIES",
+      "n_stores": 3,
+      "n_eligible_items": 9,
+      "n_items": 5,
+      "n_sku": 15,
+      "items": [
+        "HOBBIES_1_345",
+        "HOBBIES_1_134",
+        "HOBBIES_1_178",
+        "HOBBIES_1_014",
+        "HOBBIES_1_008"
+      ],
+      "mean_daily_active_by_tercile": {
+        "low": 2.394703069190606,
+        "mid": 3.1833121491587875,
+        "high": 4.406695787417652
+      }
+    }
+  ],
+  "totals": {
+    "n_bundles": 10,
+    "n_sku": 154,
+    "n_items": 45,
+    "by_cat": {
+      "FOODS": 62,
+      "HOUSEHOLD": 46,
+      "HOBBIES": 46
+    },
+    "by_state": {
+      "CA": 64,
+      "TX": 45,
+      "WI": 45
+    },
+    "zero_share_active_q": {
+      "q05": 0.056448598130841125,
+      "q50": 0.2327102803738318,
+      "q95": 0.3785141331790765
+    },
+    "mean_daily_active_q": {
+      "q05": 1.4058276456277876,
+      "q50": 3.0079069487968795,
+      "q95": 11.320436137071647
+    }
+  }
+}

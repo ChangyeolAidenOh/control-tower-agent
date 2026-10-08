@@ -1,0 +1,32 @@
+eligible items (state, cat, dept, n):
+  CA FOODS FOODS_1 19
+  CA FOODS FOODS_2 8
+  CA FOODS FOODS_3 158
+  CA HOBBIES HOBBIES_1 21
+  CA HOUSEHOLD HOUSEHOLD_1 61
+  CA HOUSEHOLD HOUSEHOLD_2 1
+  TX FOODS FOODS_1 20
+  TX FOODS FOODS_2 41
+  TX FOODS FOODS_3 189
+  TX HOBBIES HOBBIES_1 14
+  TX HOUSEHOLD HOUSEHOLD_1 112
+  TX HOUSEHOLD HOUSEHOLD_2 3
+  WI FOODS FOODS_1 27
+  WI FOODS FOODS_2 35
+  WI FOODS FOODS_3 186
+  WI HOBBIES HOBBIES_1 9
+  WI HOUSEHOLD HOUSEHOLD_1 80
+  WI HOUSEHOLD HOUSEHOLD_2 1
+bundles:
+  B01_CA_FOODS_3: eligible 158, items 4, sku 16
+  B02_CA_FOODS_1: eligible 19, items 4, sku 16
+  B03_CA_HOUSEHOLD_1: eligible 61, items 4, sku 16
+  B04_CA_HOBBIES_1: eligible 21, items 4, sku 16
+  B05_TX_FOODS_3: eligible 189, items 5, sku 15
+  B06_TX_HOUSEHOLD_1: eligible 112, items 5, sku 15
+  B07_TX_HOBBIES_1: eligible 14, items 5, sku 15
+  B08_WI_FOODS_3: eligible 186, items 5, sku 15
+  B09_WI_HOUSEHOLD_1: eligible 80, items 5, sku 15
+  B10_WI_HOBBIES_1: eligible 9, items 5, sku 15
+totals: {'n_bundles': 10, 'n_sku': 154, 'n_items': 45, 'by_cat': {'FOODS': 62, 'HOUSEHOLD': 46, 'HOBBIES': 46}, 'by_state': {'CA': 64, 'TX': 45, 'WI': 45}, 'zero_share_active_q': {'q05': 0.056448598130841125, 'q50': 0.2327102803738318, 'q95': 0.3785141331790765}, 'mean_daily_active_q': {'q05': 1.4058276456277876, 'q50': 3.0079069487968795, 'q95': 11.320436137071647}}
+written: data/processed/sku_subset_v2.csv, outputs/stage0e_subset_summary_v2.json

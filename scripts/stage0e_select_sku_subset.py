@@ -1,12 +1,17 @@
-"""Stage 0-E: SKU subset selection (pre-registered rules).
+"""Stage 0-E: SKU subset selection (pre-registered rules), v2.
+
+v2: every selection statistic is computed on the window BEFORE fold 1's
+test window (d_1 .. d_{n_days - N_FOLDS*HORIZON}) so that evaluation-period
+sales never influence which SKUs are evaluated (look-ahead selection leak,
+flagged by the independent review). v1 used the full window and is retired.
 
 Bundle = (state, dept). A bundle is the unit of the shared DC ordering
 capacity/budget constraint: one DC (state) replenishing the same items into
 all stores of that state. SKU = item x store.
 
 Rules (fixed before running; changing them is a logged decision):
-  R1 series filter: zero share in active window < 0.40,
-     active days >= 701, last 28 days not all zero
+  R1 series filter (pre-fold window only): zero share in active window < 0.40,
+     active days >= 365 before fold 1, last 28 days before fold 1 not all zero
   R2 item eligibility in a state: the item passes R1 in every store of that state
   R3 bundle quota per state (category balance): CA 4, TX 3, WI 3 bundles;
      FOODS 4, HOUSEHOLD 3, HOBBIES 3 overall (see STATE_CATEGORY_QUOTA)
@@ -19,8 +24,8 @@ Rules (fixed before running; changing them is a logged decision):
 Run:
     python -m scripts.stage0e_select_sku_subset
 Outputs:
-    data/processed/sku_subset_v1.csv
-    outputs/stage0e_subset_summary.json
+    data/processed/sku_subset_v2.csv
+    outputs/stage0e_subset_summary_v2.json
 """
 
 import json
@@ -32,12 +37,14 @@ import pandas as pd
 RAW_DIR = Path("data/raw/m5")
 PROC_DIR = Path("data/processed")
 OUT_DIR = Path("outputs")
-OUT_CSV = PROC_DIR / "sku_subset_v1.csv"
-OUT_JSON = OUT_DIR / "stage0e_subset_summary.json"
+OUT_CSV = PROC_DIR / "sku_subset_v2.csv"
+OUT_JSON = OUT_DIR / "stage0e_subset_summary_v2.json"
 
 SEED = 20261008
 ZERO_SHARE_MAX = 0.40
-MIN_ACTIVE_DAYS = 701
+MIN_ACTIVE_DAYS = 365
+HORIZON = 28
+N_FOLDS = 12
 TRAILING_ZERO_WINDOW = 28
 TARGET_SKU_PER_BUNDLE = 16
 
@@ -57,7 +64,9 @@ def load_sales():
 
 
 def series_stats(sales, d_cols):
-    mat = sales[d_cols].to_numpy(dtype=np.int16)
+    full = sales[d_cols].to_numpy(dtype=np.int16)
+    cutoff = full.shape[1] - N_FOLDS * HORIZON
+    mat = full[:, :cutoff]
     n_series, n_days = mat.shape
     nonzero = mat > 0
     ever = nonzero.any(axis=1)
@@ -171,6 +180,7 @@ def main():
 
     summary = {
         "seed": SEED,
+        "selection_window": {"last_d_used": f"d_{len(d_cols) - N_FOLDS * HORIZON}", "n_days_used": len(d_cols) - N_FOLDS * HORIZON},
         "rules": {
             "zero_share_max": ZERO_SHARE_MAX,
             "min_active_days": MIN_ACTIVE_DAYS,
