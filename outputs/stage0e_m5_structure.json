@@ -1,0 +1,360 @@
+{
+  "files_mb": {
+    "sales_train_evaluation.csv": 121.7,
+    "calendar.csv": 0.1,
+    "sell_prices.csv": 203.4,
+    "sales_train_validation.csv": 120.0,
+    "m5-forecasting-accuracy.zip": 48.0,
+    "sample_submission.csv": 5.2
+  },
+  "sales": {
+    "n_series": 30490,
+    "n_days": 1941,
+    "first_day": "2011-01-29",
+    "last_day": "2016-05-22",
+    "min_value": 0,
+    "max_value": 763,
+    "hierarchy_nunique": {
+      "item_id": 3049,
+      "dept_id": 7,
+      "cat_id": 3,
+      "store_id": 10,
+      "state_id": 3
+    },
+    "stores_per_item": {
+      "q05": 10.0,
+      "q25": 10.0,
+      "q50": 10.0,
+      "q75": 10.0,
+      "q95": 10.0
+    },
+    "series_per_dept_store": {
+      "q05": 149.0,
+      "q25": 216.0,
+      "q50": 416.0,
+      "q75": 532.0,
+      "q95": 823.0
+    }
+  },
+  "activity": {
+    "never_sold": 0,
+    "first_sale_idx": {
+      "q05": 0.0,
+      "q25": 1.0,
+      "q50": 159.0,
+      "q75": 766.0,
+      "q95": 1324.0
+    },
+    "active_days": {
+      "q05": 617.0,
+      "q25": 1175.0,
+      "q50": 1782.0,
+      "q75": 1940.0,
+      "q95": 1941.0
+    },
+    "zero_share_active": {
+      "q05": 0.16836124588324522,
+      "q25": 0.43070582174137045,
+      "q50": 0.6326301302797157,
+      "q75": 0.7953315882242404,
+      "q95": 0.9180737961225766
+    },
+    "zero_share_raw_full_window": {
+      "q05": 0.24678001030396704,
+      "q25": 0.5347758887171561,
+      "q50": 0.7331272539927872,
+      "q75": 0.8650180319422978,
+      "q95": 0.9500257599175682
+    },
+    "adi_active": {
+      "q05": 1.202445170497221,
+      "q25": 1.7565610859728507,
+      "q50": 2.7220523257653246,
+      "q75": 4.885951888742718,
+      "q95": 12.206106870229007
+    },
+    "mean_daily_active": {
+      "q05": 0.09634949497573372,
+      "q25": 0.27685554099469467,
+      "q50": 0.6099782669201206,
+      "q75": 1.3328016058978167,
+      "q95": 4.815662029881503
+    },
+    "trailing_zero_days": {
+      "q05": 0.0,
+      "q25": 0.0,
+      "q50": 0.0,
+      "q75": 3.0,
+      "q95": 15.0
+    },
+    "share_trailing_zero_ge_28d": 0.026631682518858644,
+    "share_active_ge_min": 0.9284355526402099,
+    "min_active_days_rule": 701
+  },
+  "zero_share_by_cat": {
+    "FOODS": 0.539,
+    "HOBBIES": 0.778,
+    "HOUSEHOLD": 0.696
+  },
+  "zero_share_by_dept": {
+    "FOODS_1": 0.591,
+    "FOODS_2": 0.585,
+    "FOODS_3": 0.496,
+    "HOBBIES_1": 0.717,
+    "HOBBIES_2": 0.868,
+    "HOUSEHOLD_1": 0.538,
+    "HOUSEHOLD_2": 0.806
+  },
+  "filter_sweep": {
+    "0.2": {
+      "series_pass": 1938,
+      "items_pass_ge3_stores": 269,
+      "series_pass_ge3_stores": 1609,
+      "by_cat": {
+        "FOODS": 1085,
+        "HOUSEHOLD": 503,
+        "HOBBIES": 21
+      },
+      "bundles_store_dept_total": 53,
+      "bundles_size_ge10": 37,
+      "bundles_size_ge20": 21,
+      "bundle_size": {
+        "q05": 1.0,
+        "q25": 7.0,
+        "q50": 14.0,
+        "q75": 55.0,
+        "q95": 87.19999999999999
+      }
+    },
+    "0.3": {
+      "series_pass": 3797,
+      "items_pass_ge3_stores": 519,
+      "series_pass_ge3_stores": 3249,
+      "by_cat": {
+        "FOODS": 2152,
+        "HOUSEHOLD": 947,
+        "HOBBIES": 150
+      },
+      "bundles_store_dept_total": 59,
+      "bundles_size_ge10": 47,
+      "bundles_size_ge20": 36,
+      "bundle_size": {
+        "q05": 2.0,
+        "q25": 13.5,
+        "q50": 30.0,
+        "q75": 99.5,
+        "q95": 161.6999999999999
+      }
+    },
+    "0.4": {
+      "series_pass": 6253,
+      "items_pass_ge3_stores": 875,
+      "series_pass_ge3_stores": 5632,
+      "by_cat": {
+        "FOODS": 3708,
+        "HOUSEHOLD": 1547,
+        "HOBBIES": 377
+      },
+      "bundles_store_dept_total": 60,
+      "bundles_size_ge10": 54,
+      "bundles_size_ge20": 48,
+      "bundle_size": {
+        "q05": 7.95,
+        "q25": 27.75,
+        "q50": 56.5,
+        "q75": 147.25,
+        "q95": 271.34999999999997
+      }
+    },
+    "0.5": {
+      "series_pass": 9273,
+      "items_pass_ge3_stores": 1257,
+      "series_pass_ge3_stores": 8602,
+      "by_cat": {
+        "FOODS": 5591,
+        "HOUSEHOLD": 2319,
+        "HOBBIES": 692
+      },
+      "bundles_store_dept_total": 65,
+      "bundles_size_ge10": 60,
+      "bundles_size_ge20": 56,
+      "bundle_size": {
+        "q05": 1.0,
+        "q25": 40.0,
+        "q50": 95.0,
+        "q75": 192.0,
+        "q95": 384.79999999999995
+      }
+    }
+  },
+  "calendar": {
+    "rows": 1969,
+    "date_range": [
+      "2011-01-29",
+      "2016-06-19"
+    ],
+    "days_beyond_sales": 28,
+    "wm_yr_wk_range": [
+      11101,
+      11621
+    ],
+    "event_name_1_nonnull": 162,
+    "event_name_2_nonnull": 5,
+    "event_type_1_counts": {
+      "Religious": 55,
+      "National": 52,
+      "Cultural": 37,
+      "Sporting": 18
+    },
+    "snap_days": {
+      "snap_CA": 650,
+      "snap_TX": 650,
+      "snap_WI": 650
+    },
+    "null_counts": {
+      "event_name_1": 1807,
+      "event_type_1": 1807,
+      "event_name_2": 1964,
+      "event_type_2": 1964
+    }
+  },
+  "prices": {
+    "rows": 6841121,
+    "store_item_pairs": 30490,
+    "pairs_missing_price_entirely": 0,
+    "n_weeks_in_sales_window": 278,
+    "price_week_coverage": {
+      "q05": 1.0,
+      "q25": 1.0,
+      "q50": 1.0,
+      "q75": 1.0,
+      "q95": 1.0
+    },
+    "share_coverage_lt_0_95": 0.0,
+    "share_price_starts_before_first_sale": 1.0,
+    "price_range_ratio": {
+      "q05": 1.0,
+      "q25": 1.0,
+      "q50": 1.0917225950782998,
+      "q75": 1.2138939670932358,
+      "q95": 2.046664483532934
+    },
+    "sell_price_quantiles": {
+      "q05": 0.97,
+      "q25": 2.18,
+      "q50": 3.47,
+      "q75": 5.84,
+      "q95": 10.98
+    },
+    "null_counts": {}
+  },
+  "folds": {
+    "horizon": 28,
+    "n_folds": 12,
+    "layout": [
+      {
+        "fold": 1,
+        "test_start_d": "d_1606",
+        "test_end_d": "d_1633",
+        "test_start_date": "2015-06-22",
+        "test_end_date": "2015-07-19",
+        "train_end_d": "d_1605"
+      },
+      {
+        "fold": 2,
+        "test_start_d": "d_1634",
+        "test_end_d": "d_1661",
+        "test_start_date": "2015-07-20",
+        "test_end_date": "2015-08-16",
+        "train_end_d": "d_1633"
+      },
+      {
+        "fold": 3,
+        "test_start_d": "d_1662",
+        "test_end_d": "d_1689",
+        "test_start_date": "2015-08-17",
+        "test_end_date": "2015-09-13",
+        "train_end_d": "d_1661"
+      },
+      {
+        "fold": 4,
+        "test_start_d": "d_1690",
+        "test_end_d": "d_1717",
+        "test_start_date": "2015-09-14",
+        "test_end_date": "2015-10-11",
+        "train_end_d": "d_1689"
+      },
+      {
+        "fold": 5,
+        "test_start_d": "d_1718",
+        "test_end_d": "d_1745",
+        "test_start_date": "2015-10-12",
+        "test_end_date": "2015-11-08",
+        "train_end_d": "d_1717"
+      },
+      {
+        "fold": 6,
+        "test_start_d": "d_1746",
+        "test_end_d": "d_1773",
+        "test_start_date": "2015-11-09",
+        "test_end_date": "2015-12-06",
+        "train_end_d": "d_1745"
+      },
+      {
+        "fold": 7,
+        "test_start_d": "d_1774",
+        "test_end_d": "d_1801",
+        "test_start_date": "2015-12-07",
+        "test_end_date": "2016-01-03",
+        "train_end_d": "d_1773"
+      },
+      {
+        "fold": 8,
+        "test_start_d": "d_1802",
+        "test_end_d": "d_1829",
+        "test_start_date": "2016-01-04",
+        "test_end_date": "2016-01-31",
+        "train_end_d": "d_1801"
+      },
+      {
+        "fold": 9,
+        "test_start_d": "d_1830",
+        "test_end_d": "d_1857",
+        "test_start_date": "2016-02-01",
+        "test_end_date": "2016-02-28",
+        "train_end_d": "d_1829"
+      },
+      {
+        "fold": 10,
+        "test_start_d": "d_1858",
+        "test_end_d": "d_1885",
+        "test_start_date": "2016-02-29",
+        "test_end_date": "2016-03-27",
+        "train_end_d": "d_1857"
+      },
+      {
+        "fold": 11,
+        "test_start_d": "d_1886",
+        "test_end_d": "d_1913",
+        "test_start_date": "2016-03-28",
+        "test_end_date": "2016-04-24",
+        "train_end_d": "d_1885"
+      },
+      {
+        "fold": 12,
+        "test_start_d": "d_1914",
+        "test_end_d": "d_1941",
+        "test_start_date": "2016-04-25",
+        "test_end_date": "2016-05-22",
+        "train_end_d": "d_1913"
+      }
+    ]
+  },
+  "zero_share_in_eval_window": {
+    "q05": 0.11607142857142858,
+    "q25": 0.40476190476190477,
+    "q50": 0.6339285714285714,
+    "q75": 0.8065476190476191,
+    "q95": 0.9285714285714286
+  }
+}

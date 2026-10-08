@@ -1,0 +1,6 @@
+numpy
+torch
+cvxpy
+cvxpylayers
+ecos
+scs
