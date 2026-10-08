@@ -1,0 +1,232 @@
+{
+  "task": "2-E kappa selection",
+  "date": "2026-10-08",
+  "rule": "preregistration v1.2 section 5.5: share in [0.20, 0.50] -> closest to 1.2; none -> closest to interval",
+  "reference_policy": {
+    "name": "a4_tau0.8333_proportional",
+    "tau": 0.8333333333333334,
+    "allocation": "proportional",
+    "protection_days": 3,
+    "quantile_method": "linear",
+    "tuned": false
+  },
+  "validation_window": {
+    "start_idx": 1438,
+    "end_idx": 1605,
+    "days": 168
+  },
+  "warm_in": {
+    "days": 14,
+    "start_idx": 1424,
+    "init_lookback_days": 7,
+    "excluded_from_share": true
+  },
+  "binding_epsilon": 1e-06,
+  "demand": "observed M5 sales, core p = 0, all <= selection end",
+  "results": {
+    "1.0": {
+      "overall_share": 0.35654761904761906,
+      "binding_days": 599,
+      "total_bundle_days": 1680,
+      "per_bundle": {
+        "B01_CA_FOODS_3": {
+          "binding_days": 118,
+          "window_days": 168,
+          "share": 0.7023809523809523,
+          "k_g": 133.84278071771047
+        },
+        "B02_CA_FOODS_1": {
+          "binding_days": 40,
+          "window_days": 168,
+          "share": 0.23809523809523808,
+          "k_g": 95.53686128376165
+        },
+        "B03_CA_HOUSEHOLD_1": {
+          "binding_days": 65,
+          "window_days": 168,
+          "share": 0.3869047619047619,
+          "k_g": 83.68737527492263
+        },
+        "B04_CA_HOBBIES_1": {
+          "binding_days": 43,
+          "window_days": 168,
+          "share": 0.25595238095238093,
+          "k_g": 81.07285185765782
+        },
+        "B05_TX_FOODS_3": {
+          "binding_days": 39,
+          "window_days": 168,
+          "share": 0.23214285714285715,
+          "k_g": 56.01311339910772
+        },
+        "B06_TX_HOUSEHOLD_1": {
+          "binding_days": 26,
+          "window_days": 168,
+          "share": 0.15476190476190477,
+          "k_g": 54.66365229619434
+        },
+        "B07_TX_HOBBIES_1": {
+          "binding_days": 53,
+          "window_days": 168,
+          "share": 0.31547619047619047,
+          "k_g": 33.67020849887511
+        },
+        "B08_WI_FOODS_3": {
+          "binding_days": 72,
+          "window_days": 168,
+          "share": 0.42857142857142855,
+          "k_g": 51.21606305074683
+        },
+        "B09_WI_HOUSEHOLD_1": {
+          "binding_days": 81,
+          "window_days": 168,
+          "share": 0.48214285714285715,
+          "k_g": 50.844792953009375
+        },
+        "B10_WI_HOBBIES_1": {
+          "binding_days": 62,
+          "window_days": 168,
+          "share": 0.36904761904761907,
+          "k_g": 46.29964915994262
+        }
+      }
+    },
+    "1.2": {
+      "overall_share": 0.08928571428571429,
+      "binding_days": 150,
+      "total_bundle_days": 1680,
+      "per_bundle": {
+        "B01_CA_FOODS_3": {
+          "binding_days": 25,
+          "window_days": 168,
+          "share": 0.1488095238095238,
+          "k_g": 160.61133686125257
+        },
+        "B02_CA_FOODS_1": {
+          "binding_days": 10,
+          "window_days": 168,
+          "share": 0.05952380952380952,
+          "k_g": 114.64423354051398
+        },
+        "B03_CA_HOUSEHOLD_1": {
+          "binding_days": 17,
+          "window_days": 168,
+          "share": 0.10119047619047619,
+          "k_g": 100.42485032990716
+        },
+        "B04_CA_HOBBIES_1": {
+          "binding_days": 14,
+          "window_days": 168,
+          "share": 0.08333333333333333,
+          "k_g": 97.28742222918939
+        },
+        "B05_TX_FOODS_3": {
+          "binding_days": 9,
+          "window_days": 168,
+          "share": 0.05357142857142857,
+          "k_g": 67.21573607892927
+        },
+        "B06_TX_HOUSEHOLD_1": {
+          "binding_days": 4,
+          "window_days": 168,
+          "share": 0.023809523809523808,
+          "k_g": 65.59638275543321
+        },
+        "B07_TX_HOBBIES_1": {
+          "binding_days": 9,
+          "window_days": 168,
+          "share": 0.05357142857142857,
+          "k_g": 40.40425019865013
+        },
+        "B08_WI_FOODS_3": {
+          "binding_days": 21,
+          "window_days": 168,
+          "share": 0.125,
+          "k_g": 61.459275660896196
+        },
+        "B09_WI_HOUSEHOLD_1": {
+          "binding_days": 21,
+          "window_days": 168,
+          "share": 0.125,
+          "k_g": 61.01375154361125
+        },
+        "B10_WI_HOBBIES_1": {
+          "binding_days": 20,
+          "window_days": 168,
+          "share": 0.11904761904761904,
+          "k_g": 55.55957899193114
+        }
+      }
+    },
+    "1.5": {
+      "overall_share": 0.005952380952380952,
+      "binding_days": 10,
+      "total_bundle_days": 1680,
+      "per_bundle": {
+        "B01_CA_FOODS_3": {
+          "binding_days": 0,
+          "window_days": 168,
+          "share": 0.0,
+          "k_g": 200.7641710765657
+        },
+        "B02_CA_FOODS_1": {
+          "binding_days": 0,
+          "window_days": 168,
+          "share": 0.0,
+          "k_g": 143.30529192564248
+        },
+        "B03_CA_HOUSEHOLD_1": {
+          "binding_days": 1,
+          "window_days": 168,
+          "share": 0.005952380952380952,
+          "k_g": 125.53106291238394
+        },
+        "B04_CA_HOBBIES_1": {
+          "binding_days": 1,
+          "window_days": 168,
+          "share": 0.005952380952380952,
+          "k_g": 121.60927778648673
+        },
+        "B05_TX_FOODS_3": {
+          "binding_days": 1,
+          "window_days": 168,
+          "share": 0.005952380952380952,
+          "k_g": 84.01967009866158
+        },
+        "B06_TX_HOUSEHOLD_1": {
+          "binding_days": 0,
+          "window_days": 168,
+          "share": 0.0,
+          "k_g": 81.9954784442915
+        },
+        "B07_TX_HOBBIES_1": {
+          "binding_days": 0,
+          "window_days": 168,
+          "share": 0.0,
+          "k_g": 50.50531274831267
+        },
+        "B08_WI_FOODS_3": {
+          "binding_days": 2,
+          "window_days": 168,
+          "share": 0.011904761904761904,
+          "k_g": 76.82409457612025
+        },
+        "B09_WI_HOUSEHOLD_1": {
+          "binding_days": 0,
+          "window_days": 168,
+          "share": 0.0,
+          "k_g": 76.26718942951406
+        },
+        "B10_WI_HOBBIES_1": {
+          "binding_days": 5,
+          "window_days": 168,
+          "share": 0.02976190476190476,
+          "k_g": 69.44947373991393
+        }
+      }
+    }
+  },
+  "selected_kappa": 1.0,
+  "selection_reason": "only candidate with share in [0.20, 0.50]",
+  "data_config_sha256": "0e73c1aed2e1155d56a5923e0b8f7bc786e751cdbbd17c4b466e82c98f2ec0c2"
+}

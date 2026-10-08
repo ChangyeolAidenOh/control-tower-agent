@@ -49,7 +49,7 @@ cost:
 
 capacity:
   kappa_candidates: [1.0, 1.2, 1.5]
-  kappa_selected: null               # fixed by 2-E rule (preregistration section 5.5)
+  kappa_selected: 1.0                # 2-E 2026-10-08: binding share 0.3565, only candidate in [0.20, 0.50]; Step D: frozen
   binding_epsilon: 1.0e-6            # binding if sum(w*q) >= K_g - eps (absolute)
   weight_wi: 1.0
 

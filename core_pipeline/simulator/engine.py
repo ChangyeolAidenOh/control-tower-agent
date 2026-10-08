@@ -170,6 +170,7 @@ class Observation:
     k_g: float
     h: np.ndarray
     b: np.ndarray
+    w: np.ndarray
     features: dict[str, np.ndarray] | None = None
 
 
@@ -364,6 +365,7 @@ def run_window(
             k_g=k_g,
             h=params.h,
             b=params.b,
+            w=params.w,
             features=obs_features,
         )
         q_raw = np.asarray(policy.decide(obs), dtype=np.float64)

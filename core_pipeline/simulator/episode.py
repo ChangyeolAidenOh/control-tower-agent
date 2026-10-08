@@ -82,6 +82,7 @@ class EpisodeRecord:
     guardrail_blocked: bool      # csl < cfg.episode_csl_floor
     binding_days: int
     n_days: int
+    n_sku: int                   # pooled SKU-day stats need the denominator
 
 
 @dataclass(frozen=True)
@@ -147,6 +148,7 @@ def _aggregate_weeks(
             guardrail_blocked=csl < cfg.episode_csl_floor,
             binding_days=sum(1 for r in chunk if r.binding),
             n_days=len(chunk),
+            n_sku=int(unmet.shape[1]),
         ))
     return tuple(records)
 

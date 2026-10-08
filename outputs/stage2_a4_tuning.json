@@ -1,0 +1,498 @@
+{
+  "task": "2-D-2 final A4 tuning",
+  "date": "2026-10-08",
+  "kappa": 1.0,
+  "kappa_source": "outputs/stage2_kappa_selection.json (2-E, frozen; Step D: no re-selection)",
+  "tau_grid": [
+    0.5,
+    0.55,
+    0.6,
+    0.65,
+    0.7,
+    0.75,
+    0.8,
+    0.8333333333333334,
+    0.85,
+    0.9,
+    0.95,
+    0.99
+  ],
+  "allocation_rules": [
+    "proportional",
+    "b_priority"
+  ],
+  "objective": "total h*I + b*u over validation bundle-days at the given r; warm-in excluded; no terminal term",
+  "tie_break": "lower cost, then proportional before b_priority, then smaller tau",
+  "warm_in": {
+    "days": 14,
+    "start_idx": 1424,
+    "init_lookback_days": 7,
+    "policy": "candidate itself"
+  },
+  "r_eval_10": "reuses the r = 5 selection (no extra tuning)",
+  "selected": {
+    "3": {
+      "r": 3,
+      "kappa": 1.0,
+      "tau": 0.5,
+      "allocation_rule": "proportional",
+      "validation_cost": 163699.4035358249,
+      "binding_share": 0.03630952380952381,
+      "csl_sku_day": 0.7327226345083488,
+      "fill_rate": 0.7232254874768917,
+      "validation_window": {
+        "start_idx": 1438,
+        "end_idx": 1605
+      }
+    },
+    "5": {
+      "r": 5,
+      "kappa": 1.0,
+      "tau": 0.6,
+      "allocation_rule": "proportional",
+      "validation_cost": 214570.98717773843,
+      "binding_share": 0.09464285714285714,
+      "csl_sku_day": 0.7888450834879406,
+      "fill_rate": 0.7885691768226079,
+      "validation_window": {
+        "start_idx": 1438,
+        "end_idx": 1605
+      }
+    }
+  },
+  "candidates": [
+    {
+      "r": 3,
+      "tau": 0.5,
+      "allocation": "proportional",
+      "validation_cost": 163699.4035358249,
+      "binding_share": 0.03630952380952381,
+      "csl_sku_day": 0.7327226345083488,
+      "fill_rate": 0.7232254874768917
+    },
+    {
+      "r": 3,
+      "tau": 0.55,
+      "allocation": "proportional",
+      "validation_cost": 167080.6440868931,
+      "binding_share": 0.060714285714285714,
+      "csl_sku_day": 0.7627937538651824,
+      "fill_rate": 0.7577046494676808
+    },
+    {
+      "r": 3,
+      "tau": 0.6,
+      "allocation": "proportional",
+      "validation_cost": 172078.31981681267,
+      "binding_share": 0.09464285714285714,
+      "csl_sku_day": 0.7888450834879406,
+      "fill_rate": 0.7885691768226079
+    },
+    {
+      "r": 3,
+      "tau": 0.65,
+      "allocation": "proportional",
+      "validation_cost": 180348.95964825066,
+      "binding_share": 0.1375,
+      "csl_sku_day": 0.8158627087198516,
+      "fill_rate": 0.8175443701016426
+    },
+    {
+      "r": 3,
+      "tau": 0.7,
+      "allocation": "proportional",
+      "validation_cost": 192623.33544129573,
+      "binding_share": 0.19285714285714287,
+      "csl_sku_day": 0.8427257266542981,
+      "fill_rate": 0.8448304930013045
+    },
+    {
+      "r": 3,
+      "tau": 0.75,
+      "allocation": "proportional",
+      "validation_cost": 208438.4752028338,
+      "binding_share": 0.2488095238095238,
+      "csl_sku_day": 0.8627473716759431,
+      "fill_rate": 0.868464522857344
+    },
+    {
+      "r": 3,
+      "tau": 0.8,
+      "allocation": "proportional",
+      "validation_cost": 231395.02541896587,
+      "binding_share": 0.3130952380952381,
+      "csl_sku_day": 0.8876004947433519,
+      "fill_rate": 0.8922643067661482
+    },
+    {
+      "r": 3,
+      "tau": 0.8333333333333334,
+      "allocation": "proportional",
+      "validation_cost": 251152.665332974,
+      "binding_share": 0.35654761904761906,
+      "csl_sku_day": 0.9029066171923315,
+      "fill_rate": 0.9065394914517408
+    },
+    {
+      "r": 3,
+      "tau": 0.85,
+      "allocation": "proportional",
+      "validation_cost": 263064.0174964007,
+      "binding_share": 0.3773809523809524,
+      "csl_sku_day": 0.9101731601731602,
+      "fill_rate": 0.9141112701221809
+    },
+    {
+      "r": 3,
+      "tau": 0.9,
+      "allocation": "proportional",
+      "validation_cost": 308571.485794188,
+      "binding_share": 0.4595238095238095,
+      "csl_sku_day": 0.9308132343846629,
+      "fill_rate": 0.9354707150440026
+    },
+    {
+      "r": 3,
+      "tau": 0.95,
+      "allocation": "proportional",
+      "validation_cost": 386819.7138521987,
+      "binding_share": 0.5529761904761905,
+      "csl_sku_day": 0.9542748917748918,
+      "fill_rate": 0.9588125088261418
+    },
+    {
+      "r": 3,
+      "tau": 0.99,
+      "allocation": "proportional",
+      "validation_cost": 587211.0191974366,
+      "binding_share": 0.6511904761904762,
+      "csl_sku_day": 0.9720160791589363,
+      "fill_rate": 0.9762637329791223
+    },
+    {
+      "r": 3,
+      "tau": 0.5,
+      "allocation": "b_priority",
+      "validation_cost": 163934.35885272728,
+      "binding_share": 0.0375,
+      "csl_sku_day": 0.7358147804576376,
+      "fill_rate": 0.7225394044911232
+    },
+    {
+      "r": 3,
+      "tau": 0.55,
+      "allocation": "b_priority",
+      "validation_cost": 167667.45944614484,
+      "binding_share": 0.05952380952380952,
+      "csl_sku_day": 0.7670454545454546,
+      "fill_rate": 0.7560495486557164
+    },
+    {
+      "r": 3,
+      "tau": 0.6,
+      "allocation": "b_priority",
+      "validation_cost": 173201.86775429922,
+      "binding_share": 0.09345238095238095,
+      "csl_sku_day": 0.7942949907235621,
+      "fill_rate": 0.7857571749170941
+    },
+    {
+      "r": 3,
+      "tau": 0.65,
+      "allocation": "b_priority",
+      "validation_cost": 182329.63462490335,
+      "binding_share": 0.13690476190476192,
+      "csl_sku_day": 0.8208874458874459,
+      "fill_rate": 0.8134144144683914
+    },
+    {
+      "r": 3,
+      "tau": 0.7,
+      "allocation": "b_priority",
+      "validation_cost": 195895.11261152787,
+      "binding_share": 0.18571428571428572,
+      "csl_sku_day": 0.8471706864564007,
+      "fill_rate": 0.8387696266693306
+    },
+    {
+      "r": 3,
+      "tau": 0.75,
+      "allocation": "b_priority",
+      "validation_cost": 213179.60526282404,
+      "binding_share": 0.24107142857142858,
+      "csl_sku_day": 0.8677334570191713,
+      "fill_rate": 0.8605807565703029
+    },
+    {
+      "r": 3,
+      "tau": 0.8,
+      "allocation": "b_priority",
+      "validation_cost": 237790.93457091658,
+      "binding_share": 0.30297619047619045,
+      "csl_sku_day": 0.8906153370439085,
+      "fill_rate": 0.8831360935938583
+    },
+    {
+      "r": 3,
+      "tau": 0.8333333333333334,
+      "allocation": "b_priority",
+      "validation_cost": 258957.78397357464,
+      "binding_share": 0.34404761904761905,
+      "csl_sku_day": 0.9037183055040198,
+      "fill_rate": 0.8961855060155628
+    },
+    {
+      "r": 3,
+      "tau": 0.85,
+      "allocation": "b_priority",
+      "validation_cost": 271730.41805419273,
+      "binding_share": 0.3595238095238095,
+      "csl_sku_day": 0.9105596784168213,
+      "fill_rate": 0.9029120581207927
+    },
+    {
+      "r": 3,
+      "tau": 0.9,
+      "allocation": "b_priority",
+      "validation_cost": 321089.69156464364,
+      "binding_share": 0.43333333333333335,
+      "csl_sku_day": 0.9305040197897341,
+      "fill_rate": 0.922540936993161
+    },
+    {
+      "r": 3,
+      "tau": 0.95,
+      "allocation": "b_priority",
+      "validation_cost": 409783.693850377,
+      "binding_share": 0.5071428571428571,
+      "csl_sku_day": 0.9527288188002474,
+      "fill_rate": 0.9452233134794346
+    },
+    {
+      "r": 3,
+      "tau": 0.99,
+      "allocation": "b_priority",
+      "validation_cost": 647736.2353069354,
+      "binding_share": 0.5922619047619048,
+      "csl_sku_day": 0.9715909090909091,
+      "fill_rate": 0.9629848940210308
+    },
+    {
+      "r": 5,
+      "tau": 0.5,
+      "allocation": "proportional",
+      "validation_cost": 220258.07565812566,
+      "binding_share": 0.03630952380952381,
+      "csl_sku_day": 0.7327226345083488,
+      "fill_rate": 0.7232254874768917
+    },
+    {
+      "r": 5,
+      "tau": 0.55,
+      "allocation": "proportional",
+      "validation_cost": 216286.8527180423,
+      "binding_share": 0.060714285714285714,
+      "csl_sku_day": 0.7627937538651824,
+      "fill_rate": 0.7577046494676808
+    },
+    {
+      "r": 5,
+      "tau": 0.6,
+      "allocation": "proportional",
+      "validation_cost": 214570.98717773843,
+      "binding_share": 0.09464285714285714,
+      "csl_sku_day": 0.7888450834879406,
+      "fill_rate": 0.7885691768226079
+    },
+    {
+      "r": 5,
+      "tau": 0.65,
+      "allocation": "proportional",
+      "validation_cost": 217489.66788129864,
+      "binding_share": 0.1375,
+      "csl_sku_day": 0.8158627087198516,
+      "fill_rate": 0.8175443701016426
+    },
+    {
+      "r": 5,
+      "tau": 0.7,
+      "allocation": "proportional",
+      "validation_cost": 223300.50184140698,
+      "binding_share": 0.19285714285714287,
+      "csl_sku_day": 0.8427257266542981,
+      "fill_rate": 0.8448304930013045
+    },
+    {
+      "r": 5,
+      "tau": 0.75,
+      "allocation": "proportional",
+      "validation_cost": 234718.48757336868,
+      "binding_share": 0.2488095238095238,
+      "csl_sku_day": 0.8627473716759431,
+      "fill_rate": 0.868464522857344
+    },
+    {
+      "r": 5,
+      "tau": 0.8,
+      "allocation": "proportional",
+      "validation_cost": 252557.38502384097,
+      "binding_share": 0.3130952380952381,
+      "csl_sku_day": 0.8876004947433519,
+      "fill_rate": 0.8922643067661482
+    },
+    {
+      "r": 5,
+      "tau": 0.8333333333333334,
+      "allocation": "proportional",
+      "validation_cost": 269421.6436275841,
+      "binding_share": 0.35654761904761906,
+      "csl_sku_day": 0.9029066171923315,
+      "fill_rate": 0.9065394914517408
+    },
+    {
+      "r": 5,
+      "tau": 0.85,
+      "allocation": "proportional",
+      "validation_cost": 279707.9370851305,
+      "binding_share": 0.3773809523809524,
+      "csl_sku_day": 0.9101731601731602,
+      "fill_rate": 0.9141112701221809
+    },
+    {
+      "r": 5,
+      "tau": 0.9,
+      "allocation": "proportional",
+      "validation_cost": 320636.78974317596,
+      "binding_share": 0.4595238095238095,
+      "csl_sku_day": 0.9308132343846629,
+      "fill_rate": 0.9354707150440026
+    },
+    {
+      "r": 5,
+      "tau": 0.95,
+      "allocation": "proportional",
+      "validation_cost": 394143.5576778436,
+      "binding_share": 0.5529761904761905,
+      "csl_sku_day": 0.9542748917748918,
+      "fill_rate": 0.9588125088261418
+    },
+    {
+      "r": 5,
+      "tau": 0.99,
+      "allocation": "proportional",
+      "validation_cost": 591746.4489669533,
+      "binding_share": 0.6511904761904762,
+      "csl_sku_day": 0.9720160791589363,
+      "fill_rate": 0.9762637329791223
+    },
+    {
+      "r": 5,
+      "tau": 0.5,
+      "allocation": "b_priority",
+      "validation_cost": 220505.78668867104,
+      "binding_share": 0.0375,
+      "csl_sku_day": 0.7358147804576376,
+      "fill_rate": 0.7225394044911232
+    },
+    {
+      "r": 5,
+      "tau": 0.55,
+      "allocation": "b_priority",
+      "validation_cost": 216928.91719818686,
+      "binding_share": 0.05952380952380952,
+      "csl_sku_day": 0.7670454545454546,
+      "fill_rate": 0.7560495486557164
+    },
+    {
+      "r": 5,
+      "tau": 0.6,
+      "allocation": "b_priority",
+      "validation_cost": 215794.15595721165,
+      "binding_share": 0.09345238095238095,
+      "csl_sku_day": 0.7942949907235621,
+      "fill_rate": 0.7857571749170941
+    },
+    {
+      "r": 5,
+      "tau": 0.65,
+      "allocation": "b_priority",
+      "validation_cost": 219634.5528803149,
+      "binding_share": 0.13690476190476192,
+      "csl_sku_day": 0.8208874458874459,
+      "fill_rate": 0.8134144144683914
+    },
+    {
+      "r": 5,
+      "tau": 0.7,
+      "allocation": "b_priority",
+      "validation_cost": 226875.19550151855,
+      "binding_share": 0.18571428571428572,
+      "csl_sku_day": 0.8471706864564007,
+      "fill_rate": 0.8387696266693306
+    },
+    {
+      "r": 5,
+      "tau": 0.75,
+      "allocation": "b_priority",
+      "validation_cost": 239863.29810315336,
+      "binding_share": 0.24107142857142858,
+      "csl_sku_day": 0.8677334570191713,
+      "fill_rate": 0.8605807565703029
+    },
+    {
+      "r": 5,
+      "tau": 0.8,
+      "allocation": "b_priority",
+      "validation_cost": 259354.2698546291,
+      "binding_share": 0.30297619047619045,
+      "csl_sku_day": 0.8906153370439085,
+      "fill_rate": 0.8831360935938583
+    },
+    {
+      "r": 5,
+      "tau": 0.8333333333333334,
+      "allocation": "b_priority",
+      "validation_cost": 277611.0392159843,
+      "binding_share": 0.34404761904761905,
+      "csl_sku_day": 0.9037183055040198,
+      "fill_rate": 0.8961855060155628
+    },
+    {
+      "r": 5,
+      "tau": 0.85,
+      "allocation": "b_priority",
+      "validation_cost": 288777.3393985353,
+      "binding_share": 0.3595238095238095,
+      "csl_sku_day": 0.9105596784168213,
+      "fill_rate": 0.9029120581207927
+    },
+    {
+      "r": 5,
+      "tau": 0.9,
+      "allocation": "b_priority",
+      "validation_cost": 333492.4500723682,
+      "binding_share": 0.43333333333333335,
+      "csl_sku_day": 0.9305040197897341,
+      "fill_rate": 0.922540936993161
+    },
+    {
+      "r": 5,
+      "tau": 0.95,
+      "allocation": "b_priority",
+      "validation_cost": 417253.5815755385,
+      "binding_share": 0.5071428571428571,
+      "csl_sku_day": 0.9527288188002474,
+      "fill_rate": 0.9452233134794346
+    },
+    {
+      "r": 5,
+      "tau": 0.99,
+      "allocation": "b_priority",
+      "validation_cost": 651534.6257244372,
+      "binding_share": 0.5922619047619048,
+      "csl_sku_day": 0.9715909090909091,
+      "fill_rate": 0.9629848940210308
+    }
+  ],
+  "data_config_sha256": "0e73c1aed2e1155d56a5923e0b8f7bc786e751cdbbd17c4b466e82c98f2ec0c2"
+}
