@@ -1,0 +1,77 @@
+# configs/simulator.yaml
+# Contract: docs/simulator_spec.md v0.1. Structure frozen; values marked TBD are
+# fixed in Stage 2 (kappa via 2-E) and recorded in spec v1 + decision log.
+# Numbers owned by the mart (h, b_r*, K_g, rho, folds, windows) are NOT duplicated
+# here -- Stage 2 code reads them from PostgreSQL (mart_readme.md section 7).
+
+seeds:
+  # spec section 12: A=train, B=eval, C=censor assignment, D=shock selection.
+  # Hierarchical stream construction: SeedSequence([seed, fold, bundle_idx]) for
+  # per-(fold, bundle) streams. Exception: shock bundle selection is a fold-level
+  # draw, SeedSequence([shock, fold]) -- exactly one bundle per fold (spec 5).
+  # Demand-path realizations (censoring, shock) are generated once per
+  # (fold, scenario) and shared across ALL policies (paired comparison).
+  train: 101
+  eval: 202
+  censor: 303
+  shock: 404
+
+time:
+  test_window_days: 28
+  warmup_days: 14              # W, fixed (spec section 7)
+  planning_horizon_days: 28    # rolling horizon, all policies, every day
+
+lead_time:
+  core: 2                      # pipeline slots; order D evening -> arrival D+3 morning
+  stress: [1, 3]
+
+observation:
+  mode: latent                 # core: policies observe latent demand d_t (spec section 6)
+  # "sales" variant (policy-specific s_t + censor flag) is Nice, out of Stage 2 scope
+
+demand_censoring:
+  core_p: 0.0
+  stress_grid: [0.025, 0.06, 0.17]   # share of ACTIVE days (VN2-style denominator)
+  replacement_lookback_days: 28      # mean of non-designated days within last 28 days
+  # achieved p_hat per SKU is recorded alongside results (spec section 5)
+
+demand_shock:
+  eval_only: true
+  bundles_per_fold: 1
+  duration_days: 7
+  multiplier: 1.5
+
+cost:
+  r_train: [3, 5]
+  r_eval: [3, 5, 10]
+  fixed_order_cost_core: 0.0
+  fixed_order_cost_stress: null      # F_g > 0, eval-only stress; value TBD if run
+
+capacity:
+  kappa_candidates: [1.0, 1.2, 1.5]
+  kappa_selected: null               # fixed by 2-E rule (preregistration section 5.5)
+  binding_epsilon: 1.0e-6            # binding if sum(w*q) >= K_g - eps (absolute)
+  weight_wi: 1.0
+
+constraint_handling:
+  # Review decision (2026-10-08): the engine never silently repairs policy output.
+  core_policies: require_feasible    # engine validates; violation > tol -> EngineError
+  feasibility_tol_rel: 1.0e-6        # numerical slack, relative to K_g
+  explicit_projection: policy_internal  # radial-scaling policies (A4) project inside
+  recommendation_gate: reject        # hard-constraint violations rejected, never approved
+
+warmup:
+  policy: a4                         # common warm-up policy for all runs
+  init_lookback_days: 7
+  init_inventory_multiplier: 2.0     # I = 7-day mean demand x 2
+  init_pipeline_slot_multiplier: 1.0 # each slot = 7-day mean x 1
+
+terminal:
+  # Core: perform the final midnight transition, then charge h_i x 1 day ONCE on
+  # I_{T+1} + sum(P_{T+1}) = I_T_eod + P_T[0] + P_T[1] + q_T (equivalent forms).
+  # This is a pre-registered evaluation boundary rule, not accounting salvage.
+  core: holding_one_day_all
+  continuation_sensitivity_days: 7   # folds 1-11 only, paired vs core treatment (T5)
+
+guardrail:
+  episode_csl_floor: 0.90            # episode CSL < floor -> recommendation blocked
