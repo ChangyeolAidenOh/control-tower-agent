@@ -1,0 +1,230 @@
+{
+  "best_params": {
+    "bagging_fraction": 0.7173475253763358,
+    "feature_fraction": 0.6154560509499192,
+    "lambda_l2": 0.9002954281847719,
+    "learning_rate": 0.02035656569347385,
+    "min_data_in_leaf": 100,
+    "num_leaves": 133
+  },
+  "decision": "ST3-08",
+  "encoder_hash": "4219a82331a7",
+  "folds": {
+    "1": {
+      "rows": 199818,
+      "train_end": 1605
+    },
+    "10": {
+      "rows": 238626,
+      "train_end": 1857
+    },
+    "4": {
+      "rows": 212754,
+      "train_end": 1689
+    },
+    "7": {
+      "rows": 225690,
+      "train_end": 1773
+    }
+  },
+  "iteration_selection": "no hyperparameter search; per-quantile iteration chosen once on the pre-fold-1 tuning split (train<=d_1437, valid d_1438-d_1605); fold retraining reuses fixed iterations",
+  "iterations": {
+    "0.05": 740,
+    "0.1": 689,
+    "0.2": 425,
+    "0.3": 403,
+    "0.4": 440,
+    "0.5": 726,
+    "0.6": 484,
+    "0.7": 747,
+    "0.8": 791,
+    "0.9": 541,
+    "0.95": 421
+  },
+  "lightgbm": "4.7.0",
+  "models": {
+    "lgbm_lt3_f10_q0.05.txt": {
+      "num_boost_round": 740,
+      "sha256": "7dd82579c429a654"
+    },
+    "lgbm_lt3_f10_q0.1.txt": {
+      "num_boost_round": 689,
+      "sha256": "89f1ed5e8599ef33"
+    },
+    "lgbm_lt3_f10_q0.2.txt": {
+      "num_boost_round": 425,
+      "sha256": "437b48fc8ba46d26"
+    },
+    "lgbm_lt3_f10_q0.3.txt": {
+      "num_boost_round": 403,
+      "sha256": "26464720a1b0946a"
+    },
+    "lgbm_lt3_f10_q0.4.txt": {
+      "num_boost_round": 440,
+      "sha256": "0b1c6fea39497255"
+    },
+    "lgbm_lt3_f10_q0.5.txt": {
+      "num_boost_round": 726,
+      "sha256": "c07ef66ed68e6515"
+    },
+    "lgbm_lt3_f10_q0.6.txt": {
+      "num_boost_round": 484,
+      "sha256": "ac165de7680e0077"
+    },
+    "lgbm_lt3_f10_q0.7.txt": {
+      "num_boost_round": 747,
+      "sha256": "d416bb6d93fb896f"
+    },
+    "lgbm_lt3_f10_q0.8.txt": {
+      "num_boost_round": 791,
+      "sha256": "c46f0c8ed9b98669"
+    },
+    "lgbm_lt3_f10_q0.9.txt": {
+      "num_boost_round": 541,
+      "sha256": "0837dedc64b5d978"
+    },
+    "lgbm_lt3_f10_q0.95.txt": {
+      "num_boost_round": 421,
+      "sha256": "33b09ce3d2131b85"
+    },
+    "lgbm_lt3_f1_q0.05.txt": {
+      "num_boost_round": 740,
+      "sha256": "ad968839c8404c3f"
+    },
+    "lgbm_lt3_f1_q0.1.txt": {
+      "num_boost_round": 689,
+      "sha256": "a2aa00a39da03251"
+    },
+    "lgbm_lt3_f1_q0.2.txt": {
+      "num_boost_round": 425,
+      "sha256": "8334c644b55b74be"
+    },
+    "lgbm_lt3_f1_q0.3.txt": {
+      "num_boost_round": 403,
+      "sha256": "efc6d27cd412022e"
+    },
+    "lgbm_lt3_f1_q0.4.txt": {
+      "num_boost_round": 440,
+      "sha256": "818e32d80125a37d"
+    },
+    "lgbm_lt3_f1_q0.5.txt": {
+      "num_boost_round": 726,
+      "sha256": "b8f257f2f91bc436"
+    },
+    "lgbm_lt3_f1_q0.6.txt": {
+      "num_boost_round": 484,
+      "sha256": "1d814dad890b1a6e"
+    },
+    "lgbm_lt3_f1_q0.7.txt": {
+      "num_boost_round": 747,
+      "sha256": "60419bc5b7598ecc"
+    },
+    "lgbm_lt3_f1_q0.8.txt": {
+      "num_boost_round": 791,
+      "sha256": "5c991c703db575ab"
+    },
+    "lgbm_lt3_f1_q0.9.txt": {
+      "num_boost_round": 541,
+      "sha256": "651a6bdc3488eb01"
+    },
+    "lgbm_lt3_f1_q0.95.txt": {
+      "num_boost_round": 421,
+      "sha256": "881aa36bd714f7e7"
+    },
+    "lgbm_lt3_f4_q0.05.txt": {
+      "num_boost_round": 740,
+      "sha256": "f7053b978b08a50c"
+    },
+    "lgbm_lt3_f4_q0.1.txt": {
+      "num_boost_round": 689,
+      "sha256": "b4cc9b6374d88479"
+    },
+    "lgbm_lt3_f4_q0.2.txt": {
+      "num_boost_round": 425,
+      "sha256": "dff8113896dfb26f"
+    },
+    "lgbm_lt3_f4_q0.3.txt": {
+      "num_boost_round": 403,
+      "sha256": "be83bd8e684229d7"
+    },
+    "lgbm_lt3_f4_q0.4.txt": {
+      "num_boost_round": 440,
+      "sha256": "e17399535a3bc4d5"
+    },
+    "lgbm_lt3_f4_q0.5.txt": {
+      "num_boost_round": 726,
+      "sha256": "66fcd22a53d2ae54"
+    },
+    "lgbm_lt3_f4_q0.6.txt": {
+      "num_boost_round": 484,
+      "sha256": "61abc4893fb60df7"
+    },
+    "lgbm_lt3_f4_q0.7.txt": {
+      "num_boost_round": 747,
+      "sha256": "5c59da5e3c52bd82"
+    },
+    "lgbm_lt3_f4_q0.8.txt": {
+      "num_boost_round": 791,
+      "sha256": "71b5ff6ec385c9c2"
+    },
+    "lgbm_lt3_f4_q0.9.txt": {
+      "num_boost_round": 541,
+      "sha256": "9f485550f7cb1589"
+    },
+    "lgbm_lt3_f4_q0.95.txt": {
+      "num_boost_round": 421,
+      "sha256": "9f038bdb45afe1dc"
+    },
+    "lgbm_lt3_f7_q0.05.txt": {
+      "num_boost_round": 740,
+      "sha256": "243e13bcfcbcc1dc"
+    },
+    "lgbm_lt3_f7_q0.1.txt": {
+      "num_boost_round": 689,
+      "sha256": "76d09b7908b34ac1"
+    },
+    "lgbm_lt3_f7_q0.2.txt": {
+      "num_boost_round": 425,
+      "sha256": "f2706084d4e5483b"
+    },
+    "lgbm_lt3_f7_q0.3.txt": {
+      "num_boost_round": 403,
+      "sha256": "6970a1f194ed7c14"
+    },
+    "lgbm_lt3_f7_q0.4.txt": {
+      "num_boost_round": 440,
+      "sha256": "8136ff0295b0edb7"
+    },
+    "lgbm_lt3_f7_q0.5.txt": {
+      "num_boost_round": 726,
+      "sha256": "1d0e08913d98cd4f"
+    },
+    "lgbm_lt3_f7_q0.6.txt": {
+      "num_boost_round": 484,
+      "sha256": "e6c226d296326ffe"
+    },
+    "lgbm_lt3_f7_q0.7.txt": {
+      "num_boost_round": 747,
+      "sha256": "10350299f34987b4"
+    },
+    "lgbm_lt3_f7_q0.8.txt": {
+      "num_boost_round": 791,
+      "sha256": "71575ad9daeb819e"
+    },
+    "lgbm_lt3_f7_q0.9.txt": {
+      "num_boost_round": 541,
+      "sha256": "b11df0c69afdf96c"
+    },
+    "lgbm_lt3_f7_q0.95.txt": {
+      "num_boost_round": 421,
+      "sha256": "ca46f913343733ad"
+    }
+  },
+  "numpy": "2.4.6",
+  "platform": "macOS-26.3-arm64-arm-64bit",
+  "python": "3.11.17",
+  "select_split_wql_11q": 0.2483063468157534,
+  "spec_hash": "7da8d5d3ac3e",
+  "target_mode": "lt_cum",
+  "tuning_json_sha256": "c9f987e7d7daba9a"
+}
