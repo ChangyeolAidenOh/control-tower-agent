@@ -157,3 +157,90 @@ def load_fold(model: str, fold: int) -> pd.DataFrame:
 def covariate_schema_hash(columns: Sequence[str], dtypes: Sequence[str]) -> str:
     payload = json.dumps(sorted(zip(map(str, columns), map(str, dtypes))))
     return hashlib.sha256(payload.encode()).hexdigest()[:12]
+
+
+# ---------------------------------------------------------------------------
+# Lead-time cumulative frames (Stage 3-E, ST3-08)
+# ---------------------------------------------------------------------------
+# A cumulative file predicts sum(d_{o+1..o+3}) -- a DIFFERENT target from
+# any daily horizon row. target_kind makes the two unjoinable by accident.
+
+TARGET_KIND_CUM = "cumulative_demand"
+LT_AGG_DAYS = 3
+LT_ID_COLS = ["series_id", "origin_idx", "target_start_idx",
+              "target_end_idx", "target_kind", "aggregation_days"]
+
+
+def assert_daily_frame(df: pd.DataFrame) -> None:
+    """Mixing guard: refuse cumulative frames where a daily per-horizon
+    frame is required (and vice versa via validate_lt_frame)."""
+    if "target_kind" in df.columns:
+        raise ValueError("expected a DAILY per-horizon frame but found a "
+                         "target_kind column (cumulative frame?)")
+    if "horizon" not in df.columns:
+        raise ValueError("daily frame must carry a horizon column")
+
+
+def build_lt_frame(series_id, origin_idx, qmat,
+                   quantiles: Sequence[float] = QUANTILES) -> pd.DataFrame:
+    df = pd.DataFrame({
+        "series_id": series_id,
+        "origin_idx": np.asarray(origin_idx, dtype=np.int64),
+    })
+    df["target_start_idx"] = df["origin_idx"] + 1
+    df["target_end_idx"] = df["origin_idx"] + LT_AGG_DAYS
+    df["target_kind"] = TARGET_KIND_CUM
+    df["aggregation_days"] = np.int64(LT_AGG_DAYS)
+    for j, col in enumerate(quantile_columns(quantiles)):
+        df[col] = np.asarray(qmat[:, j], dtype=np.float32)
+    return df
+
+
+def validate_lt_frame(df: pd.DataFrame,
+                      quantiles: Sequence[float] = QUANTILES) -> dict:
+    qcols = quantile_columns(quantiles)
+    missing = [c for c in LT_ID_COLS + qcols if c not in df.columns]
+    if missing:
+        raise ValueError(f"missing columns: {missing}")
+    if not (df["target_kind"] == TARGET_KIND_CUM).all():
+        raise ValueError("mixed or wrong target_kind")
+    if not (df["aggregation_days"] == LT_AGG_DAYS).all():
+        raise ValueError("aggregation_days != 3")
+    if df.duplicated(["series_id", "origin_idx"]).any():
+        raise ValueError("duplicate (series_id, origin_idx) keys")
+    if not (df["target_start_idx"] == df["origin_idx"] + 1).all():
+        raise ValueError("target_start_idx != origin_idx + 1")
+    if not (df["target_end_idx"] == df["origin_idx"] + LT_AGG_DAYS).all():
+        raise ValueError("target_end_idx != origin_idx + aggregation_days")
+    n_series = df["series_id"].nunique()
+    if not (df.groupby("origin_idx")["series_id"].nunique() == n_series).all():
+        raise ValueError("some origin lacks the full series set")
+    qm = df[qcols].to_numpy(dtype=np.float64)
+    if not np.isfinite(qm).all():
+        raise ValueError("non-finite prediction values")
+    if (np.diff(qm, axis=1) < 0).any():
+        raise ValueError("quantile columns are not non-decreasing")
+    return {"rows": int(len(df)), "series": int(n_series),
+            "origins": int(df["origin_idx"].nunique())}
+
+
+def write_lt_fold(model: str, fold: int, df: pd.DataFrame,
+                  extra_meta: dict,
+                  quantiles: Sequence[float] = QUANTILES) -> dict:
+    stats = validate_lt_frame(df, quantiles)
+    PRED_DIR.mkdir(parents=True, exist_ok=True)
+    path = PRED_DIR / f"{model}_f{fold}.parquet"
+    df.to_parquet(path, index=False)
+    back = pd.read_parquet(path)
+    if not _frames_equal(df.reset_index(drop=True), back):
+        raise ValueError(f"reload mismatch for {path}")
+    return {
+        "fold": fold,
+        "file": path.name,
+        "prediction_file_sha256": file_sha256(path),
+        "schema_version": SCHEMA_VERSION,
+        "target_kind": TARGET_KIND_CUM,
+        "aggregation_days": LT_AGG_DAYS,
+        **stats,
+        **extra_meta,
+    }

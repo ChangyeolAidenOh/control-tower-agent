@@ -685,6 +685,63 @@ class FoldDatasetBuilder:
             feats, cal, origin_idx, hs, panel_snap=cal["snap_by_series"]
         )
 
+    def inference_frame_lt(self, history: DemandHistory,
+                           origin_idx: int) -> TrainFrame:
+        """Lead-time cumulative inference rows (one per series) at one
+        origin: target = demand summed over origin+1..origin+K (K = 3,
+        the simulator protection window; ST3-08). Shares origin_features
+        and the lt_cum column contract with the training path
+        (_emit_lt_cum_rows); target-side features are the aggregated
+        known-calendar schedule only."""
+        cfg = self.cfg
+        K = cfg.lead_time_cum_horizon
+        need_end = origin_idx + K
+        if need_end > self.source.max_calendar_idx():
+            raise MissingKnownCalendarError(
+                f"known calendar ends at {self.source.max_calendar_idx()}, "
+                f"origin {origin_idx} needs {need_end}"
+            )
+        obs = history.observed_through(origin_idx)
+        if obs.shape[1] < cfg.min_history_days:
+            raise ValueError("history shorter than min_history_days")
+        if tuple(history.series_ids) != tuple(self._static["series_id"]):
+            raise ValueError("history series order must match static table")
+
+        dp = self.source.load_demand_price(max_period_idx=origin_idx)
+        price_mat, p_series, _ = _pivot(dp, "price_ffill")
+        if p_series != tuple(self._static["series_id"]):
+            raise ValueError("price series order mismatch")
+        price_tail = price_mat[:, -cfg.price_rel_window:]
+
+        cal = self._calendar_arrays(max(1, origin_idx - 27), need_end)
+        off = lambda idx: idx - cal["idx_start"]
+        wday_tail = cal["wday"][off(origin_idx - 27): off(origin_idx) + 1]
+        feats = origin_features(
+            obs[:, -cfg.min_history_days:], price_tail, wday_tail, cfg
+        )
+
+        n = len(self._static)
+        sidx = np.arange(n)
+        k0 = off(origin_idx)
+        cols: dict[str, list] = {}
+        for name in cfg.lt_cum_numeric_columns:
+            if name in feats:
+                cols.setdefault(name, []).append(feats[name])
+        cols.setdefault("cum_snap_days", []).append(
+            cal["snap_by_series"][:, k0 + 1: k0 + K + 1].sum(axis=1))
+        cols.setdefault("cum_event_days", []).append(
+            np.full(n, cal["is_event"][k0 + 1: k0 + K + 1].sum(),
+                    dtype=np.float32))
+        cols.setdefault("start_wday", []).append(
+            np.full(n, cal["wday"][k0 + 1], dtype=np.float32))
+        self._emit_statics(cols, sidx)
+        metas = {"series_idx": [sidx],
+                 "origin_idx": [np.full(n, origin_idx, dtype=np.int64)],
+                 "horizon": [np.full(n, K, dtype=np.int64)],
+                 "target_idx": [np.full(n, origin_idx + K, dtype=np.int64)]}
+        return self._finalize(cols, metas, ys=None,
+                              target_mode=TARGET_LT_CUM)
+
     def iter_test_origins(self, fold: int) -> Iterator[int]:
         """Origins test_start-1 .. test_end-1 (3-F standalone evaluation)."""
         folds = self.source.load_folds().set_index("fold")
