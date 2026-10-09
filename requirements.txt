@@ -8,3 +8,4 @@ psycopg==3.3.6
 psycopg-binary==3.3.6
 PyYAML==6.0.3
 pytest
+lightgbm
