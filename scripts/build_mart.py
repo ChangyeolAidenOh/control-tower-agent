@@ -4,7 +4,7 @@ from datetime import date, timedelta
 from core_pipeline.data.db import PROJECT_ROOT, connect, load_config, run_sql_file
 
 M5_DAY1 = date(2011, 1, 29)
-SQL_ORDER = ["sku_daily.sql", "sku_cost.sql", "bundles.sql", "views.sql"]
+SQL_ORDER = ["sku_daily.sql", "known_future_calendar.sql", "sku_cost.sql", "bundles.sql", "views.sql"]
 
 
 def d_index(label):
