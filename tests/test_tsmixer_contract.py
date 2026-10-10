@@ -454,3 +454,7 @@ def test_tune_run_contract(tmp_path):
                       device="cpu", epochs=2, batch_size=128, patience=2,
                       valid_metric="loss")
     assert np.isfinite(res_a2["best_metric"])
+
+
+import pytest
+pytestmark = pytest.mark.torch

@@ -182,3 +182,7 @@ def test_downstream_matches_engine_path():
         assert np.abs(unmet - day.unmet).max() < 1e-9
         assert np.abs(q_plan[j] - day.order).max() < 1e-9
         inv = inv_eod
+
+
+import pytest
+pytestmark = pytest.mark.torch
