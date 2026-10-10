@@ -8,16 +8,20 @@ in day o's morning arrival, realize day o's demand with realize_day, and
 store the decision-time state (inv_eod(o), P_o) that
 lp_window.to_lp_window consumes. Deterministic: no randomness anywhere.
 
-Demand source: the staging bundle's panel_train sales (observed sales as
-latent demand, core p = 0). Costs follow prepare_stage's stage split
-(h/b_r{r} final, h_tune/b_tune_r{r} tune); K_g = bundles.k_g_kappa_1_0
-for both stages (ST5-04 (5)). Lead time comes from
-SimConfig.lead_time_core (configs/simulator.yaml); --lead overrides it
-for stress variants only. Outputs are git-excluded (ST5-02); this script
-is the reproducible source.
+Origins come either from --origins/--origins-file (one common list, all
+bundles) or from --schedule-file (outputs/b_sample_schedule.json,
+ST5-06): per-bundle training origins, plus the common validation origins
+for the tune stage. Demand source: the staging bundle's panel_train
+sales (observed sales as latent demand, core p = 0). Costs follow
+prepare_stage's stage split (h/b_r{r} final, h_tune/b_tune_r{r} tune);
+K_g = bundles.k_g_kappa_1_0 for both stages (ST5-04 (5)). Lead time
+comes from SimConfig.lead_time_core; --lead overrides it for stress
+variants only. Outputs are git-excluded (ST5-02); this script is the
+reproducible source.
 
-Run: python -m scripts.build_b_warmup_states --fold 1 --stage tune \
-         --r 3 5 --origins 1200 1400 1437 1500 1577
+Run (schedule mode):
+    python -m scripts.build_b_warmup_states --fold 1 --stage tune \
+        --r 3 5 --schedule-file outputs/b_sample_schedule.json
 """
 
 import argparse
@@ -71,15 +75,37 @@ def wide_sales(panel, series_ids: list[str]) -> np.ndarray:
     return wide.to_numpy(dtype=np.float64)
 
 
-def parse_origins(args) -> list[int]:
+def origins_by_bundle(args, bundles_df) -> tuple[dict[str, list[int]], str | None]:
+    """Resolve the per-bundle origin lists and the schedule sha (if any)."""
+    gids = [row.group_id for row in bundles_df.itertuples(index=False)]
+    if args.schedule_file:
+        schedule = json.loads(Path(args.schedule_file).read_text())
+        if args.stage == "tune":
+            if args.fold != int(schedule["tune"]["fold"]):
+                raise SystemExit("tune schedule is defined for fold 1")
+            part = schedule["tune"]["bundles"]
+            extra = [int(o) for o in schedule["validation"]["origins"]]
+        else:
+            key = str(args.fold)
+            if key not in schedule["final"]:
+                raise SystemExit(f"fold {args.fold} not in schedule final part")
+            part = schedule["final"][key]["bundles"]
+            extra = []
+        out = {}
+        for gid in gids:
+            if gid not in part:
+                raise SystemExit(f"{gid} missing from schedule")
+            out[gid] = sorted({int(o) for o in part[gid]["origins"]} | set(extra))
+        return out, schedule.get("sha256")
     if args.origins_file:
         payload = json.loads(Path(args.origins_file).read_text())
         origins = payload["origins"] if isinstance(payload, dict) else payload
     else:
         origins = args.origins
     if not origins:
-        raise SystemExit("provide --origins or --origins-file")
-    return sorted(int(o) for o in set(origins))
+        raise SystemExit("provide --origins, --origins-file or --schedule-file")
+    common = sorted(int(o) for o in set(origins))
+    return {gid: common for gid in gids}, None
 
 
 def build_states(sales, origins, policy, params, k_g, sim_cfg, lead):
@@ -107,12 +133,12 @@ def main():
     parser.add_argument("--r", type=int, nargs="+", default=[3, 5])
     parser.add_argument("--origins", type=int, nargs="*", default=None)
     parser.add_argument("--origins-file", default=None)
+    parser.add_argument("--schedule-file", default=None)
     parser.add_argument("--lead", type=int, default=None,
                         help="stress override; default = SimConfig.lead_time_core")
     parser.add_argument("--out", default="outputs/b_warmup_states")
     args = parser.parse_args()
 
-    origins = parse_origins(args)
     bundle = load_bundle(STAGING_ROOT / f"fold_{args.fold:02d}")
     panel = bundle["panel_train"]
     static = bundle["series_static"]
@@ -120,6 +146,7 @@ def main():
     econ = bundle["economic_params"].set_index("series_id")
     sim_cfg = load_sim_config(SIM_CONFIG_PATH)
     lead = args.lead if args.lead is not None else int(sim_cfg.lead_time_core)
+    per_bundle_origins, schedule_sha = origins_by_bundle(args, bundles_df)
 
     if args.stage == "tune":
         h_col, b_col_fmt = "h_tune", "b_tune_r{r}"
@@ -129,9 +156,11 @@ def main():
         h_col, b_col_fmt = "h", "b_r{r}"
 
     n_periods = int(panel["period_idx"].max())
-    bad = [o for o in origins if o < MIN_ORIGIN or o > n_periods]
-    if bad:
-        raise SystemExit(f"origins out of range [{MIN_ORIGIN}, {n_periods}]: {bad}")
+    for gid, origins in per_bundle_origins.items():
+        bad = [o for o in origins if o < MIN_ORIGIN or o > n_periods]
+        if bad:
+            raise SystemExit(f"{gid}: origins out of range "
+                             f"[{MIN_ORIGIN}, {n_periods}]: {bad[:5]}")
 
     for r in args.r:
         policy, a4_meta = load_tuned_a4(r)
@@ -140,7 +169,9 @@ def main():
         b_col = b_col_fmt.format(r=r)
         manifest = {
             "stage": args.stage, "fold": args.fold, "r": r,
-            "origins": origins, "warmup_days": WARMUP_DAYS,
+            "origins_source": ("schedule" if args.schedule_file else "cli"),
+            "schedule_sha256": schedule_sha,
+            "warmup_days": WARMUP_DAYS,
             "init_lookback_days": INIT_LOOKBACK_DAYS, "lead": lead,
             "lead_source": ("cli" if args.lead is not None
                             else "sim_config.lead_time_core"),
@@ -148,10 +179,12 @@ def main():
             "a4": a4_meta, "a4_tuning_sha256": sha256_file(TUNING_PATH),
             "fold_meta_sha256": bundle["manifest"]["files"]["fold_meta.json"]["sha256"],
             "encoder_hash": bundle["encoder"]["hash"],
+            "origins_by_bundle": {g: len(o) for g, o in per_bundle_origins.items()},
             "files": {},
         }
         for row in bundles_df.itertuples(index=False):
             gid = row.group_id
+            origins = per_bundle_origins[gid]
             k_g = float(getattr(row, K_G_COLUMN))
             sids = static.loc[static["group_id"] == gid, "series_id"].astype(str).tolist()
             sales = wide_sales(panel, sids)
@@ -169,8 +202,9 @@ def main():
                      series_ids=np.asarray(sids))
             manifest["files"][path.name] = sha256_file(path)
         (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=2))
+        n_total = sum(manifest["origins_by_bundle"].values())
         print(f"{out_dir}: bundles={len(manifest['files'])} "
-              f"origins={len(origins)} lead={lead}")
+              f"origin_states={n_total} lead={lead}")
 
 
 if __name__ == "__main__":
