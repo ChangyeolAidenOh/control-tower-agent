@@ -60,7 +60,7 @@ SCENARIO_P = 0.0
 R_EVAL = (3, 5, 10)
 POLICY_R = {3: 3, 5: 5, 10: 5}
 BASELINE_POLICIES = ("a4", "a4_sl", "l0_rule_ct")
-NEW_POLICIES = ("b",)
+NEW_POLICIES = ("b", "a1", "a2")
 REG_REL_TOL = 1e-9
 REG_FIELDS = ("cost", "terminal_cost", "csl", "fill_rate", "binding_days")
 
@@ -177,8 +177,7 @@ def main() -> None:
 
     replayers: dict = {}
 
-    def b_replayer(r_env: int, f: dict) -> EvalPredictionReplayer:
-        model = f"tsmixer_b_r{POLICY_R[r_env]}"
+    def lp_replayer(model: str, f: dict) -> EvalPredictionReplayer:
         key = (model, f["fold"])
         if key not in replayers:
             replayers[key] = EvalPredictionReplayer(
@@ -221,9 +220,17 @@ def main() -> None:
                     pols["a4_sl"] = make_a4(a4sl_by_r[pr])
                 if "l0_rule_ct" in run_policies:
                     pols["l0_rule_ct"] = RuleControlTower()
+                if "a1" in run_policies:
+                    pols["a1"] = LPForecastPolicy(
+                        "a1", lp_replayer("tsmixer_a1", f), series)
+                if "a2" in run_policies:
+                    pols["a2"] = LPForecastPolicy(
+                        "a2", lp_replayer(f"tsmixer_a2_r{POLICY_R[r]}", f),
+                        series)
                 if "b" in run_policies:
                     pols["b"] = LPForecastPolicy(
-                        "b", b_replayer(r, f), series)
+                        "b", lp_replayer(f"tsmixer_b_r{POLICY_R[r]}", f),
+                        series)
                 for name, p in pols.items():
                     p.name = name
 

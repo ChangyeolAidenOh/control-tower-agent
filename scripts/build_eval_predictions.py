@@ -53,15 +53,17 @@ SCENARIO_P = 0.0
 TOL = 1e-6
 
 
-def parse_models(spec: str) -> list[tuple[str, int]]:
+def parse_models(spec: str) -> list[tuple[str, int | None]]:
     out = []
     for token in spec.split(","):
         token = token.strip()
-        if "_r" not in token:
-            raise ValueError(f"model token {token!r} must carry _r<r>")
-        mid, r = token.split("_r")
-        checkpoint_key(mid, int(r))
-        out.append((mid, int(r)))
+        if "_r" in token:
+            mid, r = token.split("_r")
+            out.append((mid, int(r)))
+        else:
+            out.append((token, None))
+    for mid, r in out:
+        checkpoint_key(mid, r)
     return out
 
 
