@@ -8,4 +8,4 @@ docs/
 .env
 *.zip
 outputs/models/
-outputs/staging/
+outputs/staging/outputs/b_warmup_states/
