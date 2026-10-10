@@ -1,0 +1,51 @@
+{
+ "protocol": "ST6-12 (6)",
+ "hp": {
+  "trial_id": 12,
+  "depth": 8,
+  "learning_rate": 0.06,
+  "l2_leaf_reg": 1.0,
+  "score": 4.96852167460518,
+  "best_iteration": 996
+ },
+ "fixed_iterations": 996,
+ "model_seed": 20261011,
+ "gpu": "NVIDIA A100-SXM4-40GB",
+ "no_eval_set": "fold retraining uses fixed iterations, no validation (ST3-03 (d))",
+ "staging_sha": {
+  "fold_train_f1.parquet": "5c45c5330e3966e2",
+  "scales_f1.json": "7143add88d60dd6c",
+  "fold_train_f4.parquet": "aa9708d7ced69134",
+  "scales_f4.json": "b5110f126422a7b3",
+  "fold_train_f7.parquet": "d824f8a140c0ddd1",
+  "scales_f7.json": "fa8655425c7128fb",
+  "fold_train_f10.parquet": "f75f6b9822ab7b69",
+  "scales_f10.json": "d486d63d945604ec"
+ },
+ "folds": {
+  "1": {
+   "rows": 195968,
+   "sec_total": 43.5,
+   "tree_count": 996,
+   "model_sha256": "0aa343d47e3e07237b4ffec9e754b9d0e5220531bd9759311e69314621ed3373"
+  },
+  "4": {
+   "rows": 208904,
+   "sec_total": 44.1,
+   "tree_count": 996,
+   "model_sha256": "451f34586a471ccc20f15e3149beb0bb12959f5f0f5b814f3c09cd8895f96068"
+  },
+  "7": {
+   "rows": 221840,
+   "sec_total": 44.6,
+   "tree_count": 996,
+   "model_sha256": "5170ec1c9bdc515512a7c712dc5442bf5abf9ed9d3c367d2b311607e8276df08"
+  },
+  "10": {
+   "rows": 234776,
+   "sec_total": 45.2,
+   "tree_count": 996,
+   "model_sha256": "c75b7dcde50c82ba7faed71f594a2fa90860ddec62b6cb31a1c3cccc6c688c95"
+  }
+ }
+}

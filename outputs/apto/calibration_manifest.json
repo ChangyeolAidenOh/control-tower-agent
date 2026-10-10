@@ -1,0 +1,21 @@
+{
+ "calibration_refit": {
+  "best_iteration": 999,
+  "score": 4.966725770545526,
+  "trial_reference": {
+   "trial": 12,
+   "order_pos": 5,
+   "trial_id": 12,
+   "depth": 8,
+   "learning_rate": 0.06,
+   "l2_leaf_reg": 1.0,
+   "score": 4.96852167460518,
+   "best_iteration": 996,
+   "sec_total": 44.0
+  }
+ },
+ "files_sha256": {
+  "calibration_valid_predictions.parquet": "40f9a17763f74f0d671a7c3974b389c9927ca610f3a37d3bb226bf01f626691f",
+  "apto_calibration.cbm": "f8fb7f247e956c6f10a89e195f983d1d66f24346bdb7810c668ad31397ed047a"
+ }
+}

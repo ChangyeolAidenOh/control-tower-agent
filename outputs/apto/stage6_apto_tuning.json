@@ -1,0 +1,240 @@
+{
+ "protocol": "ST6-12",
+ "model": "catboost_multirmse_h28",
+ "compute": {
+  "platform": "colab",
+  "task_type": "GPU",
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "gpu_probe_50iter_s": 7.5,
+  "gpu_algo_params": {
+   "boosting_type": "Plain",
+   "bootstrap_type": "Bayesian",
+   "subsample": null,
+   "random_strength": 1,
+   "border_count": 128,
+   "leaf_estimation_method": "Newton"
+  },
+  "note": "GPU training is not bit-reproducible across runs/devices; artifacts are frozen by sha256 instead (TSMixer checkpoint convention)"
+ },
+ "grid": {
+  "depth": [
+   6,
+   8,
+   10
+  ],
+  "learning_rate": [
+   0.03,
+   0.06,
+   0.1
+  ],
+  "l2_leaf_reg": [
+   1.0,
+   3.0,
+   9.0
+  ]
+ },
+ "grid_seed": 20261011,
+ "model_seed": 20261011,
+ "execution_order": [
+  21,
+  14,
+  0,
+  5,
+  25,
+  12,
+  6,
+  19,
+  15,
+  26,
+  8,
+  24,
+  2,
+  7,
+  22,
+  13,
+  16,
+  17,
+  4,
+  18,
+  1,
+  11,
+  20,
+  10,
+  3,
+  23,
+  9
+ ],
+ "budget_rule": {
+  "T_budget_s": 1866.3,
+  "budget_source": "stage4_tsmixer_tuning.json grid_run sec_total sum of 24 trials (ST6-11)",
+  "t_trial1_s": 137.4,
+  "n_run": 13
+ },
+ "max_iters": 1000,
+ "early_stopping": 50,
+ "staging_manifest_sha": {
+  "tune_train.parquet": "32aa74ac1613636e",
+  "tune_valid.parquet": "954dbc9c90692765",
+  "scales_tune.json": "babbc70eff5cd3dd"
+ },
+ "spec_hash": "55f6fc952b3c",
+ "encoder_hash": "4219a82331a7",
+ "cpu_measurement_record": {
+  "trial1_completed": false,
+  "wall_clock_s_at_abort": 5700,
+  "note": "M2 CPU 6-thread trial 1 (1000 iters, ES 50) aborted ~95 min; 3x over T_budget -> compute relocated to Colab GPU (ST6-12), grid/order/budget unchanged"
+ },
+ "trials": [
+  {
+   "trial": 21,
+   "order_pos": 0,
+   "trial_id": 21,
+   "depth": 10,
+   "learning_rate": 0.06,
+   "l2_leaf_reg": 1.0,
+   "score": 4.972009360802632,
+   "best_iteration": 947,
+   "sec_total": 137.4
+  },
+  {
+   "trial": 14,
+   "order_pos": 1,
+   "trial_id": 14,
+   "depth": 8,
+   "learning_rate": 0.06,
+   "l2_leaf_reg": 9.0,
+   "score": 4.98908757841191,
+   "best_iteration": 997,
+   "sec_total": 41.6
+  },
+  {
+   "trial": 0,
+   "order_pos": 2,
+   "trial_id": 0,
+   "depth": 6,
+   "learning_rate": 0.03,
+   "l2_leaf_reg": 1.0,
+   "score": 5.03650353879436,
+   "best_iteration": 993,
+   "sec_total": 20.8
+  },
+  {
+   "trial": 5,
+   "order_pos": 3,
+   "trial_id": 5,
+   "depth": 6,
+   "learning_rate": 0.06,
+   "l2_leaf_reg": 9.0,
+   "score": 5.020673446272257,
+   "best_iteration": 998,
+   "sec_total": 20.4
+  },
+  {
+   "trial": 25,
+   "order_pos": 4,
+   "trial_id": 25,
+   "depth": 10,
+   "learning_rate": 0.1,
+   "l2_leaf_reg": 3.0,
+   "score": 4.978231026024771,
+   "best_iteration": 706,
+   "sec_total": 104.7
+  },
+  {
+   "trial": 12,
+   "order_pos": 5,
+   "trial_id": 12,
+   "depth": 8,
+   "learning_rate": 0.06,
+   "l2_leaf_reg": 1.0,
+   "score": 4.96852167460518,
+   "best_iteration": 996,
+   "sec_total": 44.0
+  },
+  {
+   "trial": 6,
+   "order_pos": 6,
+   "trial_id": 6,
+   "depth": 6,
+   "learning_rate": 0.1,
+   "l2_leaf_reg": 1.0,
+   "score": 4.979621939431404,
+   "best_iteration": 994,
+   "sec_total": 21.1
+  },
+  {
+   "trial": 19,
+   "order_pos": 7,
+   "trial_id": 19,
+   "depth": 10,
+   "learning_rate": 0.03,
+   "l2_leaf_reg": 3.0,
+   "score": 4.985886639285962,
+   "best_iteration": 997,
+   "sec_total": 134.5
+  },
+  {
+   "trial": 15,
+   "order_pos": 8,
+   "trial_id": 15,
+   "depth": 8,
+   "learning_rate": 0.1,
+   "l2_leaf_reg": 1.0,
+   "score": 4.97151292390052,
+   "best_iteration": 868,
+   "sec_total": 40.8
+  },
+  {
+   "trial": 26,
+   "order_pos": 9,
+   "trial_id": 26,
+   "depth": 10,
+   "learning_rate": 0.1,
+   "l2_leaf_reg": 9.0,
+   "score": 4.979697659640727,
+   "best_iteration": 853,
+   "sec_total": 122.0
+  },
+  {
+   "trial": 8,
+   "order_pos": 10,
+   "trial_id": 8,
+   "depth": 6,
+   "learning_rate": 0.1,
+   "l2_leaf_reg": 9.0,
+   "score": 4.999313471795783,
+   "best_iteration": 998,
+   "sec_total": 20.3
+  },
+  {
+   "trial": 24,
+   "order_pos": 11,
+   "trial_id": 24,
+   "depth": 10,
+   "learning_rate": 0.1,
+   "l2_leaf_reg": 1.0,
+   "score": 5.000009210639025,
+   "best_iteration": 287,
+   "sec_total": 47.1
+  },
+  {
+   "trial": 2,
+   "order_pos": 12,
+   "trial_id": 2,
+   "depth": 6,
+   "learning_rate": 0.03,
+   "l2_leaf_reg": 9.0,
+   "score": 5.058409523554378,
+   "best_iteration": 999,
+   "sec_total": 20.3
+  }
+ ],
+ "selected": {
+  "trial_id": 12,
+  "depth": 8,
+  "learning_rate": 0.06,
+  "l2_leaf_reg": 1.0,
+  "score": 4.96852167460518,
+  "best_iteration": 996
+ }
+}

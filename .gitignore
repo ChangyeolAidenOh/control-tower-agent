@@ -9,3 +9,4 @@ docs/
 *.zip
 outputs/models/
 outputs/staging/outputs/b_warmup_states/
+outputs/apto/*.cbm
