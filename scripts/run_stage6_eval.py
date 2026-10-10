@@ -42,6 +42,9 @@ from core_pipeline.data.mart_reader import (
 )
 from core_pipeline.policies.a4_basestock import A4BaseStock, A4Config
 from core_pipeline.dfl.lp_problem import get_a3_saa_problem
+from core_pipeline.policies.apto_policy import (
+    APTOPolicy, load_safety_quantiles,
+)
 from core_pipeline.policies.lp_policy import (
     A3SAAPolicy, A5PerfectInfoPolicy, EvalPredictionReplayer,
     LPForecastPolicy, QuantileEvalReplayer,
@@ -62,7 +65,7 @@ SCENARIO_P = 0.0
 R_EVAL = (3, 5, 10)
 POLICY_R = {3: 3, 5: 5, 10: 5}
 BASELINE_POLICIES = ("a4", "a4_sl", "l0_rule_ct")
-NEW_POLICIES = ("b", "a1", "a2", "a3", "a5")
+NEW_POLICIES = ("b", "a1", "a2", "a3", "a5", "apto")
 MART_LAST_IDX = 1941
 REG_REL_TOL = 1e-9
 REG_FIELDS = ("cost", "terminal_cost", "csl", "fill_rate", "binding_days")
@@ -208,8 +211,12 @@ def main() -> None:
 
     episodes = []
     new_diag = {p: {"records": 0, "binding_days": 0, "n_solves": 0,
-                    "neg_clipped_days": 0, "max_capacity_violation": 0.0}
+                    "neg_clipped_days": 0, "max_capacity_violation": 0.0,
+                    "scaling_active_days": 0, "min_scale_ratio": 1.0,
+                    "max_requested_weighted_sum": 0.0}
                 for p in NEW_POLICIES}
+    apto_quantiles = {r: load_safety_quantiles(r, all_series)
+                      for r in R_EVAL} if "apto" in run_policies else {}
     warm_cache: dict = {}
     for r in R_EVAL:
         pr = POLICY_R[r]
@@ -262,6 +269,10 @@ def main() -> None:
                     a5_path = np.concatenate([bp.test, tail], axis=0)
                     pols["a5"] = A5PerfectInfoPolicy(
                         "a5", a5_path, ts, MART_LAST_IDX, series)
+                if "apto" in run_policies:
+                    pols["apto"] = APTOPolicy(
+                        "apto", lp_replayer("apto", f), series,
+                        apto_quantiles[r])
 
                 for name, p in pols.items():
                     p.name = name
@@ -296,6 +307,14 @@ def main() -> None:
                         d["max_capacity_violation"] = max(
                             d["max_capacity_violation"],
                             diag.get("capacity_violation", 0.0))
+                        d["scaling_active_days"] += int(
+                            diag.get("scaling_active", 0.0))
+                        d["min_scale_ratio"] = min(
+                            d["min_scale_ratio"],
+                            diag.get("scale_ratio", 1.0))
+                        d["max_requested_weighted_sum"] = max(
+                            d["max_requested_weighted_sum"],
+                            diag.get("requested_weighted_sum", 0.0))
             print(f"r={r} fold {fold:02d} done "
                   f"({', '.join(sorted(pols))})")
 
