@@ -24,6 +24,7 @@ QUANTILES_9: tuple[float, ...] = (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9)
 # prediction_kind; they are never written into quantile columns. Only A3's
 # q0.50 is a median estimate.
 POINT_KINDS: tuple[str, ...] = (
+    "pto_point",
     "mse_point",               # A1
     "cost_weighted_point",     # A2
     "decision_focused_point",  # B (Stage 5)
