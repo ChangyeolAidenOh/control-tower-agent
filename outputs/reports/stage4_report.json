@@ -1,0 +1,517 @@
+{
+  "a3_crossing_rate_before_by_fold": {
+    "1": 0.011247680890538033,
+    "10": 0.03993837794858203,
+    "11": 0.04532202491386165,
+    "12": 0.022743837794858203,
+    "2": 0.018362377418499866,
+    "3": 0.0307033527696793,
+    "4": 0.019107805459846278,
+    "5": 0.02021766498807315,
+    "6": 0.04185992578849722,
+    "7": 0.031614431486880465,
+    "8": 0.03460442618605884,
+    "9": 0.031771799628942485
+  },
+  "chronos_caveat": "Chronos-2 Small: public pretraining corpus links a collection containing M5; overlap cannot be ruled out -- reference performance, not verified zero-shot.",
+  "decile9": {
+    "chronos2s": {
+      "by_fold": {
+        "1": 0.41795,
+        "10": 0.44129,
+        "11": 0.43132,
+        "12": 0.44257,
+        "2": 0.3969,
+        "3": 0.41371,
+        "4": 0.42541,
+        "5": 0.43937,
+        "6": 0.4574,
+        "7": 0.47999,
+        "8": 0.41946,
+        "9": 0.42333
+      },
+      "by_h": {
+        "1": {
+          "n_origins": 336,
+          "wql": 0.40965
+        },
+        "10": {
+          "n_origins": 228,
+          "wql": 0.43466
+        },
+        "11": {
+          "n_origins": 216,
+          "wql": 0.43433
+        },
+        "12": {
+          "n_origins": 204,
+          "wql": 0.43521
+        },
+        "13": {
+          "n_origins": 192,
+          "wql": 0.43694
+        },
+        "14": {
+          "n_origins": 180,
+          "wql": 0.44067
+        },
+        "15": {
+          "n_origins": 168,
+          "wql": 0.44469
+        },
+        "16": {
+          "n_origins": 156,
+          "wql": 0.44676
+        },
+        "17": {
+          "n_origins": 144,
+          "wql": 0.4487
+        },
+        "18": {
+          "n_origins": 132,
+          "wql": 0.44697
+        },
+        "19": {
+          "n_origins": 120,
+          "wql": 0.4442
+        },
+        "2": {
+          "n_origins": 324,
+          "wql": 0.41737
+        },
+        "20": {
+          "n_origins": 108,
+          "wql": 0.43977
+        },
+        "21": {
+          "n_origins": 96,
+          "wql": 0.4416
+        },
+        "22": {
+          "n_origins": 84,
+          "wql": 0.44501
+        },
+        "23": {
+          "n_origins": 72,
+          "wql": 0.44485
+        },
+        "24": {
+          "n_origins": 60,
+          "wql": 0.44341
+        },
+        "25": {
+          "n_origins": 48,
+          "wql": 0.4418
+        },
+        "26": {
+          "n_origins": 36,
+          "wql": 0.43304
+        },
+        "27": {
+          "n_origins": 24,
+          "wql": 0.42328
+        },
+        "28": {
+          "n_origins": 12,
+          "wql": 0.43537
+        },
+        "3": {
+          "n_origins": 312,
+          "wql": 0.42094
+        },
+        "4": {
+          "n_origins": 300,
+          "wql": 0.42185
+        },
+        "5": {
+          "n_origins": 288,
+          "wql": 0.42348
+        },
+        "6": {
+          "n_origins": 276,
+          "wql": 0.4244
+        },
+        "7": {
+          "n_origins": 264,
+          "wql": 0.42857
+        },
+        "8": {
+          "n_origins": 252,
+          "wql": 0.43284
+        },
+        "9": {
+          "n_origins": 240,
+          "wql": 0.43456
+        }
+      },
+      "by_h_note": "per-h origin sets differ with h; h-curves are not pure forecast-distance effects",
+      "evaluation_mask_id": "stage3_in_window",
+      "quantile_set_id": "decile9",
+      "rows": 750288,
+      "wql": 0.43121
+    },
+    "lgbm": {
+      "by_fold": {
+        "1": 0.41809,
+        "10": 0.43162,
+        "11": 0.42593,
+        "12": 0.43537,
+        "2": 0.40102,
+        "3": 0.41738,
+        "4": 0.42572,
+        "5": 0.43788,
+        "6": 0.47046,
+        "7": 0.46955,
+        "8": 0.42006,
+        "9": 0.41743
+      },
+      "by_h": {
+        "1": {
+          "n_origins": 336,
+          "wql": 0.41578
+        },
+        "10": {
+          "n_origins": 228,
+          "wql": 0.43211
+        },
+        "11": {
+          "n_origins": 216,
+          "wql": 0.43229
+        },
+        "12": {
+          "n_origins": 204,
+          "wql": 0.4332
+        },
+        "13": {
+          "n_origins": 192,
+          "wql": 0.43462
+        },
+        "14": {
+          "n_origins": 180,
+          "wql": 0.4378
+        },
+        "15": {
+          "n_origins": 168,
+          "wql": 0.44242
+        },
+        "16": {
+          "n_origins": 156,
+          "wql": 0.44413
+        },
+        "17": {
+          "n_origins": 144,
+          "wql": 0.44455
+        },
+        "18": {
+          "n_origins": 132,
+          "wql": 0.44293
+        },
+        "19": {
+          "n_origins": 120,
+          "wql": 0.44069
+        },
+        "2": {
+          "n_origins": 324,
+          "wql": 0.41976
+        },
+        "20": {
+          "n_origins": 108,
+          "wql": 0.43704
+        },
+        "21": {
+          "n_origins": 96,
+          "wql": 0.43751
+        },
+        "22": {
+          "n_origins": 84,
+          "wql": 0.44131
+        },
+        "23": {
+          "n_origins": 72,
+          "wql": 0.44152
+        },
+        "24": {
+          "n_origins": 60,
+          "wql": 0.44038
+        },
+        "25": {
+          "n_origins": 48,
+          "wql": 0.43812
+        },
+        "26": {
+          "n_origins": 36,
+          "wql": 0.42895
+        },
+        "27": {
+          "n_origins": 24,
+          "wql": 0.41929
+        },
+        "28": {
+          "n_origins": 12,
+          "wql": 0.42869
+        },
+        "3": {
+          "n_origins": 312,
+          "wql": 0.42145
+        },
+        "4": {
+          "n_origins": 300,
+          "wql": 0.42128
+        },
+        "5": {
+          "n_origins": 288,
+          "wql": 0.42248
+        },
+        "6": {
+          "n_origins": 276,
+          "wql": 0.42283
+        },
+        "7": {
+          "n_origins": 264,
+          "wql": 0.42643
+        },
+        "8": {
+          "n_origins": 252,
+          "wql": 0.43023
+        },
+        "9": {
+          "n_origins": 240,
+          "wql": 0.43192
+        }
+      },
+      "by_h_note": "per-h origin sets differ with h; h-curves are not pure forecast-distance effects",
+      "evaluation_mask_id": "stage3_in_window",
+      "quantile_set_id": "decile9",
+      "rows": 750288,
+      "wql": 0.42987
+    },
+    "tsmixer_a3": {
+      "by_fold": {
+        "1": 0.42329,
+        "10": 0.43205,
+        "11": 0.42631,
+        "12": 0.44212,
+        "2": 0.41126,
+        "3": 0.42421,
+        "4": 0.42927,
+        "5": 0.44222,
+        "6": 0.46797,
+        "7": 0.48707,
+        "8": 0.43558,
+        "9": 0.41896
+      },
+      "by_h": {
+        "1": {
+          "n_origins": 336,
+          "wql": 0.42093
+        },
+        "10": {
+          "n_origins": 228,
+          "wql": 0.43876
+        },
+        "11": {
+          "n_origins": 216,
+          "wql": 0.4383
+        },
+        "12": {
+          "n_origins": 204,
+          "wql": 0.43897
+        },
+        "13": {
+          "n_origins": 192,
+          "wql": 0.44102
+        },
+        "14": {
+          "n_origins": 180,
+          "wql": 0.44341
+        },
+        "15": {
+          "n_origins": 168,
+          "wql": 0.44844
+        },
+        "16": {
+          "n_origins": 156,
+          "wql": 0.45081
+        },
+        "17": {
+          "n_origins": 144,
+          "wql": 0.45039
+        },
+        "18": {
+          "n_origins": 132,
+          "wql": 0.44901
+        },
+        "19": {
+          "n_origins": 120,
+          "wql": 0.44631
+        },
+        "2": {
+          "n_origins": 324,
+          "wql": 0.42631
+        },
+        "20": {
+          "n_origins": 108,
+          "wql": 0.44207
+        },
+        "21": {
+          "n_origins": 96,
+          "wql": 0.44319
+        },
+        "22": {
+          "n_origins": 84,
+          "wql": 0.44647
+        },
+        "23": {
+          "n_origins": 72,
+          "wql": 0.44703
+        },
+        "24": {
+          "n_origins": 60,
+          "wql": 0.446
+        },
+        "25": {
+          "n_origins": 48,
+          "wql": 0.445
+        },
+        "26": {
+          "n_origins": 36,
+          "wql": 0.43484
+        },
+        "27": {
+          "n_origins": 24,
+          "wql": 0.42561
+        },
+        "28": {
+          "n_origins": 12,
+          "wql": 0.4333
+        },
+        "3": {
+          "n_origins": 312,
+          "wql": 0.42762
+        },
+        "4": {
+          "n_origins": 300,
+          "wql": 0.42705
+        },
+        "5": {
+          "n_origins": 288,
+          "wql": 0.42847
+        },
+        "6": {
+          "n_origins": 276,
+          "wql": 0.42863
+        },
+        "7": {
+          "n_origins": 264,
+          "wql": 0.43163
+        },
+        "8": {
+          "n_origins": 252,
+          "wql": 0.43603
+        },
+        "9": {
+          "n_origins": 240,
+          "wql": 0.43757
+        }
+      },
+      "by_h_note": "per-h origin sets differ with h; h-curves are not pure forecast-distance effects",
+      "evaluation_mask_id": "stage3_in_window",
+      "quantile_set_id": "decile9",
+      "rows": 750288,
+      "wql": 0.43575
+    }
+  },
+  "decision": "ST4-08",
+  "equivalence_check": {
+    "match": true,
+    "metrics_wql": 0.42328634,
+    "val_wql9_formula": 0.42328634
+  },
+  "frozen_anchors": {
+    "frozen_reference": 0.37923,
+    "lgbm_rows": 750288,
+    "lgbm_wql11": 0.37923
+  },
+  "h2_citation_primary_full_period": {
+    "coverage_after": 0.8884634191943162,
+    "coverage_before": 0.9046878370798637,
+    "mean_width_after": 9.618557349695648,
+    "mean_width_before": 9.542032075802181,
+    "rows": 1390620,
+    "scope": "target<=1941"
+  },
+  "h2_input_decision": "H2 primary input model: LightGBM 11-quantile (ST4-08). Chosen to keep the ST3-07 ACI contract unchanged (q0.05/q0.95 base interval, 28-day fixed feedback delay, online update rule, initial state). The 12-fold WQL ranking between A3 and LightGBM is NOT used for this selection: those folds are the preregistered final evaluation set, and selecting on them would couple model selection with H2 evaluation. Disclosure: Stage 3 already produced and reported the LightGBM ACI coverage (0.8885 after calibration), so this decision was not made blind to prior evaluation results. A3-based ACI on the q0.10/q0.90 base interval is theoretically possible but a different experimental setting; deferred to exploratory follow-up. Stage 4 does not re-optimize any interval parameters.",
+  "point_cost_aware": {
+    "note": "cost-weighted statistics target different quantiles; unranked -- policy quality is decided by downstream cost and service level (Stage 5-6)",
+    "tsmixer_a2_r3": {
+      "evaluation_mask_id": "stage3_in_window",
+      "mase_cells_undef": 0,
+      "mase_macro": 0.91327,
+      "mase_note": "macro over series x fold cells; naive m=7 trained on the series' active span through the fold train_end -- convention local to this report, denominator shared across models per cell",
+      "nonzero_mape": 0.983,
+      "nonzero_mape_n": 578584,
+      "prediction_kind": "cost_weighted_point",
+      "rows": 750288,
+      "target_tau": 0.75,
+      "wape": 0.72
+    },
+    "tsmixer_a2_r5": {
+      "evaluation_mask_id": "stage3_in_window",
+      "mase_cells_undef": 0,
+      "mase_macro": 1.1368,
+      "mase_note": "macro over series x fold cells; naive m=7 trained on the series' active span through the fold train_end -- convention local to this report, denominator shared across models per cell",
+      "nonzero_mape": 1.30351,
+      "nonzero_mape_n": 578584,
+      "prediction_kind": "cost_weighted_point",
+      "rows": 750288,
+      "target_tau": 0.83333,
+      "wape": 0.90337
+    }
+  },
+  "point_main": {
+    "chronos2s_q50": {
+      "evaluation_mask_id": "stage3_in_window",
+      "mase_cells_undef": 0,
+      "mase_macro": 0.71202,
+      "mase_note": "macro over series x fold cells; naive m=7 trained on the series' active span through the fold train_end -- convention local to this report, denominator shared across models per cell",
+      "nonzero_mape": 0.5967,
+      "nonzero_mape_n": 578584,
+      "prediction_kind": "quantile_median_reference",
+      "rows": 750288,
+      "wape": 0.55172
+    },
+    "lgbm_q50": {
+      "evaluation_mask_id": "stage3_in_window",
+      "mase_cells_undef": 0,
+      "mase_macro": 0.71174,
+      "mase_note": "macro over series x fold cells; naive m=7 trained on the series' active span through the fold train_end -- convention local to this report, denominator shared across models per cell",
+      "nonzero_mape": 0.56528,
+      "nonzero_mape_n": 578584,
+      "prediction_kind": "quantile_median",
+      "rows": 750288,
+      "wape": 0.55044
+    },
+    "tsmixer_a1": {
+      "evaluation_mask_id": "stage3_in_window",
+      "mase_cells_undef": 0,
+      "mase_macro": 0.7511,
+      "mase_note": "macro over series x fold cells; naive m=7 trained on the series' active span through the fold train_end -- convention local to this report, denominator shared across models per cell",
+      "nonzero_mape": 0.6596,
+      "nonzero_mape_n": 578584,
+      "prediction_kind": "mse_point",
+      "rows": 750288,
+      "wape": 0.58391
+    },
+    "tsmixer_a3_q50": {
+      "evaluation_mask_id": "stage3_in_window",
+      "mase_cells_undef": 0,
+      "mase_macro": 0.71729,
+      "mase_note": "macro over series x fold cells; naive m=7 trained on the series' active span through the fold train_end -- convention local to this report, denominator shared across models per cell",
+      "nonzero_mape": 0.57637,
+      "nonzero_mape_n": 578584,
+      "prediction_kind": "quantile_grid_median",
+      "rows": 750288,
+      "wape": 0.55645
+    }
+  }
+}

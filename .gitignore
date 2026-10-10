@@ -8,3 +8,4 @@ docs/
 .env
 *.zip
 outputs/models/
+outputs/staging/

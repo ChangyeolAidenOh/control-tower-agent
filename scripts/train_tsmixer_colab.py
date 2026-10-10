@@ -51,6 +51,10 @@ def main() -> None:
     parser.add_argument("--epochs-json", default=None,
                         help="tuning_results.json; overrides --epochs with "
                              "epochs_by_key[<checkpoint key>] (ST4-07 T3)")
+    parser.add_argument("--tuning-json", default=None,
+                        help="tuning_results.json; applies selected_hp "
+                             "(architecture + lr) AND epochs_by_key[key] "
+                             "(ST4-07 final-training path)")
     parser.add_argument("--batch-size", type=int, default=1024)
     parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--patience", type=int, default=5)
@@ -60,11 +64,24 @@ def main() -> None:
     args = parser.parse_args()
 
     key = checkpoint_key(args.model, args.r)  # validates model/r pairing
-    if args.epochs_json:
+    cfg = TSMixerConfig()
+    if args.tuning_json or args.epochs_json:
         import json
-        tuned = json.loads(Path(args.epochs_json).read_text())
+        tuned = json.loads(Path(args.tuning_json
+                                or args.epochs_json).read_text())
         args.epochs = int(tuned["epochs_by_key"][key]["best_epoch"])
-        print(f"epochs from tuning: {args.epochs} ({key})")
+        if args.tuning_json:
+            hp = tuned["selected_hp"]
+            cfg = TSMixerConfig(d_model=hp["d_model"],
+                                n_blocks=hp["n_blocks"],
+                                dropout=hp["dropout"], ff_dim=hp["ff_dim"],
+                                d_feat=hp["d_feat"])
+            args.lr = float(hp["lr"])
+            print(f"tuned hp: d{hp['d_model']} b{hp['n_blocks']} "
+                  f"do{hp['dropout']} lr{hp['lr']} epochs {args.epochs} "
+                  f"({key})")
+        else:
+            print(f"epochs from tuning: {args.epochs} ({key})")
     device = "cuda" if torch.cuda.is_available() else "cpu"
     bundle = load_bundle(
         Path(args.bundle),
@@ -76,7 +93,7 @@ def main() -> None:
     print(f"{key} fold {args.fold} stage {args.stage} device {device} "
           f"encoder {bundle['encoder']['hash']}")
     train_one(bundle, args.model, args.fold, args.r, args.stage,
-              TSMixerConfig(), Path(args.out), epochs=args.epochs,
+              cfg, Path(args.out), epochs=args.epochs,
               batch_size=args.batch_size, lr=args.lr,
               global_seed=args.global_seed, device=device,
               patience=args.patience, git_commit=args.git_commit,
