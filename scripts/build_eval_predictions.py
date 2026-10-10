@@ -36,6 +36,11 @@ import pandas as pd
 from core_pipeline.data import db
 from core_pipeline.data.mart_reader import fetch_demand_by_bundle, fetch_folds
 from core_pipeline.forecast import point_store
+from core_pipeline.forecast import prediction_store as qstore
+from core_pipeline.forecast.tsmixer.config import (
+    MODEL_KIND, QUANTILES_9, TSMixerConfig, checkpoint_fold_for,
+    checkpoint_key,
+)
 from core_pipeline.forecast.common import file_sha256, write_json
 from core_pipeline.forecast.dataset import MartPanelSource
 from core_pipeline.forecast.tsmixer.config import (
@@ -170,6 +175,10 @@ def frames_equal(a: pd.DataFrame, b: pd.DataFrame) -> bool:
 def crosscheck(frame: pd.DataFrame, key: str, fold: int,
                series_group: dict, shocked_gid: str,
                shock_start_idx: int) -> dict:
+    """Prediction-layer gate (ST6-02 (3), ST6-03 (2)) against the committed
+    scoring parquet on shared origins. Works for both the point schema
+    (yhat) and the A3 9-quantile schema (q0.10..q0.90): rows are compared
+    across every value column at once."""
     committed_path = COMMITTED_DIR / f"tsmixer_{key}_f{fold}.parquet"
     committed = pd.read_parquet(committed_path)
     merged = frame.merge(
@@ -180,24 +189,33 @@ def crosscheck(frame: pd.DataFrame, key: str, fold: int,
     gids = merged["series_id"].map(series_group)
     if gids.isna().any():
         raise RuntimeError(f"{key} fold {fold}: unmapped series in crosscheck")
-    strict = (gids != shocked_gid) | (merged["origin_idx"] < shock_start_idx)
-    new = merged["yhat_new"].to_numpy(np.float64)
-    old = merged["yhat_old"].to_numpy(np.float64)
+    val_cols = (["yhat"] if "yhat" in frame.columns
+                else qstore.quantile_columns(QUANTILES_9))
+    missing = [c for c in val_cols
+               if c + "_new" not in merged.columns
+               or c + "_old" not in merged.columns]
+    if missing:
+        raise RuntimeError(
+            f"{key} fold {fold}: value columns {missing} absent after merge")
+    strict = ((gids != shocked_gid)
+              | (merged["origin_idx"] < shock_start_idx)).to_numpy()
+    new = merged[[c + "_new" for c in val_cols]].to_numpy(np.float64)
+    old = merged[[c + "_old" for c in val_cols]].to_numpy(np.float64)
     diff = np.abs(new - old)
-    s_diff = diff[strict.to_numpy()]
+    s_diff = diff[strict]
     strict_max = float(s_diff.max()) if s_diff.size else 0.0
     strict_exact = bool((s_diff == 0.0).all())
     if not strict_exact:
-        ok = np.isclose(new[strict.to_numpy()], old[strict.to_numpy()],
-                        rtol=TOL, atol=TOL).all()
+        ok = np.isclose(new[strict], old[strict], rtol=TOL, atol=TOL).all()
         if not ok:
             raise RuntimeError(
                 f"{key} fold {fold}: strict crosscheck failed, "
                 f"max_abs_diff {strict_max:.3e} beyond rel/abs {TOL}")
-    post = (~strict).to_numpy()
+    post = ~strict
     p_diff = diff[post]
     return {
         "committed_file": committed_path.name,
+        "value_columns": val_cols,
         "common_origins": int(merged["origin_idx"].nunique()),
         "strict_rows": int(strict.sum()),
         "strict_exact": strict_exact,
@@ -206,7 +224,7 @@ def crosscheck(frame: pd.DataFrame, key: str, fold: int,
         "post_shock_max_abs_diff": float(p_diff.max()) if p_diff.size else 0.0,
         "post_shock_mean_abs_diff": (float(p_diff.mean())
                                      if p_diff.size else 0.0),
-        "post_shock_changed_share": (float((p_diff > 0).mean())
+        "post_shock_changed_share": (float((p_diff > 0).any(axis=1).mean())
                                      if p_diff.size else 0.0),
     }
 
@@ -308,10 +326,21 @@ def main() -> None:
                 raw = predict(model, panel, static_in, rows, orgs, cfg,
                               batch_size=args.batch_size)
                 sid, org_l, hor = long_arrays(panel, rows, orgs, cfg)
-                frame = point_store.build_point_frame(
-                    sid, org_l, hor, raw.reshape(-1))
-                stats = point_store.validate_point_frame(
-                    frame, MODEL_KIND[mid])
+                if mid == "a3":
+                    from core_pipeline.forecast.tsmixer.postproc import (
+                        finalize_quantiles,
+                    )
+                    fixed, crossing = finalize_quantiles(raw)
+                    frame = qstore.build_frame(
+                        sid, org_l, hor,
+                        fixed.reshape(-1, len(QUANTILES_9)), QUANTILES_9)
+                    stats = qstore.validate_frame(frame, QUANTILES_9)
+                    stats["crossing_rate_before"] = crossing
+                else:
+                    frame = point_store.build_point_frame(
+                        sid, org_l, hor, raw.reshape(-1))
+                    stats = point_store.validate_point_frame(
+                        frame, MODEL_KIND[mid])
                 check = crosscheck(frame, key, fold, series_group,
                                    draw.group_id, shock_start_idx)
                 out_path = EVAL_DIR / f"tsmixer_{key}_{SCENARIO}_f{fold}.parquet"

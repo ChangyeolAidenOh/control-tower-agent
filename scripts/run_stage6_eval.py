@@ -41,8 +41,10 @@ from core_pipeline.data.mart_reader import (
     fetch_sku_costs,
 )
 from core_pipeline.policies.a4_basestock import A4BaseStock, A4Config
+from core_pipeline.dfl.lp_problem import get_a3_saa_problem
 from core_pipeline.policies.lp_policy import (
-    EvalPredictionReplayer, LPForecastPolicy,
+    A3SAAPolicy, EvalPredictionReplayer, LPForecastPolicy,
+    QuantileEvalReplayer,
 )
 from core_pipeline.policies.rule_ct import RuleControlTower
 from core_pipeline.simulator.demand_paths import build_fold_paths
@@ -60,7 +62,7 @@ SCENARIO_P = 0.0
 R_EVAL = (3, 5, 10)
 POLICY_R = {3: 3, 5: 5, 10: 5}
 BASELINE_POLICIES = ("a4", "a4_sl", "l0_rule_ct")
-NEW_POLICIES = ("b", "a1", "a2")
+NEW_POLICIES = ("b", "a1", "a2", "a3")
 REG_REL_TOL = 1e-9
 REG_FIELDS = ("cost", "terminal_cost", "csl", "fill_rate", "binding_days")
 
@@ -176,6 +178,20 @@ def main() -> None:
         path_sha[f["fold"]] = scenario_sha(paths[f["fold"]], group_ids)
 
     replayers: dict = {}
+    q_replayers: dict = {}
+    saa_cache: dict = {}
+
+    def a3_replayer(f: dict) -> QuantileEvalReplayer:
+        key = f["fold"]
+        if key not in q_replayers:
+            q_replayers[key] = QuantileEvalReplayer(
+                model="tsmixer_a3", scenario=SCENARIO, fold=f["fold"],
+                expected_origins=range(f["test_start_idx"],
+                                       f["test_end_idx"] + 1),
+                expected_series=all_series,
+                expected_path_sha=path_sha[f["fold"]],
+            )
+        return q_replayers[key]
 
     def lp_replayer(model: str, f: dict) -> EvalPredictionReplayer:
         key = (model, f["fold"])
@@ -231,6 +247,13 @@ def main() -> None:
                     pols["b"] = LPForecastPolicy(
                         "b", lp_replayer(f"tsmixer_b_r{POLICY_R[r]}", f),
                         series)
+                if "a3" in run_policies:
+                    prob = get_a3_saa_problem(
+                        saa_cache, (gid, r), h, b,
+                        np.full(len(series), sim_cfg.weight_wi),
+                        float(kg[gid]), 29, sim_cfg.lead_time_core, 9)
+                    pols["a3"] = A3SAAPolicy(
+                        "a3", a3_replayer(f), series, prob)
                 for name, p in pols.items():
                     p.name = name
 
