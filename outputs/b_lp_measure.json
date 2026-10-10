@@ -1,0 +1,272 @@
+{
+  "tune_f01_r3": {
+    "stage": "tune",
+    "fold": 1,
+    "r": 3,
+    "per_bundle": [
+      {
+        "group_id": "B01_CA_FOODS_3",
+        "n_sku": 16,
+        "n_samples": 8,
+        "sec_compile": 0.136,
+        "sec_train_median": 0.03935822960920632,
+        "sec_train_max": 0.19148349994793534,
+        "sec_val_median": 0.00920256250537932,
+        "sec_oracle_median": 0.03478287486359477
+      },
+      {
+        "group_id": "B02_CA_FOODS_1",
+        "n_sku": 16,
+        "n_samples": 8,
+        "sec_compile": 0.087,
+        "sec_train_median": 0.03343843761831522,
+        "sec_train_max": 0.04129495797678828,
+        "sec_val_median": 0.010572854429483414,
+        "sec_oracle_median": 0.03536464553326368
+      },
+      {
+        "group_id": "B03_CA_HOUSEHOLD_1",
+        "n_sku": 16,
+        "n_samples": 8,
+        "sec_compile": 0.048,
+        "sec_train_median": 0.03133741649799049,
+        "sec_train_max": 0.08030995773151517,
+        "sec_val_median": 0.00869614607654512,
+        "sec_oracle_median": 0.033693041652441025
+      },
+      {
+        "group_id": "B04_CA_HOBBIES_1",
+        "n_sku": 16,
+        "n_samples": 8,
+        "sec_compile": 0.048,
+        "sec_train_median": 0.04553531319834292,
+        "sec_train_max": 0.05868291715160012,
+        "sec_val_median": 0.010762333404272795,
+        "sec_oracle_median": 0.03534058295190334
+      },
+      {
+        "group_id": "B05_TX_FOODS_3",
+        "n_sku": 15,
+        "n_samples": 8,
+        "sec_compile": 0.046,
+        "sec_train_median": 0.03649964579381049,
+        "sec_train_max": 0.04474475001916289,
+        "sec_val_median": 0.008142354432493448,
+        "sec_oracle_median": 0.0336493335198611
+      },
+      {
+        "group_id": "B06_TX_HOUSEHOLD_1",
+        "n_sku": 15,
+        "n_samples": 8,
+        "sec_compile": 0.083,
+        "sec_train_median": 0.029279228998348117,
+        "sec_train_max": 0.05149370804429054,
+        "sec_val_median": 0.007755000609904528,
+        "sec_oracle_median": 0.0319092080462724
+      },
+      {
+        "group_id": "B07_TX_HOBBIES_1",
+        "n_sku": 15,
+        "n_samples": 8,
+        "sec_compile": 0.047,
+        "sec_train_median": 0.02998202107846737,
+        "sec_train_max": 0.042402375023812056,
+        "sec_val_median": 0.008039458654820919,
+        "sec_oracle_median": 0.03168316627852619
+      },
+      {
+        "group_id": "B08_WI_FOODS_3",
+        "n_sku": 15,
+        "n_samples": 8,
+        "sec_compile": 0.047,
+        "sec_train_median": 0.037933520739898086,
+        "sec_train_max": 0.04328716592863202,
+        "sec_val_median": 0.008097999962046742,
+        "sec_oracle_median": 0.03284724964760244
+      },
+      {
+        "group_id": "B09_WI_HOUSEHOLD_1",
+        "n_sku": 15,
+        "n_samples": 8,
+        "sec_compile": 0.046,
+        "sec_train_median": 0.030955104157328606,
+        "sec_train_max": 0.033339790999889374,
+        "sec_val_median": 0.007731187390163541,
+        "sec_oracle_median": 0.03223681263625622
+      },
+      {
+        "group_id": "B10_WI_HOBBIES_1",
+        "n_sku": 15,
+        "n_samples": 8,
+        "sec_compile": 0.046,
+        "sec_train_median": 0.04033770854584873,
+        "sec_train_max": 0.051521708723157644,
+        "sec_val_median": 0.009185708360746503,
+        "sec_oracle_median": 0.033761708065867424
+      }
+    ],
+    "budget": {
+      "t_train_median_sec": 0.03544466709718108,
+      "t_val_median_sec": 0.00875414558686316,
+      "t_oracle_median_sec": 0.03367231204174459,
+      "t_compile_total_sec": 0.634,
+      "epochs_cap": 20,
+      "valid_samples_per_epoch": 240,
+      "budget_sec": 10800.0,
+      "n_bundles": 10,
+      "eligible_per_bundle": {
+        "B01_CA_FOODS_3": 406,
+        "B02_CA_FOODS_1": 596,
+        "B03_CA_HOUSEHOLD_1": 855,
+        "B04_CA_HOBBIES_1": 453,
+        "B05_TX_FOODS_3": 351,
+        "B06_TX_HOUSEHOLD_1": 591,
+        "B07_TX_HOBBIES_1": 833,
+        "B08_WI_FOODS_3": 717,
+        "B09_WI_HOUSEHOLD_1": 521,
+        "B10_WI_HOBBIES_1": 1087
+      },
+      "n_max": 351,
+      "n_per_bundle_rule_value": 351,
+      "est_hours_n10": 0.03,
+      "est_hours_n20": 0.06,
+      "est_hours_n40": 0.1,
+      "est_hours_n351": 0.74
+    }
+  },
+  "tune_f01_r5": {
+    "stage": "tune",
+    "fold": 1,
+    "r": 5,
+    "per_bundle": [
+      {
+        "group_id": "B01_CA_FOODS_3",
+        "n_sku": 16,
+        "n_samples": 8,
+        "sec_compile": 0.092,
+        "sec_train_median": 0.041349750477820635,
+        "sec_train_max": 0.05292208306491375,
+        "sec_val_median": 0.009035041555762291,
+        "sec_oracle_median": 0.03327877097763121
+      },
+      {
+        "group_id": "B02_CA_FOODS_1",
+        "n_sku": 16,
+        "n_samples": 8,
+        "sec_compile": 0.049,
+        "sec_train_median": 0.035691124852746725,
+        "sec_train_max": 0.04862291691824794,
+        "sec_val_median": 0.00952379172667861,
+        "sec_oracle_median": 0.034127813298255205
+      },
+      {
+        "group_id": "B03_CA_HOUSEHOLD_1",
+        "n_sku": 16,
+        "n_samples": 8,
+        "sec_compile": 0.049,
+        "sec_train_median": 0.031184541527181864,
+        "sec_train_max": 0.04549762513488531,
+        "sec_val_median": 0.008678625104948878,
+        "sec_oracle_median": 0.03272074949927628
+      },
+      {
+        "group_id": "B04_CA_HOBBIES_1",
+        "n_sku": 16,
+        "n_samples": 8,
+        "sec_compile": 0.048,
+        "sec_train_median": 0.054579000221565366,
+        "sec_train_max": 0.06079533416777849,
+        "sec_val_median": 0.010671416530385613,
+        "sec_oracle_median": 0.0353963125962764
+      },
+      {
+        "group_id": "B05_TX_FOODS_3",
+        "n_sku": 15,
+        "n_samples": 8,
+        "sec_compile": 0.048,
+        "sec_train_median": 0.03415137552656233,
+        "sec_train_max": 0.04823100008070469,
+        "sec_val_median": 0.007786020869389176,
+        "sec_oracle_median": 0.03289083391427994
+      },
+      {
+        "group_id": "B06_TX_HOUSEHOLD_1",
+        "n_sku": 15,
+        "n_samples": 8,
+        "sec_compile": 0.104,
+        "sec_train_median": 0.03870464628562331,
+        "sec_train_max": 0.0581725831143558,
+        "sec_val_median": 0.007895645685493946,
+        "sec_oracle_median": 0.034383458783850074
+      },
+      {
+        "group_id": "B07_TX_HOBBIES_1",
+        "n_sku": 15,
+        "n_samples": 8,
+        "sec_compile": 0.046,
+        "sec_train_median": 0.02632750035263598,
+        "sec_train_max": 0.03669029101729393,
+        "sec_val_median": 0.007480541476979852,
+        "sec_oracle_median": 0.031326874857768416
+      },
+      {
+        "group_id": "B08_WI_FOODS_3",
+        "n_sku": 15,
+        "n_samples": 8,
+        "sec_compile": 0.046,
+        "sec_train_median": 0.04104779218323529,
+        "sec_train_max": 0.04637162480503321,
+        "sec_val_median": 0.008207791252061725,
+        "sec_oracle_median": 0.032616146141663194
+      },
+      {
+        "group_id": "B09_WI_HOUSEHOLD_1",
+        "n_sku": 15,
+        "n_samples": 8,
+        "sec_compile": 0.047,
+        "sec_train_median": 0.030371312517672777,
+        "sec_train_max": 0.04103562515228987,
+        "sec_val_median": 0.008068437920883298,
+        "sec_oracle_median": 0.03591764601878822
+      },
+      {
+        "group_id": "B10_WI_HOBBIES_1",
+        "n_sku": 15,
+        "n_samples": 8,
+        "sec_compile": 0.048,
+        "sec_train_median": 0.04452766664326191,
+        "sec_train_max": 0.05473970901221037,
+        "sec_val_median": 0.009103562450036407,
+        "sec_oracle_median": 0.03401052113622427
+      }
+    ],
+    "budget": {
+      "t_train_median_sec": 0.03701518732123077,
+      "t_val_median_sec": 0.00876793754287064,
+      "t_oracle_median_sec": 0.03341777063906193,
+      "t_compile_total_sec": 0.578,
+      "epochs_cap": 20,
+      "valid_samples_per_epoch": 240,
+      "budget_sec": 10800.0,
+      "n_bundles": 10,
+      "eligible_per_bundle": {
+        "B01_CA_FOODS_3": 406,
+        "B02_CA_FOODS_1": 596,
+        "B03_CA_HOUSEHOLD_1": 855,
+        "B04_CA_HOBBIES_1": 453,
+        "B05_TX_FOODS_3": 351,
+        "B06_TX_HOUSEHOLD_1": 591,
+        "B07_TX_HOBBIES_1": 833,
+        "B08_WI_FOODS_3": 717,
+        "B09_WI_HOUSEHOLD_1": 521,
+        "B10_WI_HOBBIES_1": 1087
+      },
+      "n_max": 351,
+      "n_per_bundle_rule_value": 351,
+      "est_hours_n10": 0.04,
+      "est_hours_n20": 0.06,
+      "est_hours_n40": 0.1,
+      "est_hours_n351": 0.77
+    }
+  }
+}
