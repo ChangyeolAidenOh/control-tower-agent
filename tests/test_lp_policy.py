@@ -8,6 +8,7 @@ rolling-execution item end to end.
 """
 
 import json
+import math
 
 import numpy as np
 import pandas as pd
@@ -322,3 +323,46 @@ class TestEngineRolling:
         )
         assert float(results[0].order[0]) == pytest.approx(5.0, abs=1e-6)
         assert float(results[1].order[0]) == pytest.approx(0.0, abs=1e-6)
+
+class TestA5Boundary:
+    """ST6-09 (2): data-end boundary behavior of the perfect-info policy."""
+
+    def _policy(self, path, start_idx, last_idx):
+        from core_pipeline.policies.lp_policy import A5PerfectInfoPolicy
+        return A5PerfectInfoPolicy("a5", path, start_idx, last_idx, ("S",))
+
+    def test_full_horizon_matches_direct_solve(self):
+        rng = np.random.default_rng(3)
+        path = rng.gamma(2.0, 2.0, (60, 1))
+        pol = self._policy(path, 100, 100 + 60)
+        obs = make_obs(inv=[4.0], pipeline=[[1.0, 0.0]], h=[1.0], b=[3.0],
+                       k_g=50.0, t_idx=100)
+        q = pol.decide(obs)
+        demand_29, inv0, pipe0 = to_lp_window(
+            path[1:29], obs.inv, obs.pipeline)
+        ref = solve_a5(demand_29, inv0, pipe0, np.array([1.0]),
+                       np.array([3.0]), np.array([1.0]), 50.0)
+        assert q[0] == pytest.approx(float(ref.orders[0, 0]), abs=1e-6)
+        assert pol.last_truncated is False
+
+    def test_future_under_lead_orders_zero(self):
+        path = np.full((60, 1), 5.0)
+        last_idx = 160
+        pol = self._policy(path, 110, last_idx)
+        for t, fd in ((158, 2), (159, 1)):
+            obs = make_obs(inv=[0.0], pipeline=[[0.0, 0.0]], h=[1.0],
+                           b=[3.0], k_g=50.0, t_idx=t)
+            q = pol.decide(obs)
+            assert q[0] == pytest.approx(0.0, abs=1e-6)
+            assert pol.last_diagnostics()["future_days"] == fd
+            assert pol.last_truncated is True
+
+    def test_future_zero_no_solve(self):
+        path = np.full((60, 1), 5.0)
+        pol = self._policy(path, 110, 160)
+        obs = make_obs(inv=[7.0], pipeline=[[0.0, 0.0]], h=[1.0], b=[3.0],
+                       k_g=50.0, t_idx=160)
+        q = pol.decide(obs)
+        assert q[0] == 0.0
+        assert pol.n_solves == 0
+        assert math.isnan(pol.last_diagnostics()["lp_objective"])

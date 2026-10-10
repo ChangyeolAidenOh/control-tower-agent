@@ -43,8 +43,8 @@ from core_pipeline.data.mart_reader import (
 from core_pipeline.policies.a4_basestock import A4BaseStock, A4Config
 from core_pipeline.dfl.lp_problem import get_a3_saa_problem
 from core_pipeline.policies.lp_policy import (
-    A3SAAPolicy, EvalPredictionReplayer, LPForecastPolicy,
-    QuantileEvalReplayer,
+    A3SAAPolicy, A5PerfectInfoPolicy, EvalPredictionReplayer,
+    LPForecastPolicy, QuantileEvalReplayer,
 )
 from core_pipeline.policies.rule_ct import RuleControlTower
 from core_pipeline.simulator.demand_paths import build_fold_paths
@@ -62,7 +62,8 @@ SCENARIO_P = 0.0
 R_EVAL = (3, 5, 10)
 POLICY_R = {3: 3, 5: 5, 10: 5}
 BASELINE_POLICIES = ("a4", "a4_sl", "l0_rule_ct")
-NEW_POLICIES = ("b", "a1", "a2", "a3")
+NEW_POLICIES = ("b", "a1", "a2", "a3", "a5")
+MART_LAST_IDX = 1941
 REG_REL_TOL = 1e-9
 REG_FIELDS = ("cost", "terminal_cost", "csl", "fill_rate", "binding_days")
 
@@ -154,7 +155,7 @@ def main() -> None:
     try:
         folds_all = fetch_folds(conn)
         kg = fetch_bundle_capacity(conn, float(sim_cfg.kappa_selected))
-        max_idx = max(f["test_end_idx"] for f in folds_all)
+        max_idx = MART_LAST_IDX
         demand = fetch_demand_by_bundle(conn, max_idx)
         costs = fetch_sku_costs(conn)
     finally:
@@ -254,6 +255,14 @@ def main() -> None:
                         float(kg[gid]), 29, sim_cfg.lead_time_core, 9)
                     pols["a3"] = A3SAAPolicy(
                         "a3", a3_replayer(f), series, prob)
+                if "a5" in run_policies:
+                    _, mat = demand[gid]
+                    ts, te = f["test_start_idx"], f["test_end_idx"]
+                    tail = mat[te:MART_LAST_IDX, :]
+                    a5_path = np.concatenate([bp.test, tail], axis=0)
+                    pols["a5"] = A5PerfectInfoPolicy(
+                        "a5", a5_path, ts, MART_LAST_IDX, series)
+
                 for name, p in pols.items():
                     p.name = name
 
@@ -273,6 +282,8 @@ def main() -> None:
                         "guardrail_blocked": rec.guardrail_blocked,
                         "binding_days": rec.binding_days,
                         "n_days": rec.n_days, "n_sku": rec.n_sku,
+                        "truncated_oracle_horizon": (
+                            name == "a5" and rec.fold == 12),
                     } for rec in res.records)
                     if name in NEW_POLICIES:
                         d = new_diag[name]

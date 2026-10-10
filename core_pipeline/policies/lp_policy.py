@@ -346,3 +346,83 @@ class A3SAAPolicy:
 
     def last_diagnostics(self) -> dict[str, float]:
         return dict(self._diag)
+
+class A5PerfectInfoPolicy:
+    """Perfect-information reference policy (ST6-09): solves the same LP as
+    every rolling policy, but on the REALIZED future demand -- the current
+    fold's scenario path joined, past the test window, with raw mart demand
+    up to d_1941 (no scenario transform out there, no zero substitution).
+    horizon shrinks as the data end approaches: future_days =
+    max(0, min(28, last_demand_idx - t)); at future_days = 0 no LP is
+    solved and q = 0 is returned; with future_days < lead + 1 the order
+    cannot arrive inside the observable span, so q_0 = 0 is optimal under
+    the positive terminal charge (asserted in tests). Reference policy
+    only -- never called a bound, not a real-time-operable policy."""
+
+    def __init__(self, name: str, future_demand: np.ndarray,
+                 start_idx: int, last_demand_idx: int, series_ids):
+        """future_demand: (n_future_days, n_sku) realized demand for period
+        indices start_idx .. start_idx + n_future_days - 1 (scenario inside
+        the test window, raw mart beyond it). last_demand_idx caps the
+        observable horizon (1941 for mart)."""
+        self.name = name
+        self._demand = np.asarray(future_demand, dtype=np.float64)
+        self._start_idx = int(start_idx)
+        self._last_idx = int(last_demand_idx)
+        self._series_ids = tuple(str(s) for s in series_ids)
+        if self._demand.shape[1] != len(self._series_ids):
+            raise ValueError("future_demand width != n_sku")
+        have_last = self._start_idx + self._demand.shape[0] - 1
+        if have_last < min(self._last_idx, self._start_idx + 27 + FORECAST_DAYS):
+            raise ValueError(
+                f"future_demand ends at {have_last}, too short for the "
+                f"window starting {self._start_idx}")
+        self._diag: dict[str, float] = {}
+        self.n_solves = 0
+        self.last_truncated = False
+
+    def decide(self, obs: Observation) -> np.ndarray:
+        n_sku = len(self._series_ids)
+        t = int(obs.t_idx)
+        future_days = max(0, min(FORECAST_DAYS, self._last_idx - t))
+        self.last_truncated = future_days < FORECAST_DAYS
+        if future_days == 0:
+            self._diag = {
+                "lp_objective": float("nan"), "lp_solve_s": 0.0,
+                "future_days": 0.0, "n_neg_clipped": 0.0,
+                "min_raw_order": 0.0, "weighted_order_sum": 0.0,
+                "capacity_slack": float(obs.k_g),
+                "capacity_violation": 0.0,
+            }
+            return np.zeros(n_sku)
+        row0 = t + 1 - self._start_idx
+        if row0 < 0 or row0 + future_days > self._demand.shape[0]:
+            raise PolicyError(
+                f"{self.name}: demand rows [{row0}, {row0 + future_days}) "
+                f"outside the provided path at t={t}")
+        future = self._demand[row0:row0 + future_days]
+        demand_w = np.concatenate(
+            [np.zeros((1, n_sku)), future], axis=0)
+        t0 = time.perf_counter()
+        sol = solve_a5(demand_w,
+                       np.asarray(obs.inv, dtype=np.float64),
+                       np.asarray(obs.pipeline, dtype=np.float64),
+                       np.asarray(obs.h, dtype=np.float64),
+                       np.asarray(obs.b, dtype=np.float64),
+                       np.asarray(obs.w, dtype=np.float64),
+                       float(obs.k_g))
+        solve_s = time.perf_counter() - t0
+        self.n_solves += 1
+        if sol.status != "optimal":
+            raise PolicyError(
+                f"{self.name}: LP status {sol.status!r} at t={t} "
+                f"future_days={future_days}; no fallback order (ST6-01 (6))")
+        q, diag = _finalize_orders(
+            self.name, sol.orders[0], obs.w, obs.k_g, t, f"a5fd{future_days}")
+        self._diag = {"lp_objective": float(sol.objective),
+                      "lp_solve_s": float(solve_s),
+                      "future_days": float(future_days), **diag}
+        return q
+
+    def last_diagnostics(self) -> dict[str, float]:
+        return dict(self._diag)
