@@ -1,0 +1,50 @@
+{
+  "fold": 1,
+  "train_end_idx": 1605,
+  "staging_schema_version": "tsmixer_staging_v1",
+  "adapter_version": "st4_adapters_v1",
+  "input_schema_hash": "9a316e62920a",
+  "files": {
+    "panel_train.parquet": {
+      "sha256": "99af1711426eb52a655a672da7eaff102079da4f970df22dc7b111b95670fbaf",
+      "bytes": 501183,
+      "rows": 247170,
+      "period_min": 1,
+      "period_max": 1605
+    },
+    "known_calendar.parquet": {
+      "sha256": "afb4e9d6f0fb4f6552f29a2da8f1994ead8ec8ed25e154df66cd68536d000aca",
+      "bytes": 18672,
+      "rows": 4815,
+      "period_min": 1,
+      "period_max": 1605
+    },
+    "series_static.parquet": {
+      "sha256": "cb4e00ca2cacb16352d8c4e78fcfe32bb10ca8fe078e490c26076c2e02b55061",
+      "bytes": 7296,
+      "rows": 154
+    },
+    "economic_params.parquet": {
+      "sha256": "0dc30d07ad4893b43a29c7affe05d4b651a9af96a1706f68ae77b6b9f17c33fd",
+      "bytes": 15949,
+      "rows": 154
+    },
+    "bundles.parquet": {
+      "sha256": "c4735d5dbc4c399ff2fd045ce7edd7ee68ea0aeb7678465ef2bd93e4d66dda69",
+      "bytes": 6440,
+      "rows": 10
+    },
+    "scalers.npz": {
+      "sha256": "45159cdb21c11c5c1ed528a080fa07e7c5cf626984c4dc6d68db58a65daaf1b2",
+      "bytes": 20002
+    },
+    "encoder.json": {
+      "sha256": "7486b237c817552ddaf5f6ecb4f865b7bd8c756b594140c9932a79d8738c48ad",
+      "bytes": 4715
+    },
+    "fold_meta.json": {
+      "sha256": "a55abffc86d76f4ae40386ee11f76fbebd5bbaf2ca628c43d929597cc9d2a840",
+      "bytes": 617
+    }
+  }
+}
