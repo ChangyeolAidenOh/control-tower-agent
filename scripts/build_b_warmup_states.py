@@ -11,8 +11,10 @@ lp_window.to_lp_window consumes. Deterministic: no randomness anywhere.
 Demand source: the staging bundle's panel_train sales (observed sales as
 latent demand, core p = 0). Costs follow prepare_stage's stage split
 (h/b_r{r} final, h_tune/b_tune_r{r} tune); K_g = bundles.k_g_kappa_1_0
-for both stages (ST5-04 (5)). Outputs are git-excluded (ST5-02); this
-script is the reproducible source.
+for both stages (ST5-04 (5)). Lead time comes from
+SimConfig.lead_time_core (configs/simulator.yaml); --lead overrides it
+for stress variants only. Outputs are git-excluded (ST5-02); this script
+is the reproducible source.
 
 Run: python -m scripts.build_b_warmup_states --fold 1 --stage tune \
          --r 3 5 --origins 1200 1400 1437 1500 1577
@@ -38,7 +40,6 @@ from core_pipeline.simulator.engine import (
 WARMUP_DAYS = 14
 INIT_LOOKBACK_DAYS = 7
 MIN_ORIGIN = WARMUP_DAYS + INIT_LOOKBACK_DAYS + 1  # lookback must start at period 1
-LEAD_TIME = 2  # core L = 2 (spec section 5.1); override with --lead for stress runs
 K_G_COLUMN = "k_g_kappa_1_0"
 STAGING_ROOT = Path("outputs/staging/tsmixer")
 TUNING_PATH = Path("outputs/stage2_a4_tuning.json")
@@ -106,7 +107,8 @@ def main():
     parser.add_argument("--r", type=int, nargs="+", default=[3, 5])
     parser.add_argument("--origins", type=int, nargs="*", default=None)
     parser.add_argument("--origins-file", default=None)
-    parser.add_argument("--lead", type=int, default=LEAD_TIME)
+    parser.add_argument("--lead", type=int, default=None,
+                        help="stress override; default = SimConfig.lead_time_core")
     parser.add_argument("--out", default="outputs/b_warmup_states")
     args = parser.parse_args()
 
@@ -117,6 +119,7 @@ def main():
     bundles_df = bundle["bundles"]
     econ = bundle["economic_params"].set_index("series_id")
     sim_cfg = load_sim_config(SIM_CONFIG_PATH)
+    lead = args.lead if args.lead is not None else int(sim_cfg.lead_time_core)
 
     if args.stage == "tune":
         h_col, b_col_fmt = "h_tune", "b_tune_r{r}"
@@ -138,7 +141,9 @@ def main():
         manifest = {
             "stage": args.stage, "fold": args.fold, "r": r,
             "origins": origins, "warmup_days": WARMUP_DAYS,
-            "init_lookback_days": INIT_LOOKBACK_DAYS, "lead": args.lead,
+            "init_lookback_days": INIT_LOOKBACK_DAYS, "lead": lead,
+            "lead_source": ("cli" if args.lead is not None
+                            else "sim_config.lead_time_core"),
             "k_g_column": K_G_COLUMN, "h_col": h_col, "b_col": b_col,
             "a4": a4_meta, "a4_tuning_sha256": sha256_file(TUNING_PATH),
             "fold_meta_sha256": bundle["manifest"]["files"]["fold_meta.json"]["sha256"],
@@ -157,7 +162,7 @@ def main():
             params = SkuParams(series_ids=tuple(sids), h=h, b=b,
                                w=np.ones(len(sids)))
             inv_out, pipe_out = build_states(sales, origins, policy, params,
-                                             k_g, sim_cfg, args.lead)
+                                             k_g, sim_cfg, lead)
             path = out_dir / f"{gid}.npz"
             np.savez(path, origins=np.asarray(origins, dtype=np.int64),
                      inv=inv_out, pipeline=pipe_out,
@@ -165,7 +170,7 @@ def main():
             manifest["files"][path.name] = sha256_file(path)
         (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=2))
         print(f"{out_dir}: bundles={len(manifest['files'])} "
-              f"origins={len(origins)}")
+              f"origins={len(origins)} lead={lead}")
 
 
 if __name__ == "__main__":
