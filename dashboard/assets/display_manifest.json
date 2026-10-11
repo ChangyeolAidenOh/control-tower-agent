@@ -1,0 +1,26 @@
+{
+ "case_selection_rule": "Sort weeks by (fold, week, group_id) ascending. C1 = first with fallback == False and gate.all_rejected == False; C2 = first with fallback == True; C3 = first with fallback == False and 0 < gate.gate_passed_candidates < gate.evaluated_candidates and key != C1 key; C4 = first with fallback == False and gate.gate_passed_candidates == gate.evaluated_candidates. Deduplicate by (fold, week, group_id). Mechanical, text-blind rule (ST9-03, amended ST9-04 after C1/C3 key collision, before deployment).",
+ "case_texts_review": "passed 2026-10-11 (C1, C2); new cases from ST9-04 require review",
+ "contract": "docs/stage9_dashboard_contract.md v1.1",
+ "generated_at": "2026-10-11T10:49:41+00:00",
+ "git_commit": "caf5cd2",
+ "h3_h5_anchor_check": "passed",
+ "pending": [
+  "forecast_extract (9-D)"
+ ],
+ "script": "scripts/build_dashboard_snapshot.py",
+ "snapshot_sha256": "5585b0f35bc484e2b26224cec0d7a68bd3ab148e34e55990bc70dd30ce7db2b2",
+ "sources": {
+  "outputs/agent_h5_common_state.json": "7a10b03d8f6f6afcff5707eb7cd8722024aa1204133fda982ffe3198f25f2db9",
+  "outputs/agent_llm_official.json": "15215d470e3cb04d11c19bab6607819b82360f791d782e5dfad387632e5e5048",
+  "outputs/agent_numeric_official.json": "2bf4004d776f6fed08f13b437d9c4d5470cd974c0ab372f507f4b5635c19822a",
+  "outputs/deck/s5_agg.json": "cf204bdaf9793daafea08c5f3953128b1edf2b0bab7594845ac0eb5b9c1c9577",
+  "outputs/reports/stage3_report.json": "39393f99b02fe0386e0143591610af1ecb10ffad62e0cff317c0565b164a3043",
+  "outputs/reports/stage4_report.json": "02ebc805f2a93369bfcccf4374e133d47c75e56cc01e06a1090579e40562abe8",
+  "outputs/reports/stage8_lagging_metrics.json": "4c2a85c027eef47805f4264f329eb20d5ff9db3e37a0c4a11f3b7e5f36f57699",
+  "outputs/stage6_confirmatory.json": "7a685b572e7c1e9379d51c1b12b3cefaf687fda4e41ed87f72f4bd974234b180",
+  "outputs/stage6_eval_core_step6.json": "1dc0cedafc3f452865fedaa32b8b5053f8338ab9238a0612f99023eb917614ce"
+ },
+ "tier_a_verified": true,
+ "whitelist_version": "wl-2"
+}
