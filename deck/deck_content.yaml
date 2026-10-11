@@ -1,0 +1,243 @@
+# deck/deck_content.yaml — Stage 7 deck content config (Git tracked)
+# Values: {ref: "file_key:dotted.path", format: "..."} resolved from frozen JSONs at build,
+# or {frozen: "...", source: "..."} for numbers whose JSON pointer is not yet wired.
+# build_deck.py prints an audit list of every frozen literal; convert to ref as pointers
+# are confirmed. Hand-typed numbers outside these two forms are forbidden.
+
+meta:
+  title: "SCM Control Tower 의사결정 지원 파이프라인 — 파일럿 완료 보고"
+  subtitle: "사전등록 기반 시뮬레이션 파일럿 (M5 CPG 서브셋, 가상 고객)"
+  date: "2026-10"
+  language: ko
+  font: "Malgun Gothic"
+  layout: LAYOUT_16x9
+  naming: "LLM 인터페이스를 가진 의사결정 지원 파이프라인"
+  files:
+    s5: outputs/deck/s5_agg.json
+    confirmatory: outputs/stage6_confirmatory.json
+  rules:
+    - "H3 단독 인용 금지 — CSL −4.7pp 병기 (S1, S6)"
+    - "H5 보조 통계(76.7%, +15.69)는 부록 A4 전용, 판정 비사용 라벨"
+    - "H1 PASS는 3단계 수용 전 r 기각과 동반 제시"
+    - "CSL 라벨: §5 표 = 에피소드 평균 / 차트·집계 = pooled SKU-일"
+    - "비용 단위 = 시뮬레이터 비용 단위(설정 비용함수 기준), 금액 환산 금지"
+
+slides:
+  - id: S1
+    part: main
+    layout: stat_cards
+    seconds: 20
+    title: "Executive Summary"
+    headline: >-
+      승인 흐름 기반 의사결정 시스템의 비용 개선 가능성을 확인했지만, 서비스 수준
+      가드레일과 LLM 후보 생성 우위는 충족하지 못했다. 따라서 현재 단계의 권고는
+      자율 발주 승격이 아닌 사람 승인 기반의 의사결정 지원이다.
+    stats:
+      - label: "H3 · L0 대비 비용 차이"
+        value: {frozen: "+240.66", source: "docs/agent_h3h5_report.md"}
+        sub: {frozen: "단측 95% 하한 +205.73 · CSL −4.7%p 병존", source: "docs/agent_h3h5_report.md"}
+      - label: "서비스 수준 변화 (Agent − L0)"
+        value: {frozen: "−4.7%p", source: "docs/agent_h3h5_report.md"}
+        sub: {frozen: "운영 승격의 핵심 제약", source: "outline S1"}
+      - label: "H5 · LLM strict-win"
+        value: {frozen: "43.96%", source: "docs/agent_h3h5_report.md"}
+        sub: {frozen: "사전등록 기준 50% 미달 (211/480)", source: "docs/agent_h3h5_report.md"}
+    sources: ["docs/agent_h3h5_report.md", "docs/agent_stage_report.md"]
+
+  - id: S2
+    part: main
+    layout: generic
+    seconds: 10
+    title: "Decision Scope — 어떤 결정을 다루는가"
+    headline: >-
+      대상 결정 = DC 공유 용량(K_g) 하 일별 발주량, 28일 롤링 중 첫날만 실행 —
+      담당자·승인권자·가능/금지 조치를 분석 전에 고정했다.
+    body:
+      - "결정: 154 SKU · 10묶음, 일별 발주량 (28-day rolling, first day executed)"
+      - "담당: 계획 담당(승인점 ①) / DC 관리자(승인점 ②)"
+      - "가상 고객 가정은 '첫 미팅 질문 리스트'로 명시 분리"
+    sources: ["docs/decision_definition.md §0–§3"]
+
+  - id: S3
+    part: main
+    layout: generic   # upgrade target: before_after_band
+    seconds: 15
+    title: "AS-IS → To-Be — 수작업 예외 처리에서 승인 흐름으로"
+    headline: >-
+      예외 발생 시 수작업 근거 수집 6단계에서, 에이전트가 근거 수집·승인 요청 초안·
+      사후 추적을 대체하고 사람이 행동공간 정의·승인점 ①②·실행/롤백을 유지하는
+      승인 흐름으로.
+    body:
+      - "AS-IS: 예외 감지 → 근거 수집 → 대안 계산 → 승인 요청 → 실행 → 사후 추적 (수작업)"
+      - "To-Be: 에이전트 대체 = 근거 수집 · 승인 요청 초안 · 사후 추적"
+      - "사람 유지 = 행동공간 정의, 승인점 ①(계획) ②(DC), 실행·롤백"
+      - "L1(조언형) vs L2(승인형) 차이는 승인 단계 1곳"
+    sources: ["docs/asis_decision_journey.md §1–§2", "docs/decision_definition.md §4"]
+
+  - id: S4
+    part: main
+    layout: generic
+    seconds: 15
+    title: "Acceptance Criteria — 성능 열람 전 동결"
+    headline: >-
+      L1 통계 비열등(CSL, δ=1%p) + L2 하드 가드레일(번들×주 CSL 90% floor, 위반 시
+      자동 차단) + 3-tier 판정(채택 검토 / 조건부 채택 / 기각).
+    body:
+      - "preregistration v1.2 동결일 2026-10-08, 독립 리뷰 3회"
+      - "δ=1%p · 90% floor = [가정] 라벨 (가상 고객 파라미터)"
+    sources: ["docs/decision_definition.md §6", "docs/preregistration.md v1.2"]
+
+  - id: S5
+    part: main
+    layout: scatter_chart
+    seconds: 25
+    title: "Alternatives — 비용–서비스 수준 비교 (r=5)"
+    headline: >-
+      동일한 수요·비용 환경에서도 정책별 비용과 서비스 수준의 균형점이 달랐으며,
+      비용 절감이 곧 운영 승격 가능성을 의미하지는 않았다.
+    chart:
+      kind: xy_scatter
+      x_title: "평균 에피소드 비용 (시뮬레이터 비용 단위)"
+      y_title: "Pooled SKU-일 CSL"
+      points_ref: "s5:policies"          # all 9 policies, display_name/mean_episode_cost/pooled_sku_day_csl
+      frontier_ref: "s5:frontier_operational"
+      agent_ref: "s5:agent"
+      reference_policies_ref: "s5:reference_policies"
+      hline: {y: 0.90, label: "CSL 90% (참고 기준)"}
+      emphasis: ["l0_rule_ct", "a4", "a4_sl", "b", "apto"]
+    footnotes:
+      - "프런티어·지배 관계는 점추정 기술통계 — 쌍별 통계 판정은 사전등록 비교(H1: A2·A3·A4 / H1-b: A-PTO / H3: L0 vs Agent)에만 존재"
+      - "Agent = LLM 인터페이스 파이프라인의 실현 경로 1개 (모델 비결정성, 계약 재현) — 프런티어 계산 제외"
+      - "A5 = 완전정보 참고 정책, 프런티어 제외 · CSL 90% 수평선은 에피소드 게이트 충족과 동일시 금지"
+    talk_notes:
+      - "B(순수 비용 DFL)는 프런티어 밖 — A1에 지배 (사전등록 비교 아님, H1과 무모순)"
+      - "Agent는 A-PTO에 지배되나 자기 베이스 A4를 상향 이동(+1.4pp CSL, +16.4 비용)"
+      - "A4-SL의 L0 Pareto 지배 — 규칙 개선이 이미 상당 부분 달성, '에이전트 유일 해법' 서사 금지"
+    sources: ["outputs/deck/s5_agg.json (ST8-01/02)", "docs/asis_diagnosis.md"]
+
+  - id: S6
+    part: main
+    layout: generic   # upgrade target: judgment_matrix + h3_card
+    seconds: 30
+    title: "파일럿 결과 — H1 · H3"
+    headline: >-
+      순수 비용 DFL과 승인 흐름 에이전트 모두 비용은 줄였으나 서비스와의 결합
+      트레이드오프가 동형으로 재현됐다 — B는 비용 종점 통과(r3·r5)에도 수용 판정은
+      전 r 기각이다.
+    body:
+      - key: "H1 vs A2 (r=5) Δ̂"
+        value: {ref: "confirmatory:results.r5.h1.a2.point_estimate", format: "{:.1f}"}
+      - key: "H1 vs A3 (r=5) Δ̂"
+        value: {ref: "confirmatory:results.r5.h1.a3.point_estimate", format: "{:.1f}"}
+      - key: "H1 vs A4 (r=5) Δ̂"
+        value: {ref: "confirmatory:results.r5.h1.a4.point_estimate", format: "{:.1f}"}
+      - key: "H1 교집합 판정"
+        value: {frozen: "r3 PASS · r5 PASS · r10 FAIL", source: "stage6_report.md §4"}
+      - key: "H1-SL"
+        value: {frozen: "전 r FAIL (B CSL 0.589–0.655, 에피소드 평균·§5 표 통계)", source: "stage6_report.md §4–§5"}
+      - key: "H1-b vs A-PTO (r=5) Δ̂"
+        value: {ref: "confirmatory:results.r5.h1_b.point_estimate", format: "{:.1f}"}
+      - key: "3단계 수용 (정의서 §6)"
+        value: {frozen: "전 r 기각 — 기각(L1)/기각(L1)/기각(1차)", source: "stage6_report.md §4"}
+      - key: "H3 Δ_CT (L0 − Agent)"
+        value: {frozen: "+240.66 (단측 95% 하한 +205.73) → PASS · CSL −4.7%p [−5.30, −4.23] 병존", source: "docs/agent_h3h5_report.md"}
+      - key: "해석"
+        value: {frozen: "B 과소 발주 — binding 218일 vs 비용최적 참조 A5 4,360일 (순수 비용 surrogate의 귀결)", source: "stage6_report.md §7"}
+    sources: ["outputs/stage6_confirmatory.json", "docs/stage6_report.md", "docs/agent_h3h5_report.md"]
+
+  - id: S7
+    part: main
+    layout: generic   # upgrade target: h5_breakdown_bar
+    seconds: 35
+    title: "H5 실패 해부 — 사전 동결 규칙의 기계 적용"
+    headline: >-
+      strict-win 211/480 = 43.96% < 50% → FAIL. 판정 규칙은 성능 미열람 상태에서
+      동결(ST7-09)했고 사후 변경하지 않았다.
+    body:
+      - "판정 사실: 승 211 / 동률 205 / 패 64 (/480), 통과 최소 241"
+      - "동률 해부: 동률 질량 42.7%가 지배 — 그중 120주는 양군 전 후보 거절로 fallback bit-동일"
+      - "동률=미승의 보수적 조작화를 성능 열람 전 동결, 사후 변경 없음"
+      - "재배치: 가치의 중심은 후보 생성 우위가 아니라 승인 흐름 전체(H3)와 설명·인터페이스 → 'LLM 인터페이스를 가진 의사결정 지원 파이프라인' 재명명"
+    sources: ["docs/agent_stage_report.md §3–§4", "agent_h5_common_state.json"]
+
+  - id: S8
+    part: main
+    layout: generic
+    seconds: 30
+    title: "Recommendation & Next Steps"
+    headline: >-
+      L2(승인형) 승격 보류 — 가드레일 미충족 상태의 권고는 사람 승인 기반 의사결정
+      지원(L1) 유지. 후속 설계 = 서비스 제약 결합(τ 하한, CSL 페널티 내재화).
+    body:
+      - "비즈니스 케이스 계산 경계 (Stage 8): 관측값 / 시뮬레이션 결과(설정 비용함수 내 성과) / 향후 검증할 비즈니스 가정 — 3분할, 현 시점 수치 미기재"
+      - "자율성 로드맵: L1→L2 승격 = 4주 연속 권고 비용 ≤ 기준선 + 시간 블록 CI 하한 > 0 / 강등 = 1주라도 CI 상한 초과 / L3 = 문서 시뮬레이션만"
+    sources: ["plan v1.3 §4.7·§4.9", "docs/maturity_checklist.md", "docs/agent_stage_report.md §5"]
+
+  - id: A1
+    part: appendix
+    layout: generic
+    title: "부록 A1 — L-M-E-K 조작적 정의"
+    body:
+      - "공개 프레임에 근거한 조작적 정의 (SK AX 2026.09 공개 자료)"
+      - "Lever = 클라이언트 조정 가능 비즈니스 변수 / DFL·ACI·LLM = Enabler"
+    sources: ["docs/lmek_model.md v2"]
+
+  - id: A2
+    part: appendix
+    layout: generic
+    title: "부록 A2 — 아키텍처·게이트 설계"
+    body:
+      - "조치 공간: τ 격자 5점 + SKU 발주 승수 ≤10 / 실행 순서 τ′→A4→승수→용량 게이트"
+      - "선정: A3 9-분위수 시나리오 × 10일 / 게이트 = raw 용량 거절 + 7일 CSL 중앙값 0.90"
+      - "fallback = 운영 장치 (안전 인증 아님)"
+    sources: ["docs/agent_stage_report.md §1"]
+
+  - id: A3
+    part: appendix
+    layout: generic
+    title: "부록 A3 — 열람 통제·무결성"
+    body:
+      - "LLM 동결(payload sha 98c23b07278c) → 스모크(기술 계약만) → 공식 양군 480 → 판정 규칙 동결(ST7-09, 성능 미열람) → 동시 공개 → 재생 앵커 480/480"
+      - "덱 제작 검증 사이클(ST8-01/02): V1 정책 명명 불일치 적발 → V4a §5 표 통계 식별(에피소드 평균 vs pooled) → V4b 환경 드리프트 재확인(L0 −8.77, ST6-06) — 검증 게이트가 일하는 방식의 사례"
+    sources: ["handoff v1.9 §2", "outputs/deck/s5_agg.json"]
+
+  - id: A4
+    part: appendix
+    layout: generic
+    title: "부록 A4 — H5 보조 통계 (판정 비사용)"
+    body:
+      - "동률 제외 조건부 승률 76.7% / 실현 28일 보조 비교 +15.69 (LLM 저렴, 209/480 우위·134 동일) — 전부 판정 비사용"
+      - "기각 구성: LLM 용량 42.2%·CSL 31.1% vs 수치 용량 25.3%·CSL 48.5%"
+      - "운영: 지출 $1.1032 / 적법률 99.76% / 선택시간 중앙값 13.06s vs 1.04s"
+    sources: ["docs/agent_stage_report.md §2–§3", "agent_llm_official.json", "agent_numeric_official.json"]
+
+  - id: A5
+    part: appendix
+    layout: generic
+    title: "부록 A5 — 한계"
+    body:
+      - "에이전트: 실현 경로 1개 일반화 불가 / 균등 무작위는 탐색 하한(SOTA 탐색 대비 주장 불가) / A3 재생 분위수 승계 / CSL −4.7pp 후속 설계 / 시뮬레이터 세계 평가 / 설명 호출 15건 잘림"
+      - "H1: 학습 노출 비대칭 / A4 상태 검증정보 재사용 / surrogate ≠ 롤링 비용"
+      - "A-PTO: 13/27 trial / Colab GPU 이전(sha 동결 대체) / calibration 창 공유"
+      - "범위: 안정 회전 CPG 154 SKU·10묶음 한정, 수요 관측 = 외생 가정 조건부"
+    sources: ["docs/agent_stage_report.md §5", "docs/stage6_report.md §8"]
+
+  - id: A6
+    part: appendix
+    layout: generic
+    title: "부록 A6 — 재현 절차"
+    body:
+      - "재현 커맨드 7종 + 덱 집계(scripts/build_deck_s5_agg.py) / 산출물 sha 표"
+      - "LLM군 재실행 = 계약 재현(동결 설정·원시 응답 보관·sha 추적)"
+    sources: ["docs/agent_stage_report.md §6", "handoff v1.9 §3"]
+
+tom:
+  id: TOM
+  layout: generic   # upgrade target: three_lane_tom
+  title: "Target Operating Model — 역할·승인·책임 1장"
+  body:
+    - "에이전트: 근거 수집 · 후보 생성 · 승인 요청 초안 · 사후 추적"
+    - "사람: 행동공간 정의 · 승인점 ①(계획 담당) ②(DC 관리자) · 실행/롤백 · 정책 변경 승인"
+    - "APS·시스템: 발주 실행 · 데이터 공급"
+    - "인수인계 = 주간 브리프 / 정책 변경(τ 격자·게이트 임계) = 승인점 ② 권한 / 장애 대응 = LLM 실패 시 무조치 A4 fallback (운영 장치)"
+  sources: ["plan §4.8", "docs/asis_decision_journey.md §2", "docs/agent_stage_report.md §1"]
