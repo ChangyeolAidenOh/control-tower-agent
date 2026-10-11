@@ -4,7 +4,7 @@
 
 > 본 저장소의 모든 수치는 공개 데이터(M5) 기반 **시뮬레이션 결과**이며, 실제 고객사 성과가 아닙니다.
 
-**대시보드**: [배포 URL — 9-G에서 치환] · 로컬 실행: `cd dashboard && streamlit run app.py`
+**대시보드**: https://control-tower-agent.streamlit.app · 로컬 실행: `cd dashboard && streamlit run app.py`
 
 ## 어떤 의사결정을 다루는가
 
