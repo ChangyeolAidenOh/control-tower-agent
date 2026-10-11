@@ -427,10 +427,15 @@ def main() -> int:
         "h3_h5_anchor_check": "passed",
         "sources": sources,
         "case_selection_rule": CASE_SELECTION_RULE,
-        "case_texts_review": "passed 2026-10-11 (C1, C2); new cases from ST9-04 require review",
-        "pending": ["forecast_extract (9-D)"],
+        "case_texts_review": "passed 2026-10-11 (C1, C2, C3, C4)",
+        "pending": [],
         "snapshot_sha256": snap_sha,
     }
+    extract_path = ASSETS / "forecast_extract.json"
+    if extract_path.exists():
+        manifest["forecast_extract_sha256"] = sha256_file(extract_path)
+    else:
+        manifest["pending"].append("forecast_extract (9-D)")
     man_path = ASSETS / "display_manifest.json"
     with open(man_path, "w", encoding="utf-8") as f:
         json.dump(manifest, f, ensure_ascii=False, indent=1, sort_keys=True)
@@ -438,7 +443,7 @@ def main() -> int:
     print(f"snapshot {snap_path.relative_to(ROOT)} sha256 {snap_sha}")
     print(f"manifest {man_path.relative_to(ROOT)}")
     print(f"cases {len(snapshot['approval']['cases'])}")
-    print("pending: forecast_extract")
+    print(f"manifest pending: {manifest['pending']}")
     return 0
 
 
