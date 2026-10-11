@@ -187,3 +187,33 @@ def test_bad_shapes_raise(cfg):
         run(lambda w, ctx: [], scen, state, hist, test[:21], cfg)
     with pytest.raises(ValueError):
         run(lambda w, ctx: [], scen[:, :, :4], state, hist, test, cfg)
+
+def test_selection_time_budget_cuts_evaluation(cfg):
+    hist, test, scen, state = make_world()
+    actions = [make_action(0.70, {}, BASE_TAU, SERIES),
+               make_action(0.80, {}, BASE_TAU, SERIES),
+               make_action(0.90, {}, BASE_TAU, SERIES)]
+    res_cut, _ = run_agent_window(
+        state.copy(), test, hist, lambda w, ctx: actions,
+        lambda o: scen, SERIES, params(), 1e9, cfg,
+        test_start_idx=T_START, fold=1, group_id="B99",
+        base_tau=BASE_TAU, policy_name="agent_numeric",
+        csl_floor=0.0, selection_time_budget_s=0.0,
+    ), None
+    res_cut = res_cut[0] if isinstance(res_cut, tuple) else res_cut
+    for wk in res_cut.weeks:
+        assert wk.budget_exceeded
+        assert wk.candidates_provided == 3
+        assert wk.gate["evaluated_candidates"] == 0
+        assert wk.fallback
+        assert wk.selection_time_s >= 0.0
+    res_all = run_agent_window(
+        state.copy(), test, hist, lambda w, ctx: actions,
+        lambda o: scen, SERIES, params(), 1e9, cfg,
+        test_start_idx=T_START, fold=1, group_id="B99",
+        base_tau=BASE_TAU, policy_name="agent_numeric",
+        csl_floor=0.0, selection_time_budget_s=None,
+    )
+    for wk in res_all.weeks:
+        assert not wk.budget_exceeded
+        assert wk.gate["evaluated_candidates"] == 3

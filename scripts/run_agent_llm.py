@@ -1,22 +1,23 @@
-"""ST7-06 Step 3: LLM-arm runner, smoke mode (frozen contract, ST7-04).
+"""ST7-06/ST7-07: LLM-arm runner -- smoke and official modes (ST7-04).
 
-Pre-flight hard gates: the freeze manifest must match the live code (payload
-sha, adapter file sha, schema sha, SDK version) and ANTHROPIC_API_KEY must be
-set -- any mismatch aborts BEFORE the first paid call. Smoke episodes come
-from the frozen manifest (fold 1, bundle ranks 0-1, weeks 0-3 = 8 episodes,
-<= 16 calls). Technical-contract facts only reach the console: call outcome,
-stop_reason, tokens, latency, candidate legality/truncation, cost spent and
-the 960-call extrapolation (L1). Performance quantities (cost, CSL, gate
-pass, fallback) are computed, written to the sealed JSON and sha-recorded,
-never printed (ST7-04). Raw responses are stored in full with sha256 (L4).
+Pre-flight hard gates (both modes): the freeze manifest must match the live
+code (payload sha, adapter file sha, schema sha, SDK version) and
+ANTHROPIC_API_KEY must be set -- any mismatch aborts BEFORE the first paid
+call. Smoke runs the frozen episode set (fold 1, ranks 0-1); official runs
+--folds (default 1-12) over every bundle = 480 episodes, 960 calls under
+the frozen contract -- no prompt, model or parameter change of any kind.
 
-Timing split (L6): selection_time_s covers generation + parse + scenario
-evaluation + gate + ranking + realized execution of the window loop;
-explanation_time_s is measured separately after the window and is excluded
-from any H5 time budget.
+Console surfaces technical-contract facts only: outcomes, tokens, latency,
+legality counters, spend and the per-episode selection-time median (the
+numeric arm's official time budget, ST7-01). Performance quantities are
+written to the sealed JSON with sha256, never printed (ST7-04). Raw
+responses are stored in full. Budget exhaustion (conservative guard) and
+auth failures ABORT the run (reviewer table, ST7-06); timeouts/429/5xx are
+recorded as tech errors with zero extra calls and the episode falls back.
 
 Run:
-  python -m scripts.run_agent_llm --tag smoke
+  python -m scripts.run_agent_llm --mode smoke
+  caffeinate -i python -m scripts.run_agent_llm --mode official --tag official
 """
 
 import argparse
@@ -106,22 +107,27 @@ def save_raw(tag: str, name: str, rec: la.CallRecord) -> None:
                                 "raw": rec.raw}, sort_keys=True))
 
 
+def replayer_get(replayer: AgentSelectionReplayer, series):
+    def get(origin_idx: int):
+        return replayer.get(origin_idx, series)
+    return get
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--tag", type=str, default="smoke")
+    ap.add_argument("--mode", choices=["smoke", "official"], default="smoke")
+    ap.add_argument("--folds", type=str, default="1-12")
+    ap.add_argument("--tag", type=str, default=None)
     args = ap.parse_args()
+    tag = args.tag or args.mode
 
     db.load_dotenv()
     if not os.environ.get("ANTHROPIC_API_KEY"):
         raise SystemExit("ANTHROPIC_API_KEY is not set; aborting before "
                          "any paid call")
     manifest = verify_freeze()
-    smoke = manifest["smoke_episodes"]
-    fold_no = int(smoke["fold"])
-    ranks = [int(r) for r in smoke["bundle_ranks"]]
     print(f"freeze ok payload={manifest['freeze_payload_sha256'][:12]} "
-          f"sdk={manifest['anthropic_sdk_version']} "
-          f"smoke=f{fold_no} ranks={ranks} max_calls={smoke['n_calls_max']}")
+          f"sdk={manifest['anthropic_sdk_version']} mode={args.mode}")
 
     sim_cfg = load_sim_config(PROJECT_ROOT / "configs" / "simulator.yaml")
     tuning = json.loads(TUNING_PATH.read_text())
@@ -138,183 +144,200 @@ def main() -> None:
         costs = fetch_sku_costs(conn)
     finally:
         conn.close()
-    f = next(x for x in folds_all if x["fold"] == fold_no)
-    ts = f["test_start_idx"]
     group_ids = sorted(demand)
-    smoke_gids = [group_ids[r] for r in ranks]
     all_series = tuple(s for gid in group_ids for s in demand[gid][0])
 
-    paths = build_fold_paths(
-        demand, fold=fold_no,
-        warmup_start_row=f["warmup_start_idx"] - 1,
-        test_start_row=ts - 1, test_end_row=f["test_end_idx"] - 1,
-        p=SCENARIO_P, cfg=sim_cfg,
-    )
-    path_sha = scenario_sha(paths, group_ids)
-    replayer = AgentSelectionReplayer(
-        fold=fold_no,
-        expected_origins=[ts - 1 + 7 * w for w in range(N_WEEKS)],
-        expected_series=all_series,
-        expected_path_sha=path_sha,
-    )
+    if args.mode == "smoke":
+        smoke = manifest["smoke_episodes"]
+        fold_list = [int(smoke["fold"])]
+        gid_by_fold = {fold_list[0]: [group_ids[int(r)]
+                                      for r in smoke["bundle_ranks"]]}
+    else:
+        lo, hi = (args.folds.split("-") + [args.folds.split("-")[0]])[:2]
+        fold_list = list(range(int(lo), int(hi) + 1))
+        gid_by_fold = {f: group_ids for f in fold_list}
 
     client = la.make_client()
     ledger = la.CostLedger()
-    episodes, week_rows, call_rows = [], [], []
-    gen_latencies, expl_latencies = [], []
+    episodes, week_rows = [], []
+    sel_times, gen_latencies, expl_latencies = [], [], []
+    outcome_counts: dict[str, int] = {}
+    valid_slots = slot_total = 0
     integrity_ok = True
+    run_t0 = time.time()
 
-    for gid in smoke_gids:
-        bp = paths[gid]
-        series, _ = demand[gid]
-        h, b = cost_arrays(series, costs, R_ENV)
-        pr = SkuParams(series_ids=series, h=h, b=b,
-                       w=np.full(len(series), sim_cfg.weight_wi))
-        state = compute_common_warmup(
-            bp.warmup, bp.history, warmup_a4, pr, kg[gid], sim_cfg,
-            warmup_start_idx=f["warmup_start_idx"],
+    for fold_no in fold_list:
+        f = next(x for x in folds_all if x["fold"] == fold_no)
+        ts = f["test_start_idx"]
+        paths = build_fold_paths(
+            demand, fold=fold_no,
+            warmup_start_row=f["warmup_start_idx"] - 1,
+            test_start_row=ts - 1, test_end_row=f["test_end_idx"] - 1,
+            p=SCENARIO_P, cfg=sim_cfg,
         )
-        hist = np.concatenate([bp.history, bp.warmup], axis=0)
-        gen_meta: dict[int, dict] = {}
+        path_sha = scenario_sha(paths, group_ids)
+        replayer = AgentSelectionReplayer(
+            fold=fold_no,
+            expected_origins=[ts - 1 + 7 * w for w in range(N_WEEKS)],
+            expected_series=all_series,
+            expected_path_sha=path_sha,
+        )
 
-        def provider(w, ctx, _gid=gid, _series=series):
-            expected = ts - 1 + 7 * w
-            if ctx.origin_idx != expected:
-                raise RuntimeError(
-                    f"origin mismatch: ctx {ctx.origin_idx} != {expected}")
-            prompt = la.build_generation_prompt(
-                _gid, _series, h, b,
-                recent_demand=ctx.hist[-la.RECENT_DAYS:],
-                inv=ctx.state.inv, pipeline=ctx.state.pipeline,
-                k_g=float(kg[_gid]), base_tau=base_tau,
-                week=w + 1, prev_week=ctx.prev,
+        for gid in gid_by_fold[fold_no]:
+            bp = paths[gid]
+            series, _ = demand[gid]
+            h, b = cost_arrays(series, costs, R_ENV)
+            pr = SkuParams(series_ids=series, h=h, b=b,
+                           w=np.full(len(series), sim_cfg.weight_wi))
+            state = compute_common_warmup(
+                bp.warmup, bp.history, warmup_a4, pr, kg[gid], sim_cfg,
+                warmup_start_idx=f["warmup_start_idx"],
             )
-            rec = la.call_generation(client, ledger, la.GEN_SYSTEM, prompt)
-            save_raw(args.tag, f"f{fold_no}_{_gid}_w{w}_gen", rec)
-            if rec.outcome == la.OUTCOME_FATAL_AUTH:
-                raise SystemExit(f"fatal auth error: {rec.error}")
-            parse = None
-            if rec.outcome == la.OUTCOME_OK:
-                parse = la.process_generation_response(rec.text, _series,
-                                                       base_tau)
-            stats = (parse.stats() if parse is not None
-                     and not parse.parse_failed else
-                     {"candidate_slots_used": 0, "valid_candidates": 0,
-                      "invalid_candidates": 0, "duplicate_valid_slots": 0,
-                      "truncated_count": 0})
-            gen_meta[w] = {"call": record_dict(rec),
-                           "parse_failed": parse is None or parse.parse_failed,
-                           "failure_reason": (None if parse is None
-                                              else parse.failure_reason),
-                           **stats}
-            gen_latencies.append(rec.latency_s)
-            print(f"f{fold_no} {_gid} w{w + 1} gen={rec.outcome} "
-                  f"stop={rec.stop_reason} in={rec.input_tokens} "
-                  f"out={rec.output_tokens} lat={rec.latency_s:.1f}s "
-                  f"valid={stats['valid_candidates']}/"
-                  f"{stats['candidate_slots_used']} "
-                  f"trunc={stats['truncated_count']}")
-            if parse is None or parse.parse_failed:
-                return []
-            return [c.action for c in parse.valid]
+            hist = np.concatenate([bp.history, bp.warmup], axis=0)
+            gen_meta: dict[int, dict] = {}
 
-        t0 = time.perf_counter()
-        res = run_agent_window(
-            state, bp.test, hist, provider, replayer_get(replayer, series),
-            series, pr, kg[gid], sim_cfg,
-            test_start_idx=ts, fold=fold_no, group_id=gid,
-            base_tau=base_tau, policy_name=POLICY_NAME,
-        )
-        selection_time_s = time.perf_counter() - t0
+            def provider(w, ctx, _gid=gid, _series=series, _ts=ts,
+                         _fold=fold_no):
+                expected = _ts - 1 + 7 * w
+                if ctx.origin_idx != expected:
+                    raise RuntimeError(
+                        f"origin mismatch: ctx {ctx.origin_idx} != {expected}")
+                prompt = la.build_generation_prompt(
+                    _gid, _series, h, b,
+                    recent_demand=ctx.hist[-la.RECENT_DAYS:],
+                    inv=ctx.state.inv, pipeline=ctx.state.pipeline,
+                    k_g=float(kg[_gid]), base_tau=base_tau,
+                    week=w + 1, prev_week=ctx.prev,
+                )
+                rec = la.call_generation(client, ledger, la.GEN_SYSTEM,
+                                         prompt)
+                save_raw(tag, f"f{_fold}_{_gid}_w{w}_gen", rec)
+                if rec.outcome in la.FATAL_OUTCOMES:
+                    raise SystemExit(f"fatal: {rec.outcome} {rec.error}")
+                parse = None
+                if rec.outcome == la.OUTCOME_OK:
+                    parse = la.process_generation_response(
+                        rec.text, _series, base_tau)
+                stats = (parse.stats() if parse is not None
+                         and not parse.parse_failed else
+                         {"candidate_slots_used": 0, "valid_candidates": 0,
+                          "invalid_candidates": 0,
+                          "duplicate_valid_slots": 0, "truncated_count": 0})
+                gen_meta[w] = {
+                    "call": record_dict(rec),
+                    "parse_failed": parse is None or parse.parse_failed,
+                    "failure_reason": (None if parse is None
+                                       else parse.failure_reason),
+                    **stats}
+                gen_latencies.append(rec.latency_s)
+                outcome_counts[rec.outcome] = (
+                    outcome_counts.get(rec.outcome, 0) + 1)
+                nonlocal_counts["valid"] += stats["valid_candidates"]
+                nonlocal_counts["slots"] += stats["candidate_slots_used"]
+                if parse is None or parse.parse_failed:
+                    return []
+                return [c.action for c in parse.valid]
 
-        for wk in res.weeks:
-            expl_prompt = la.build_explanation_prompt(
-                gid, wk.week,
-                {"tau_eff": wk.selected_tau,
-                 "multipliers": wk.selected_multipliers},
-                wk.gate)
-            rec = la.call_explanation(client, ledger, expl_prompt)
-            save_raw(args.tag, f"f{fold_no}_{gid}_w{wk.week - 1}_expl", rec)
-            expl_latencies.append(rec.latency_s)
-            print(f"f{fold_no} {gid} w{wk.week} expl={rec.outcome} "
-                  f"in={rec.input_tokens} out={rec.output_tokens} "
-                  f"lat={rec.latency_s:.1f}s")
-            week_rows.append({
-                "fold": fold_no, "group_id": gid, "week": wk.week,
-                "origin_idx": wk.origin_idx, "gate": wk.gate,
-                "fallback": wk.fallback,
-                "selected_slot": wk.selected_slot,
-                "selected_tau": wk.selected_tau,
-                "selected_multipliers": list(map(list,
-                                                 wk.selected_multipliers)),
-                "selected_mean_cost": wk.selected_mean_cost,
-                "scaling": wk.scaling,
-                "generation": gen_meta[wk.week - 1],
-                "explanation": {**record_dict(rec),
-                                "text": rec.text if rec.outcome == la.OUTCOME_OK
-                                else ""},
-            })
+            nonlocal_counts = {"valid": 0, "slots": 0}
+            res = run_agent_window(
+                state, bp.test, hist, provider,
+                replayer_get(replayer, series),
+                series, pr, kg[gid], sim_cfg,
+                test_start_idx=ts, fold=fold_no, group_id=gid,
+                base_tau=base_tau, policy_name=POLICY_NAME,
+            )
+            valid_slots += nonlocal_counts["valid"]
+            slot_total += nonlocal_counts["slots"]
 
-        ok = (res.n_days == WINDOW_DAYS and len(res.records) == N_WEEKS
-              and abs(sum(r.cost for r in res.records) - res.window_cost)
-              <= 1e-9 * max(1.0, abs(res.window_cost)))
-        integrity_ok = integrity_ok and ok
-        print(f"f{fold_no} {gid} ok={ok} days={res.n_days} "
-              f"selection_time={selection_time_s:.1f}s")
-        episodes.extend({
-            "policy": POLICY_NAME, "r": R_ENV, "fold": rec_.fold,
-            "group_id": rec_.group_id, "week": rec_.week,
-            "cost": rec_.cost, "holding_cost": rec_.holding_cost,
-            "shortage_cost": rec_.shortage_cost,
-            "terminal_cost": rec_.terminal_cost,
-            "csl": rec_.csl, "fill_rate": rec_.fill_rate,
-            "guardrail_blocked": rec_.guardrail_blocked,
-            "binding_days": rec_.binding_days,
-            "n_days": rec_.n_days, "n_sku": rec_.n_sku,
-        } for rec_ in res.records)
-        call_rows.append({"group_id": gid,
-                          "selection_time_s": selection_time_s})
+            for wk in res.weeks:
+                expl_prompt = la.build_explanation_prompt(
+                    gid, wk.week,
+                    {"tau_eff": wk.selected_tau,
+                     "multipliers": wk.selected_multipliers},
+                    wk.gate)
+                rec = la.call_explanation(client, ledger, expl_prompt)
+                save_raw(tag, f"f{fold_no}_{gid}_w{wk.week - 1}_expl", rec)
+                if rec.outcome in la.FATAL_OUTCOMES:
+                    raise SystemExit(f"fatal: {rec.outcome} {rec.error}")
+                expl_latencies.append(rec.latency_s)
+                outcome_counts[rec.outcome] = (
+                    outcome_counts.get(rec.outcome, 0) + 1)
+                sel_times.append(wk.selection_time_s)
+                week_rows.append({
+                    "fold": fold_no, "group_id": gid, "week": wk.week,
+                    "origin_idx": wk.origin_idx, "gate": wk.gate,
+                    "fallback": wk.fallback,
+                    "selected_slot": wk.selected_slot,
+                    "selected_tau": wk.selected_tau,
+                    "selected_multipliers": list(
+                        map(list, wk.selected_multipliers)),
+                    "selected_mean_cost": wk.selected_mean_cost,
+                    "scaling": wk.scaling,
+                    "selection_time_s": wk.selection_time_s,
+                    "candidates_provided": wk.candidates_provided,
+                    "budget_exceeded": wk.budget_exceeded,
+                    "generation": gen_meta[wk.week - 1],
+                    "explanation": {
+                        **record_dict(rec),
+                        "text": (rec.text
+                                 if rec.outcome == la.OUTCOME_OK else "")},
+                })
 
-    gen_mean = float(np.mean(gen_latencies)) if gen_latencies else 0.0
-    expl_mean = float(np.mean(expl_latencies)) if expl_latencies else 0.0
+            ok = (res.n_days == WINDOW_DAYS and len(res.records) == N_WEEKS
+                  and abs(sum(r.cost for r in res.records) - res.window_cost)
+                  <= 1e-9 * max(1.0, abs(res.window_cost)))
+            integrity_ok = integrity_ok and ok
+            print(f"f{fold_no:02d} {gid} ok={ok} "
+                  f"valid={nonlocal_counts['valid']}/"
+                  f"{nonlocal_counts['slots']} "
+                  f"sel_med={np.median([w_.selection_time_s for w_ in res.weeks]):.1f}s "
+                  f"spent=${ledger.spent_usd:.3f}")
+            episodes.extend({
+                "policy": POLICY_NAME, "r": R_ENV, "fold": rec_.fold,
+                "group_id": rec_.group_id, "week": rec_.week,
+                "cost": rec_.cost, "holding_cost": rec_.holding_cost,
+                "shortage_cost": rec_.shortage_cost,
+                "terminal_cost": rec_.terminal_cost,
+                "csl": rec_.csl, "fill_rate": rec_.fill_rate,
+                "guardrail_blocked": rec_.guardrail_blocked,
+                "binding_days": rec_.binding_days,
+                "n_days": rec_.n_days, "n_sku": rec_.n_sku,
+            } for rec_ in res.records)
+
+    sel_median = float(np.median(sel_times)) if sel_times else 0.0
     n_calls = ledger.calls
     mean_cost = ledger.spent_usd / n_calls if n_calls else 0.0
-    projected_960 = mean_cost * 960
-
-    out_path = OUT_DIR / f"agent_llm_{args.tag}.json"
+    out_path = OUT_DIR / f"agent_llm_{tag}.json"
     payload = {
-        "task": "ST7-06 LLM-arm smoke run",
-        "tag": args.tag,
+        "task": f"ST7 LLM-arm {args.mode} run",
+        "tag": tag,
         "date": datetime.date.today().isoformat(),
         "freeze_payload_sha256": manifest["freeze_payload_sha256"],
-        "fold": fold_no, "bundles": smoke_gids, "r_env": R_ENV,
+        "mode": args.mode, "folds": fold_list, "r_env": R_ENV,
         "policy": POLICY_NAME,
         "ledger": {"calls": ledger.calls,
                    "input_tokens": ledger.input_tokens,
                    "output_tokens": ledger.output_tokens,
                    "spent_usd": ledger.spent_usd},
-        "performance_withheld_until_official": True,
+        "selection_time_median_s": sel_median,
+        "outcome_counts": outcome_counts,
+        "performance_withheld_until_official": args.mode == "smoke",
         "episodes": episodes,
         "weeks": week_rows,
-        "selection_times": call_rows,
     }
     out_path.write_text(json.dumps(payload, sort_keys=True))
     file_sha = hashlib.sha256(out_path.read_bytes()).hexdigest()
-    print(f"integrity_all_ok={integrity_ok} episode_rows={len(episodes)}")
+    print(f"integrity_all_ok={integrity_ok} episode_rows={len(episodes)} "
+          f"wall_s={time.time() - run_t0:.0f}")
+    print(f"outcomes={outcome_counts} legal_slots={valid_slots}/{slot_total}")
     print(f"calls={n_calls} tokens_in={ledger.input_tokens} "
           f"tokens_out={ledger.output_tokens} "
           f"spent_usd={ledger.spent_usd:.4f} mean_call_usd={mean_cost:.5f}")
-    print(f"projected_official_960_calls_usd={projected_960:.2f} "
-          f"(budget {la.TOTAL_BUDGET_USD:.2f}, smoke incl.)")
-    print(f"latency gen_mean={gen_mean:.1f}s expl_mean={expl_mean:.1f}s")
+    print(f"selection_time_median_s={sel_median:.2f} "
+          f"gen_mean={np.mean(gen_latencies) if gen_latencies else 0:.1f}s "
+          f"expl_mean={np.mean(expl_latencies) if expl_latencies else 0:.1f}s")
     print(f"wrote {out_path.name} sha256={file_sha[:16]} "
-          f"(performance sealed, ST7-04)")
-
-
-def replayer_get(replayer: AgentSelectionReplayer, series):
-    def get(origin_idx: int):
-        return replayer.get(origin_idx, series)
-    return get
+          f"(performance sealed until joint disclosure, ST7-04)")
 
 
 if __name__ == "__main__":

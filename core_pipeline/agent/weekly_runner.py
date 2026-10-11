@@ -12,20 +12,31 @@ strictly between t_w's midnight transition and t_w+1's demand realization:
 The candidate provider receives a SelectionContext assembled at exactly
 this point (state COPY, history view, previous-week realized summary), so
 an LLM provider's information set coincides with the gate's by
-construction (L2); the numeric arm ignores the context. The winner (or
-the no-action fallback when all candidates are rejected) executes the
-realized week in capacity_mode="scale" (ST7-02 D2); the final engine
-state carries into week w+1 (states are arm-private, D6). After week 4
-the terminal valuation and the weekly aggregation reuse the FROZEN episode
-machinery (_aggregate_weeks import: single source for cost/CSL formulas),
-so H3/H5 realized costs stay on the Stage 6 28-day contract. The 10-day
-selection costs are never added to realized costs (D4).
+construction (L2); the numeric arm ignores the context.
+
+Selection timing and budget (ST7-01/L6): selection_time_s covers the
+provider call (generation + parsing for the LLM arm) plus candidate
+evaluation, gating and ranking -- never the realized execution or the
+explanation call. With selection_time_budget_s set (numeric arm official
+runs: the LLM arm's measured per-episode median), the evaluation loop
+stops once the elapsed selection time exceeds the budget and ONLY the
+candidates already evaluated are used; the cut is recorded
+(budget_exceeded, candidates_provided vs evaluated_candidates).
+
+The winner (or the no-action fallback when all candidates are rejected)
+executes the realized week in capacity_mode="scale" (ST7-02 D2); the final
+engine state carries into week w+1 (states are arm-private, D6). After week
+4 the terminal valuation and the weekly aggregation reuse the FROZEN episode
+machinery (_aggregate_weeks import), so H3/H5 realized costs stay on the
+Stage 6 28-day contract. The 10-day selection costs are never added to
+realized costs (D4).
 
 Chaining identity: run_window ends every day with midnight_transition, so
 four chained 7-day calls reproduce one 28-day call day-by-day when the
 policy coincides (pinned by the no-action parity test).
 """
 
+import time
 from dataclasses import dataclass
 
 import numpy as np
@@ -81,6 +92,9 @@ class WeekLog:
     selected_mean_cost: float        # nan on fallback
     scaling: dict                    # realized-path D2 record
     evaluations: tuple[CandidateEvaluation, ...]
+    selection_time_s: float          # provider + evaluation + rank (L6)
+    candidates_provided: int         # slots handed over by the provider
+    budget_exceeded: bool            # evaluation cut by the time budget
 
 
 @dataclass(frozen=True)
@@ -112,6 +126,7 @@ def run_agent_window(
     base_tau: float,
     policy_name: str,
     csl_floor: float | None = None,  # official runs: None -> cfg.episode_csl_floor
+    selection_time_budget_s: float | None = None,
 ) -> AgentWindowResult:
     n_days, n_sku = test_demand.shape
     if n_days != WINDOW_DAYS:
@@ -150,15 +165,22 @@ def run_agent_window(
                 f"({FORECAST_DAYS}, {n_sku}, {N_SCEN})")
         scen_sel = scen[:SELECTION_DAYS]
 
+        sel_t0 = time.perf_counter()
         actions = list(candidate_provider(w, ctx))
-        evals = [
-            evaluate_candidate(
+        evals: list[CandidateEvaluation] = []
+        budget_exceeded = False
+        for slot, action in enumerate(actions):
+            if (selection_time_budget_s is not None
+                    and time.perf_counter() - sel_t0
+                    > selection_time_budget_s):
+                budget_exceeded = True
+                break
+            evals.append(evaluate_candidate(
                 slot, action, scen_sel, state, hist_sel, series_ids,
                 params, k_g, cfg, t0_idx=t_w + 1, csl_floor=floor,
-            )
-            for slot, action in enumerate(actions)
-        ]
+            ))
         winner = select_candidate(evals)
+        selection_time_s = time.perf_counter() - sel_t0
         fallback = winner is None
         action = no_action if fallback else winner.action
 
@@ -184,6 +206,9 @@ def run_agent_window(
             selected_mean_cost=float("nan") if fallback else winner.mean_cost,
             scaling=policy.scaling_summary(),
             evaluations=tuple(evals),
+            selection_time_s=selection_time_s,
+            candidates_provided=len(actions),
+            budget_exceeded=budget_exceeded,
         ))
 
     terminal = terminal_cost(state, params.h)

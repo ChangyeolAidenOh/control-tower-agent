@@ -86,6 +86,7 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--folds", type=str, default="1")
     ap.add_argument("--tag", type=str, default="smoke")
+    ap.add_argument("--time-budget-s", type=float, default=None)
     args = ap.parse_args()
     lo, hi = (args.folds.split("-") + [args.folds.split("-")[0]])[:2]
     fold_list = list(range(int(lo), int(hi) + 1))
@@ -169,6 +170,7 @@ def main() -> None:
                 kg[gid], sim_cfg,
                 test_start_idx=ts, fold=fold, group_id=gid,
                 base_tau=base_tau, policy_name=POLICY_NAME,
+                selection_time_budget_s=args.time_budget_s,
             )
             elapsed = time.perf_counter() - t0
             timings.append(elapsed / N_WEEKS)
@@ -208,6 +210,9 @@ def main() -> None:
                                                  wk.selected_multipliers)),
                 "selected_mean_cost": wk.selected_mean_cost,
                 "scaling": wk.scaling,
+                "selection_time_s": wk.selection_time_s,
+                "candidates_provided": wk.candidates_provided,
+                "budget_exceeded": wk.budget_exceeded,
             } for wk in res.weeks)
 
     out_path = OUT_DIR / f"agent_numeric_{args.tag}.json"
@@ -219,6 +224,7 @@ def main() -> None:
         "r_env": R_ENV,
         "base_tau": base_tau,
         "schedule_sha256": schedule_sha,
+        "time_budget_s": args.time_budget_s,
         "policy": POLICY_NAME,
         "performance_withheld_until_llm_freeze": args.tag == "smoke",
         "episodes": episodes,
