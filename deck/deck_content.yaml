@@ -12,6 +12,7 @@ meta:
   - H1 PASS는 3단계 수용 전 r 기각과 동반 제시
   - 'CSL 라벨: §5 표 = 에피소드 평균 / 차트·집계 = pooled SKU-일'
   - 비용 단위 = 시뮬레이터 비용 단위(설정 비용함수 기준), 금액 환산 금지
+  - 'ΔWC·자본효과(USD)는 γ·k 명시 가정 조건부(A5 전용) — 시뮬레이터 비용의 금액 환산 금지는 유지, 통화는 재고 브리지 경유만'
 slides:
 - id: S1
   kicker: Executive Summary
@@ -226,7 +227,7 @@ slides:
     tone: muted
     items:
     - 관측값 / 시뮬레이션 결과 / 향후 검증할 비즈니스 가정 — 3분할
-    - 시뮬레이션 성과 = 설정 비용함수 내 성과, 현 시점 수치 미기재
+    - '관측 수치·재무 브리지·조건부 시나리오는 부록 A5 요약 · 상세 docs/business_case.md (ST8-10)'
   - name: 자율성 로드맵
     tone: muted
     items:
@@ -355,6 +356,50 @@ slides:
   sources:
   - docs/agent_stage_report.md §5
   - docs/stage6_report.md §8
+- id: A5
+  kicker: Appendix
+  layout: grid_2x2
+  title: 'A5 — 비즈니스 케이스: 계산 경계 3분할 요약 (상세 docs/business_case.md)'
+  panels:
+  - name: 관측 — L0 → Agent (r=5, 480ep, 동결 산출물)
+    tone: accent
+    items:
+    - frozen: '비용 −240.66/ep (−18.77%) = 보유 −403.73 + 결품 +182.67 + 터미널 −19.59 — 절감은 전액 보유비, 결품비는 증가'
+      source: stage8_lagging_metrics.json
+    - frozen: 'pooled CSL −4.73%p · 수량 결품률 +6.15%p (≈ 미충족 +3.85단위/묶음·일)'
+      source: stage8_lagging_metrics.json
+    - frozen: 'DOI(on-hand) 1.96 → 1.26일 (−35.6%) · in-transit −0.29일(별도) · 총 포지션 −0.99일'
+      source: stage8_lagging_metrics.json
+  - name: 재무 브리지 (관측 → 가정의 교량)
+    tone: ink
+    items:
+    - frozen: '항등식: 판매가 평가 재고자산 = 일평균 보유비용 / ρ (h_i = ρ·p̄_i, ρ = 0.401871 — 합성 비용 계수)'
+      source: docs/business_case.md §4
+    - frozen: '판매가 평가 on-hand: L0 333.6 → Agent 190.1 USD/묶음, Δ 143.5 (서브셋 10묶음 1,435)'
+      source: stage8_lagging_metrics.json financial_bridge
+    - frozen: '검산: 내재 평균단가 2.71 ≈ p̄ 중앙값 2.49 · in-transit은 소유권 가정 전 제외'
+      source: docs/business_case.md §4
+  - name: 조건부 재무 시나리오 — 전부 [가정]
+    tone: muted
+    items:
+    - frozen: '[가정] ΔWC(γ) = γ × 1,435 USD — γ ∈ {0.5, 0.6, 0.7} → 718 / 861 / 1,005 (일회성, 서브셋)'
+      source: docs/business_case.md §5.1
+    - frozen: '[가정] 연간 자본효과 = ΔWC × k — 예: γ=0.6, k=0.10 → 86 USD/년 (서브셋)'
+      source: docs/business_case.md §5.2
+    - frozen: '전사 확장은 비례 계수 S 명시 후에만 — 본 덱은 서브셋 수치만 제시, 규모가 아닌 환산 구조가 목적'
+      source: docs/business_case.md §3·§5
+  - name: 금지 규칙 · 산출 불가 · 파일럿 입력
+    tone: warn
+    items:
+    - frozen: '금지: 일회성 ΔWC와 연간 흐름 합산 / 합성비용 절감과의 ROI 합산 / 서비스 비용 미정량 상태의 순편익 주장'
+      source: docs/business_case.md §5.3
+    - frozen: '산출 불가: 실제 ROI · 현금 절감액 · 전사 효과(S 미가정) · 서비스 악화 금액 · ρ–자본비용 중복 여부'
+      source: docs/business_case.md §7
+    - frozen: '파일럿 확인 입력 6종: c_i · k(WACC) · 실측 보관비 · SLA 단가 · 구현/운영비(LLM $1.10/480ep) · CSL 하한'
+      source: docs/business_case.md §7
+  sources:
+  - outputs/reports/stage8_lagging_metrics.json (ST8-07/09, 게이트 G1–G4)
+  - docs/business_case.md (ST8-10)
 tom:
   id: TOM
   kicker: Target Operating Model

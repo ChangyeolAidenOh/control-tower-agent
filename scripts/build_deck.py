@@ -557,7 +557,9 @@ def build_grid_2x2(slide, spec, res):
     top = BAND_TOP if spec.get("headline") else Inches(1.62)
     pos = grid_positions(2, 2, top=top)
     for (x, y, w, h), p in zip(pos, panels):
-        panel(slide, x, y, w, h, p["name"], p["items"], tone=p.get("tone", "accent"))
+        items = [res.value(it, f"{spec['id']}:{p['name']}:{j}")
+                 for j, it in enumerate(p["items"])]
+        panel(slide, x, y, w, h, p["name"], items, tone=p.get("tone", "accent"))
     source_line(slide, spec.get("sources"))
 
 
