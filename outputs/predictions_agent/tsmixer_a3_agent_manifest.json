@@ -1,0 +1,627 @@
+{
+  "crosscheck_tolerance": {
+    "atol": 1e-06,
+    "rtol": 1e-06
+  },
+  "folds": [
+    {
+      "checkpoint_sha256": "e20f01b4bbacd140",
+      "crossing_rate_before": 0.012581168831168832,
+      "demand_path_sha256": "a789632a75e872fb1f8792e3bb6bd987341092024a6e9c2cc51cf834293b7ddc",
+      "encoder_hash": "f8add6ab7386",
+      "file": "tsmixer_a3_agent_f1.parquet",
+      "fold": 1,
+      "gates": {
+        "t_minus_1": {
+          "bit_exact": true,
+          "label": "vs_committed_t_minus_1",
+          "max_abs_diff": 0.0,
+          "origins": [
+            1605
+          ],
+          "rows": 4312
+        },
+        "weekly": {
+          "bit_exact": true,
+          "label": "vs_eval_weekly",
+          "max_abs_diff": 0.0,
+          "origins": [
+            1612,
+            1619,
+            1626
+          ],
+          "rows": 12936
+        }
+      },
+      "origin_count": 4,
+      "origins": 4,
+      "prediction_file_sha256": "32f41276d8518306",
+      "probe_max_abs_diff": 4.76837158203125e-07,
+      "retrain_fold": 1,
+      "rows": 17248,
+      "selection_origins": [
+        1605,
+        1612,
+        1619,
+        1626
+      ],
+      "series": 154,
+      "shock": {
+        "duration_days": 7,
+        "group_id": "B03_CA_HOUSEHOLD_1",
+        "multiplier": 1.5,
+        "shock_start_idx": 1608,
+        "start_offset": 2
+      }
+    },
+    {
+      "checkpoint_sha256": "e20f01b4bbacd140",
+      "crossing_rate_before": 0.014436456400742115,
+      "demand_path_sha256": "03e11ea825856575a4e39688a9b42c708a7d0b8cfed1ef1f2a71359f2dba85bc",
+      "encoder_hash": "f8add6ab7386",
+      "file": "tsmixer_a3_agent_f2.parquet",
+      "fold": 2,
+      "gates": {
+        "t_minus_1": {
+          "bit_exact": true,
+          "label": "vs_committed_t_minus_1",
+          "max_abs_diff": 0.0,
+          "origins": [
+            1633
+          ],
+          "rows": 4312
+        },
+        "weekly": {
+          "bit_exact": true,
+          "label": "vs_eval_weekly",
+          "max_abs_diff": 0.0,
+          "origins": [
+            1640,
+            1647,
+            1654
+          ],
+          "rows": 12936
+        }
+      },
+      "origin_count": 4,
+      "origins": 4,
+      "prediction_file_sha256": "7ed8674b7a0ff9c5",
+      "probe_max_abs_diff": 4.76837158203125e-07,
+      "retrain_fold": 1,
+      "rows": 17248,
+      "selection_origins": [
+        1633,
+        1640,
+        1647,
+        1654
+      ],
+      "series": 154,
+      "shock": {
+        "duration_days": 7,
+        "group_id": "B07_TX_HOBBIES_1",
+        "multiplier": 1.5,
+        "shock_start_idx": 1646,
+        "start_offset": 12
+      }
+    },
+    {
+      "checkpoint_sha256": "e20f01b4bbacd140",
+      "crossing_rate_before": 0.03229359925788497,
+      "demand_path_sha256": "cabeb99cef6bb75b62346ffc54630eb41f3591343cf064e0c4dc71e50a258258",
+      "encoder_hash": "f8add6ab7386",
+      "file": "tsmixer_a3_agent_f3.parquet",
+      "fold": 3,
+      "gates": {
+        "t_minus_1": {
+          "bit_exact": true,
+          "label": "vs_committed_t_minus_1",
+          "max_abs_diff": 0.0,
+          "origins": [
+            1661
+          ],
+          "rows": 4312
+        },
+        "weekly": {
+          "bit_exact": true,
+          "label": "vs_eval_weekly",
+          "max_abs_diff": 0.0,
+          "origins": [
+            1668,
+            1675,
+            1682
+          ],
+          "rows": 12936
+        }
+      },
+      "origin_count": 4,
+      "origins": 4,
+      "prediction_file_sha256": "b072ff49779892ad",
+      "probe_max_abs_diff": 4.76837158203125e-07,
+      "retrain_fold": 1,
+      "rows": 17248,
+      "selection_origins": [
+        1661,
+        1668,
+        1675,
+        1682
+      ],
+      "series": 154,
+      "shock": {
+        "duration_days": 7,
+        "group_id": "B02_CA_FOODS_1",
+        "multiplier": 1.5,
+        "shock_start_idx": 1674,
+        "start_offset": 12
+      }
+    },
+    {
+      "checkpoint_sha256": "94128f92051cc412",
+      "crossing_rate_before": 0.020640074211502782,
+      "demand_path_sha256": "d9a50bcb29af2b0d42930f89399ab5d4bfd024941b3984aa5aaeb06d18ec50fe",
+      "encoder_hash": "f8add6ab7386",
+      "file": "tsmixer_a3_agent_f4.parquet",
+      "fold": 4,
+      "gates": {
+        "t_minus_1": {
+          "bit_exact": true,
+          "label": "vs_committed_t_minus_1",
+          "max_abs_diff": 0.0,
+          "origins": [
+            1689
+          ],
+          "rows": 4312
+        },
+        "weekly": {
+          "bit_exact": true,
+          "label": "vs_eval_weekly",
+          "max_abs_diff": 0.0,
+          "origins": [
+            1696,
+            1703,
+            1710
+          ],
+          "rows": 12936
+        }
+      },
+      "origin_count": 4,
+      "origins": 4,
+      "prediction_file_sha256": "fcc151fcae1c1c8d",
+      "probe_max_abs_diff": 7.152557373046875e-07,
+      "retrain_fold": 4,
+      "rows": 17248,
+      "selection_origins": [
+        1689,
+        1696,
+        1703,
+        1710
+      ],
+      "series": 154,
+      "shock": {
+        "duration_days": 7,
+        "group_id": "B04_CA_HOBBIES_1",
+        "multiplier": 1.5,
+        "shock_start_idx": 1702,
+        "start_offset": 12
+      }
+    },
+    {
+      "checkpoint_sha256": "94128f92051cc412",
+      "crossing_rate_before": 0.021335807050092765,
+      "demand_path_sha256": "40a872e0034c09205ea490b9347f5269fc8b8c0bbaca936dffe0bf74b8516ee9",
+      "encoder_hash": "f8add6ab7386",
+      "file": "tsmixer_a3_agent_f5.parquet",
+      "fold": 5,
+      "gates": {
+        "t_minus_1": {
+          "bit_exact": true,
+          "label": "vs_committed_t_minus_1",
+          "max_abs_diff": 0.0,
+          "origins": [
+            1717
+          ],
+          "rows": 4312
+        },
+        "weekly": {
+          "bit_exact": true,
+          "label": "vs_eval_weekly",
+          "max_abs_diff": 0.0,
+          "origins": [
+            1724,
+            1731,
+            1738
+          ],
+          "rows": 12936
+        }
+      },
+      "origin_count": 4,
+      "origins": 4,
+      "prediction_file_sha256": "515282a1bb3e654e",
+      "probe_max_abs_diff": 7.152557373046875e-07,
+      "retrain_fold": 4,
+      "rows": 17248,
+      "selection_origins": [
+        1717,
+        1724,
+        1731,
+        1738
+      ],
+      "series": 154,
+      "shock": {
+        "duration_days": 7,
+        "group_id": "B04_CA_HOBBIES_1",
+        "multiplier": 1.5,
+        "shock_start_idx": 1718,
+        "start_offset": 0
+      }
+    },
+    {
+      "checkpoint_sha256": "94128f92051cc412",
+      "crossing_rate_before": 0.04626623376623377,
+      "demand_path_sha256": "87b84ee45b10f4056d342e5909682ec30d2e5fa1de940810c5cea9385b5e0891",
+      "encoder_hash": "f8add6ab7386",
+      "file": "tsmixer_a3_agent_f6.parquet",
+      "fold": 6,
+      "gates": {
+        "t_minus_1": {
+          "bit_exact": true,
+          "label": "vs_committed_t_minus_1",
+          "max_abs_diff": 0.0,
+          "origins": [
+            1745
+          ],
+          "rows": 4312
+        },
+        "weekly": {
+          "bit_exact": true,
+          "label": "vs_eval_weekly",
+          "max_abs_diff": 0.0,
+          "origins": [
+            1752,
+            1759,
+            1766
+          ],
+          "rows": 12936
+        }
+      },
+      "origin_count": 4,
+      "origins": 4,
+      "prediction_file_sha256": "cab8f030452a7728",
+      "probe_max_abs_diff": 7.152557373046875e-07,
+      "retrain_fold": 4,
+      "rows": 17248,
+      "selection_origins": [
+        1745,
+        1752,
+        1759,
+        1766
+      ],
+      "series": 154,
+      "shock": {
+        "duration_days": 7,
+        "group_id": "B07_TX_HOBBIES_1",
+        "multiplier": 1.5,
+        "shock_start_idx": 1749,
+        "start_offset": 3
+      }
+    },
+    {
+      "checkpoint_sha256": "5122c50210a8f57c",
+      "crossing_rate_before": 0.03669990723562152,
+      "demand_path_sha256": "c6d17e5e1677622164cf58635152b3e7e789ebd892eade5c662555bdd04f400a",
+      "encoder_hash": "f8add6ab7386",
+      "file": "tsmixer_a3_agent_f7.parquet",
+      "fold": 7,
+      "gates": {
+        "t_minus_1": {
+          "bit_exact": true,
+          "label": "vs_committed_t_minus_1",
+          "max_abs_diff": 0.0,
+          "origins": [
+            1773
+          ],
+          "rows": 4312
+        },
+        "weekly": {
+          "bit_exact": true,
+          "label": "vs_eval_weekly",
+          "max_abs_diff": 0.0,
+          "origins": [
+            1780,
+            1787,
+            1794
+          ],
+          "rows": 12936
+        }
+      },
+      "origin_count": 4,
+      "origins": 4,
+      "prediction_file_sha256": "34dff95f2037da1a",
+      "probe_max_abs_diff": 7.152557373046875e-07,
+      "retrain_fold": 7,
+      "rows": 17248,
+      "selection_origins": [
+        1773,
+        1780,
+        1787,
+        1794
+      ],
+      "series": 154,
+      "shock": {
+        "duration_days": 7,
+        "group_id": "B01_CA_FOODS_3",
+        "multiplier": 1.5,
+        "shock_start_idx": 1783,
+        "start_offset": 9
+      }
+    },
+    {
+      "checkpoint_sha256": "5122c50210a8f57c",
+      "crossing_rate_before": 0.039192949907235625,
+      "demand_path_sha256": "75c73ee9ac7e62fc89407698c9e4c1f4357889a2f7b284c6b51d66e04535aa37",
+      "encoder_hash": "f8add6ab7386",
+      "file": "tsmixer_a3_agent_f8.parquet",
+      "fold": 8,
+      "gates": {
+        "t_minus_1": {
+          "bit_exact": true,
+          "label": "vs_committed_t_minus_1",
+          "max_abs_diff": 0.0,
+          "origins": [
+            1801
+          ],
+          "rows": 4312
+        },
+        "weekly": {
+          "bit_exact": true,
+          "label": "vs_eval_weekly",
+          "max_abs_diff": 0.0,
+          "origins": [
+            1808,
+            1815,
+            1822
+          ],
+          "rows": 12936
+        }
+      },
+      "origin_count": 4,
+      "origins": 4,
+      "prediction_file_sha256": "c1aabfc858b16d2f",
+      "probe_max_abs_diff": 7.152557373046875e-07,
+      "retrain_fold": 7,
+      "rows": 17248,
+      "selection_origins": [
+        1801,
+        1808,
+        1815,
+        1822
+      ],
+      "series": 154,
+      "shock": {
+        "duration_days": 7,
+        "group_id": "B07_TX_HOBBIES_1",
+        "multiplier": 1.5,
+        "shock_start_idx": 1804,
+        "start_offset": 2
+      }
+    },
+    {
+      "checkpoint_sha256": "5122c50210a8f57c",
+      "crossing_rate_before": 0.032525510204081634,
+      "demand_path_sha256": "2552354814a297a0146a2748c864e0546f6653a54e63b0e1f3f48f9d0ccfd2ff",
+      "encoder_hash": "f8add6ab7386",
+      "file": "tsmixer_a3_agent_f9.parquet",
+      "fold": 9,
+      "gates": {
+        "t_minus_1": {
+          "bit_exact": true,
+          "label": "vs_committed_t_minus_1",
+          "max_abs_diff": 0.0,
+          "origins": [
+            1829
+          ],
+          "rows": 4312
+        },
+        "weekly": {
+          "bit_exact": true,
+          "label": "vs_eval_weekly",
+          "max_abs_diff": 0.0,
+          "origins": [
+            1836,
+            1843,
+            1850
+          ],
+          "rows": 12936
+        }
+      },
+      "origin_count": 4,
+      "origins": 4,
+      "prediction_file_sha256": "6945b10c2e6171b8",
+      "probe_max_abs_diff": 7.152557373046875e-07,
+      "retrain_fold": 7,
+      "rows": 17248,
+      "selection_origins": [
+        1829,
+        1836,
+        1843,
+        1850
+      ],
+      "series": 154,
+      "shock": {
+        "duration_days": 7,
+        "group_id": "B06_TX_HOUSEHOLD_1",
+        "multiplier": 1.5,
+        "shock_start_idx": 1845,
+        "start_offset": 15
+      }
+    },
+    {
+      "checkpoint_sha256": "823a392bcf94f911",
+      "crossing_rate_before": 0.03751159554730983,
+      "demand_path_sha256": "13c2ebf62f51c64f3a68946a19372096f88a3a3e023381abe92f6572535a8dc8",
+      "encoder_hash": "f8add6ab7386",
+      "file": "tsmixer_a3_agent_f10.parquet",
+      "fold": 10,
+      "gates": {
+        "t_minus_1": {
+          "bit_exact": true,
+          "label": "vs_committed_t_minus_1",
+          "max_abs_diff": 0.0,
+          "origins": [
+            1857
+          ],
+          "rows": 4312
+        },
+        "weekly": {
+          "bit_exact": true,
+          "label": "vs_eval_weekly",
+          "max_abs_diff": 0.0,
+          "origins": [
+            1864,
+            1871,
+            1878
+          ],
+          "rows": 12936
+        }
+      },
+      "origin_count": 4,
+      "origins": 4,
+      "prediction_file_sha256": "3808b006231d0ea4",
+      "probe_max_abs_diff": 9.5367431640625e-07,
+      "retrain_fold": 10,
+      "rows": 17248,
+      "selection_origins": [
+        1857,
+        1864,
+        1871,
+        1878
+      ],
+      "series": 154,
+      "shock": {
+        "duration_days": 7,
+        "group_id": "B03_CA_HOUSEHOLD_1",
+        "multiplier": 1.5,
+        "shock_start_idx": 1867,
+        "start_offset": 9
+      }
+    },
+    {
+      "checkpoint_sha256": "823a392bcf94f911",
+      "crossing_rate_before": 0.04707792207792208,
+      "demand_path_sha256": "28180248fc59b6dfc0f32d4806fb11c0201d9f078d14f0ffa4e94136432c499a",
+      "encoder_hash": "f8add6ab7386",
+      "file": "tsmixer_a3_agent_f11.parquet",
+      "fold": 11,
+      "gates": {
+        "t_minus_1": {
+          "bit_exact": true,
+          "label": "vs_committed_t_minus_1",
+          "max_abs_diff": 0.0,
+          "origins": [
+            1885
+          ],
+          "rows": 4312
+        },
+        "weekly": {
+          "bit_exact": true,
+          "label": "vs_eval_weekly",
+          "max_abs_diff": 0.0,
+          "origins": [
+            1892,
+            1899,
+            1906
+          ],
+          "rows": 12936
+        }
+      },
+      "origin_count": 4,
+      "origins": 4,
+      "prediction_file_sha256": "76dcb37b7cf0ad10",
+      "probe_max_abs_diff": 9.5367431640625e-07,
+      "retrain_fold": 10,
+      "rows": 17248,
+      "selection_origins": [
+        1885,
+        1892,
+        1899,
+        1906
+      ],
+      "series": 154,
+      "shock": {
+        "duration_days": 7,
+        "group_id": "B04_CA_HOBBIES_1",
+        "multiplier": 1.5,
+        "shock_start_idx": 1902,
+        "start_offset": 16
+      }
+    },
+    {
+      "checkpoint_sha256": "823a392bcf94f911",
+      "crossing_rate_before": 0.02458256029684601,
+      "demand_path_sha256": "a38f5ea819e04181a69200d429ed3dd61826bfc98c29e46a2f6cfab7255e66ff",
+      "encoder_hash": "f8add6ab7386",
+      "file": "tsmixer_a3_agent_f12.parquet",
+      "fold": 12,
+      "gates": {
+        "t_minus_1": {
+          "bit_exact": true,
+          "label": "vs_committed_t_minus_1",
+          "max_abs_diff": 0.0,
+          "origins": [
+            1913
+          ],
+          "rows": 4312
+        },
+        "weekly": {
+          "bit_exact": true,
+          "label": "vs_eval_weekly",
+          "max_abs_diff": 0.0,
+          "origins": [
+            1920,
+            1927,
+            1934
+          ],
+          "rows": 12936
+        }
+      },
+      "origin_count": 4,
+      "origins": 4,
+      "prediction_file_sha256": "30faef656d165ab9",
+      "probe_max_abs_diff": 9.5367431640625e-07,
+      "retrain_fold": 10,
+      "rows": 17248,
+      "selection_origins": [
+        1913,
+        1920,
+        1927,
+        1934
+      ],
+      "series": 154,
+      "shock": {
+        "duration_days": 7,
+        "group_id": "B08_WI_FOODS_3",
+        "multiplier": 1.5,
+        "shock_start_idx": 1914,
+        "start_offset": 0
+      }
+    }
+  ],
+  "forecast_horizon": 28,
+  "history_observation_rule": "exogenous_latent",
+  "input_normalization": "checkpoint_aux(scale, price_mean)",
+  "model": "tsmixer_a3",
+  "model_id": "a3",
+  "prediction_kind": "quantile_grid",
+  "prediction_purpose": "agent_candidate_selection_replay",
+  "r_train": null,
+  "runtime": {
+    "batch_size": 2048,
+    "device": "cpu"
+  },
+  "scenario_id": {
+    "name": "agent",
+    "note": "same core scenario demand; origins = weekly selection days T-1+7w, w=0..3 (ST7-02 D6/P0-1)",
+    "p": 0.0,
+    "shock_rule": "pre-registered fold-level draw (seed D)"
+  },
+  "schema_version": "pred_v1"
+}
