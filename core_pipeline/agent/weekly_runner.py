@@ -34,6 +34,12 @@ realized costs (D4).
 Chaining identity: run_window ends every day with midnight_transition, so
 four chained 7-day calls reproduce one 28-day call day-by-day when the
 policy coincides (pinned by the no-action parity test).
+
+ST8-05 observability extension: AgentWindowResult carries the executed
+28-day DayResult sequence (days, default ()) for instrumentation-only
+consumers (Stage 8 inventory diagnostics). The field never feeds back into
+candidate selection, gating, or week-to-week state -- decision logic is
+byte-identical to the frozen official runs.
 """
 
 import time
@@ -52,6 +58,7 @@ from core_pipeline.agent.gate import (
 )
 from core_pipeline.simulator.engine import (
     BundleState,
+    DayResult,
     SimConfig,
     SkuParams,
     run_window,
@@ -107,6 +114,7 @@ class AgentWindowResult:
     terminal: float
     n_days: int
     weeks: tuple[WeekLog, ...]
+    days: tuple[DayResult, ...] = ()  # ST8-05 instrumentation only
 
 
 def run_agent_window(
@@ -221,4 +229,5 @@ def run_agent_window(
         terminal=terminal,
         n_days=len(days_all),
         weeks=tuple(week_logs),
+        days=tuple(days_all),
     )
