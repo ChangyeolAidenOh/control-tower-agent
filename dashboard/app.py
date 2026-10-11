@@ -5,6 +5,11 @@ evaluation. All figures come from the verified display snapshot.
 External wording follows the two-layer principle (ST9-06).
 """
 
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
 import streamlit as st
 
 import labels
