@@ -1,0 +1,446 @@
+{
+ "task": "Stage 8 lagging-metric report v2",
+ "decision": "ST8-04..09 execution; logged ST8-07/09",
+ "date": "2026-10-11",
+ "purpose": "technical statistics for the Stage 8 business case -- no judgment use, confirmatory verdicts unchanged",
+ "population": {
+  "r": 5,
+  "n_episodes_per_policy": 480,
+  "key": "(fold, group_id, week)",
+  "agent_note": "realized path of the LLM-interfaced decision-support pipeline; single realization, contract-level reproducibility (model nondeterminism); displayed with its own marker, excluded from the frontier computation"
+ },
+ "sources": {
+  "step6": {
+   "path": "outputs/stage6_eval_core_step6.json",
+   "sha256": "1dc0cedafc3f452865fedaa32b8b5053f8338ab9238a0612f99023eb917614ce"
+  },
+  "s5_agg": {
+   "path": "outputs/deck/s5_agg.json",
+   "sha256": "cf204bdaf9793daafea08c5f3953128b1edf2b0bab7594845ac0eb5b9c1c9577"
+  },
+  "agent_official": {
+   "path": "outputs/agent_llm_official.json",
+   "sha256": "15215d470e3cb04d11c19bab6607819b82360f791d782e5dfad387632e5e5048"
+  },
+  "replay_full": {
+   "path": "outputs/reports/stage8_inventory_diagnostics_full.json",
+   "sha256": "ad1afe4d604a0908aad4b8e28f48a3ad5809838f2c0079fa92289f8c61bf63e0"
+  },
+  "replay_agent": {
+   "path": "outputs/reports/stage8_inventory_diagnostics_agent.json",
+   "sha256": "81b277f958e7e9caf0c8f349a24f9610051e37c310e5aa500f1a261a3a03f302"
+  }
+ },
+ "definitions": {
+  "total_cost": "episode cost = holding + shortage + terminal (attribution unchanged from Stage 6)",
+  "csl_pooled": "sum(csl * n_sku * n_days) / sum(n_sku * n_days)",
+  "unmet_sku_day_share": "1 - pooled SKU-day CSL (NOT a stockout-rate conversion, spec section 8 / ST8-09)",
+  "stockout_rate_quantity_pooled": "sum(unmet) / sum(exogenous demand) -- replay cells only",
+  "doi_onhand": "sum(EOD on-hand) / sum(exogenous demand), common evaluation window",
+  "intransit_days": "sum(EOD in-transit incl. same-day order) / sum(exogenous demand); reported separately from on-hand, never summed into DOI silently",
+  "financial_bridge": "sale_price_valued_onhand_usd = mean daily holding cost / rho; see financial_bridge.delta.note"
+ },
+ "gates": {
+  "g1_source_anchor": true,
+  "g2_s5_cross_anchor": true,
+  "g3_replay_integrity": true,
+  "g4_pooled_recompute": true,
+  "rel_tol": 1e-09
+ },
+ "lagging_metrics": {
+  "a4": {
+   "display_name": "A4",
+   "total_cost": {
+    "mean_episode_cost": 1025.3456321573403,
+    "total_cost_480": 492165.9034355234,
+    "mean_holding_cost": 478.27466930644124,
+    "mean_shortage_cost": 493.9937175418434,
+    "mean_terminal_cost": 53.077245309056025
+   },
+   "csl": {
+    "pooled_sku_day_csl": 0.79213048855906,
+    "episode_mean_csl": 0.7924466765873012,
+    "label": "primary = pooled SKU-day; episode mean kept separately (ST8-01 statistic split)"
+   },
+   "service_shortfall": {
+    "unmet_sku_day_share_pooled": 0.20786951144094,
+    "quantity_stockout_rate": 0.21743264614185231,
+    "quantity_label": "pooled (sum unmet / sum exogenous demand), replay-covered",
+    "naming_note": "unmet SKU-day share = 1 - pooled SKU-day CSL; per simulator_spec section 8 this is NOT a stockout-rate conversion -- the quantity statistic is the stockout rate (ST8-09)"
+   },
+   "days_of_inventory": {
+    "pooled_doi_onhand": 1.1209612870325023,
+    "pooled_intransit_days": 2.346292135873148,
+    "pooled_total_position_days": 3.4672534229056504,
+    "mean_daily_inv_eod": 70.18685582318388,
+    "mean_daily_intransit_eod": 146.9086129598193,
+    "mean_daily_demand": 62.61309523809524
+   }
+  },
+  "a4_sl": {
+   "display_name": "A4-SL",
+   "total_cost": {
+    "mean_episode_cost": 1192.9645774872704,
+    "total_cost_480": 572622.9971938898,
+    "mean_holding_cost": 848.551687374254,
+    "mean_shortage_cost": 270.09414709965023,
+    "mean_terminal_cost": 74.31874301336474
+   },
+   "csl": {
+    "pooled_sku_day_csl": 0.8801213667285096,
+    "episode_mean_csl": 0.8803794642857125,
+    "label": "primary = pooled SKU-day; episode mean kept separately (ST8-01 statistic split)"
+   },
+   "service_shortfall": {
+    "unmet_sku_day_share_pooled": 0.1198786332714904,
+    "quantity_stockout_rate": 0.11526167127190468,
+    "quantity_label": "pooled (sum unmet / sum exogenous demand), replay-covered",
+    "naming_note": "unmet SKU-day share = 1 - pooled SKU-day CSL; per simulator_spec section 8 this is NOT a stockout-rate conversion -- the quantity statistic is the stockout rate (ST8-09)"
+   },
+   "days_of_inventory": {
+    "pooled_doi_onhand": 2.0979455827515063,
+    "pooled_intransit_days": 2.802338482957266,
+    "pooled_total_position_days": 4.900284065708773,
+    "mean_daily_inv_eod": 131.35886657716128,
+    "mean_daily_intransit_eod": 175.46308632278263,
+    "mean_daily_demand": 62.61309523809524
+   }
+  },
+  "l0_rule_ct": {
+   "display_name": "L0",
+   "total_cost": {
+    "mean_episode_cost": 1282.446312574163,
+    "total_cost_480": 615574.2300355982,
+    "mean_holding_cost": 938.5557794725228,
+    "mean_shortage_cost": 266.68671799360817,
+    "mean_terminal_cost": 77.20381510803074
+   },
+   "csl": {
+    "pooled_sku_day_csl": 0.8537028447742734,
+    "episode_mean_csl": 0.8540277777777778,
+    "label": "primary = pooled SKU-day; episode mean kept separately (ST8-01 statistic split)"
+   },
+   "service_shortfall": {
+    "unmet_sku_day_share_pooled": 0.14629715522572662,
+    "quantity_stockout_rate": 0.13629045831663067,
+    "quantity_label": "pooled (sum unmet / sum exogenous demand), replay-covered",
+    "naming_note": "unmet SKU-day share = 1 - pooled SKU-day CSL; per simulator_spec section 8 this is NOT a stockout-rate conversion -- the quantity statistic is the stockout rate (ST8-09)"
+   },
+   "days_of_inventory": {
+    "pooled_doi_onhand": 1.9637474171632339,
+    "pooled_intransit_days": 2.720807598499841,
+    "pooled_total_position_days": 4.684555015663075,
+    "mean_daily_inv_eod": 122.95630405440511,
+    "mean_daily_intransit_eod": 170.35818528940374,
+    "mean_daily_demand": 62.61309523809524
+   }
+  },
+  "a1": {
+   "display_name": "A1",
+   "total_cost": {
+    "mean_episode_cost": 926.3478790339357,
+    "total_cost_480": 444646.9819362891,
+    "mean_holding_cost": 365.0681384117803,
+    "mean_shortage_cost": 516.5774295760137,
+    "mean_terminal_cost": 44.702311046141304
+   },
+   "csl": {
+    "pooled_sku_day_csl": 0.7149621212121212,
+    "episode_mean_csl": 0.7150706845238093,
+    "label": "primary = pooled SKU-day; episode mean kept separately (ST8-01 statistic split)"
+   },
+   "service_shortfall": {
+    "unmet_sku_day_share_pooled": 0.2850378787878788,
+    "quantity_stockout_rate": 0.23726116189898383,
+    "quantity_label": "episode-mean fill_rate complement -- NOT pooled (demand weights not serialized in the frozen artifact)",
+    "naming_note": "unmet SKU-day share = 1 - pooled SKU-day CSL; per simulator_spec section 8 this is NOT a stockout-rate conversion -- the quantity statistic is the stockout rate (ST8-09)"
+   },
+   "days_of_inventory": {
+    "status": "not computed",
+    "reason": "inventory units absent from the frozen episode artifact; replay not performed for this cell (ST8-04 scope)"
+   }
+  },
+  "a2": {
+   "display_name": "A2",
+   "total_cost": {
+    "mean_episode_cost": 1284.443772895585,
+    "total_cost_480": 616533.0109898808,
+    "mean_holding_cost": 1039.6442296977452,
+    "mean_shortage_cost": 159.87098052716826,
+    "mean_terminal_cost": 84.92856267067228
+   },
+   "csl": {
+    "pooled_sku_day_csl": 0.9052837043908473,
+    "episode_mean_csl": 0.905572916666667,
+    "label": "primary = pooled SKU-day; episode mean kept separately (ST8-01 statistic split)"
+   },
+   "service_shortfall": {
+    "unmet_sku_day_share_pooled": 0.09471629560915273,
+    "quantity_stockout_rate": 0.08258142305428784,
+    "quantity_label": "episode-mean fill_rate complement -- NOT pooled (demand weights not serialized in the frozen artifact)",
+    "naming_note": "unmet SKU-day share = 1 - pooled SKU-day CSL; per simulator_spec section 8 this is NOT a stockout-rate conversion -- the quantity statistic is the stockout rate (ST8-09)"
+   },
+   "days_of_inventory": {
+    "status": "not computed",
+    "reason": "inventory units absent from the frozen episode artifact; replay not performed for this cell (ST8-04 scope)"
+   }
+  },
+  "b": {
+   "display_name": "B",
+   "total_cost": {
+    "mean_episode_cost": 982.1582025812344,
+    "total_cost_480": 471435.9372389925,
+    "mean_holding_cost": 316.36174215512466,
+    "mean_shortage_cost": 626.7597069999829,
+    "mean_terminal_cost": 39.03675342612682
+   },
+   "csl": {
+    "pooled_sku_day_csl": 0.6547232529375386,
+    "episode_mean_csl": 0.6549627976190471,
+    "label": "primary = pooled SKU-day; episode mean kept separately (ST8-01 statistic split)"
+   },
+   "service_shortfall": {
+    "unmet_sku_day_share_pooled": 0.34527674706246136,
+    "quantity_stockout_rate": 0.2910708917263146,
+    "quantity_label": "pooled (sum unmet / sum exogenous demand), replay-covered",
+    "naming_note": "unmet SKU-day share = 1 - pooled SKU-day CSL; per simulator_spec section 8 this is NOT a stockout-rate conversion -- the quantity statistic is the stockout rate (ST8-09)"
+   },
+   "days_of_inventory": {
+    "pooled_doi_onhand": 0.6813700277081536,
+    "pooled_intransit_days": 2.044290734695063,
+    "pooled_total_position_days": 2.7256607624032165,
+    "mean_daily_inv_eod": 42.66268643727421,
+    "mean_daily_intransit_eod": 127.99937046581768,
+    "mean_daily_demand": 62.61309523809524
+   }
+  },
+  "a3": {
+   "display_name": "A3",
+   "total_cost": {
+    "mean_episode_cost": 1528.6430837458574,
+    "total_cost_480": 733748.6801980116,
+    "mean_holding_cost": 157.04150924398633,
+    "mean_shortage_cost": 1356.5418981130233,
+    "mean_terminal_cost": 15.059676388847832
+   },
+   "csl": {
+    "pooled_sku_day_csl": 0.3753865182436611,
+    "episode_mean_csl": 0.3763529265873024,
+    "label": "primary = pooled SKU-day; episode mean kept separately (ST8-01 statistic split)"
+   },
+   "service_shortfall": {
+    "unmet_sku_day_share_pooled": 0.6246134817563389,
+    "quantity_stockout_rate": 0.6426869554936561,
+    "quantity_label": "episode-mean fill_rate complement -- NOT pooled (demand weights not serialized in the frozen artifact)",
+    "naming_note": "unmet SKU-day share = 1 - pooled SKU-day CSL; per simulator_spec section 8 this is NOT a stockout-rate conversion -- the quantity statistic is the stockout rate (ST8-09)"
+   },
+   "days_of_inventory": {
+    "status": "not computed",
+    "reason": "inventory units absent from the frozen episode artifact; replay not performed for this cell (ST8-04 scope)"
+   }
+  },
+  "a5": {
+   "display_name": "A5",
+   "total_cost": {
+    "mean_episode_cost": 278.3877418491659,
+    "total_cost_480": 133626.11608759963,
+    "mean_holding_cost": 157.78611896241466,
+    "mean_shortage_cost": 81.47004249379337,
+    "mean_terminal_cost": 39.13158039295785
+   },
+   "csl": {
+    "pooled_sku_day_csl": 0.9126662028447743,
+    "episode_mean_csl": 0.9133730158730159,
+    "label": "primary = pooled SKU-day; episode mean kept separately (ST8-01 statistic split)"
+   },
+   "service_shortfall": {
+    "unmet_sku_day_share_pooled": 0.08733379715522571,
+    "quantity_stockout_rate": 0.04754919311004935,
+    "quantity_label": "episode-mean fill_rate complement -- NOT pooled (demand weights not serialized in the frozen artifact)",
+    "naming_note": "unmet SKU-day share = 1 - pooled SKU-day CSL; per simulator_spec section 8 this is NOT a stockout-rate conversion -- the quantity statistic is the stockout rate (ST8-09)"
+   },
+   "days_of_inventory": {
+    "status": "not computed",
+    "reason": "inventory units absent from the frozen episode artifact; replay not performed for this cell (ST8-04 scope)"
+   }
+  },
+  "apto": {
+   "display_name": "A-PTO",
+   "total_cost": {
+    "mean_episode_cost": 986.1738185697678,
+    "total_cost_480": 473363.43291348853,
+    "mean_holding_cost": 626.5120370921045,
+    "mean_shortage_cost": 298.33267457281437,
+    "mean_terminal_cost": 61.32910690484733
+   },
+   "csl": {
+    "pooled_sku_day_csl": 0.8424358379715523,
+    "episode_mean_csl": 0.8432142857142854,
+    "label": "primary = pooled SKU-day; episode mean kept separately (ST8-01 statistic split)"
+   },
+   "service_shortfall": {
+    "unmet_sku_day_share_pooled": 0.1575641620284477,
+    "quantity_stockout_rate": 0.1281205702905036,
+    "quantity_label": "episode-mean fill_rate complement -- NOT pooled (demand weights not serialized in the frozen artifact)",
+    "naming_note": "unmet SKU-day share = 1 - pooled SKU-day CSL; per simulator_spec section 8 this is NOT a stockout-rate conversion -- the quantity statistic is the stockout rate (ST8-09)"
+   },
+   "days_of_inventory": {
+    "status": "not computed",
+    "reason": "inventory units absent from the frozen episode artifact; replay not performed for this cell (ST8-04 scope)"
+   }
+  },
+  "agent_llm": {
+   "display_name": "Agent",
+   "total_cost": {
+    "mean_episode_cost": 1041.7848947957598,
+    "total_cost_480": 500056.74950196466,
+    "mean_holding_cost": 534.821360375008,
+    "mean_shortage_cost": 449.3516945718363,
+    "mean_terminal_cost": 57.61183984891542
+   },
+   "csl": {
+    "pooled_sku_day_csl": 0.8064123376623377,
+    "episode_mean_csl": 0.8067323908730147,
+    "label": "primary = pooled SKU-day; episode mean kept separately (ST8-01 statistic split)"
+   },
+   "service_shortfall": {
+    "unmet_sku_day_share_pooled": 0.19358766233766234,
+    "quantity_stockout_rate": 0.19776971575417068,
+    "quantity_label": "pooled (sum unmet / sum exogenous demand), replay-covered",
+    "naming_note": "unmet SKU-day share = 1 - pooled SKU-day CSL; per simulator_spec section 8 this is NOT a stockout-rate conversion -- the quantity statistic is the stockout rate (ST8-09)"
+   },
+   "days_of_inventory": {
+    "pooled_doi_onhand": 1.264285379717848,
+    "pooled_intransit_days": 2.433465957283294,
+    "pooled_total_position_days": 3.697751337001142,
+    "mean_daily_inv_eod": 79.16082088840501,
+    "mean_daily_intransit_eod": 152.3668357420415,
+    "mean_daily_demand": 62.61309523809524
+   }
+  }
+ },
+ "financial_bridge": {
+  "per_policy": {
+   "a4": {
+    "mean_daily_holding_cost": 68.32495275806303,
+    "sale_price_valued_onhand_usd": 170.01712678462252
+   },
+   "a4_sl": {
+    "mean_daily_holding_cost": 121.22166962489342,
+    "sale_price_valued_onhand_usd": 301.64323781734294
+   },
+   "l0_rule_ct": {
+    "mean_daily_holding_cost": 134.07939706750327,
+    "sale_price_valued_onhand_usd": 333.6379013850297
+   },
+   "a1": {
+    "mean_daily_holding_cost": 52.152591201682895,
+    "sale_price_valued_onhand_usd": 129.77445797701972
+   },
+   "a2": {
+    "mean_daily_holding_cost": 148.52060424253506,
+    "sale_price_valued_onhand_usd": 369.57283367681435
+   },
+   "b": {
+    "mean_daily_holding_cost": 45.19453459358924,
+    "sale_price_valued_onhand_usd": 112.46030341475061
+   },
+   "a3": {
+    "mean_daily_holding_cost": 22.434501320569478,
+    "sale_price_valued_onhand_usd": 55.82513125000181
+   },
+   "a5": {
+    "mean_daily_holding_cost": 22.54087413748781,
+    "sale_price_valued_onhand_usd": 56.08982518641009
+   },
+   "apto": {
+    "mean_daily_holding_cost": 89.50171958458635,
+    "sale_price_valued_onhand_usd": 222.7125609575868
+   },
+   "agent_llm": {
+    "mean_daily_holding_cost": 76.403051482144,
+    "sale_price_valued_onhand_usd": 190.11835012266124
+   }
+  },
+  "delta": {
+   "l0_minus_agent_sale_price_valued_usd": 143.51955126236845,
+   "note": "conditional-scenario input ONLY: delta WC(gamma) = gamma * this delta, annual capital effect = delta WC * k_annual -- gamma and k_annual are explicit assumptions in docs/business_case.md, never applied here. One-off working-capital release and annual flows are never summed. Units: M5 sale-price USD, 10-bundle subset; identity: daily holding cost = rho * sum_i p_i * I_i (h_i = rho * p_i, EOD on-hand basis, in-transit excluded).",
+   "rho": 0.401871,
+   "rho_source": "simulator_spec cost section / mart.cost_meta (Stage 1-D)"
+  }
+ },
+ "comparisons": {
+  "l0_rule_ct_vs_agent_llm": {
+   "base": "l0_rule_ct",
+   "other": "agent_llm",
+   "cost_diff_mean_episode": 240.66141777840312,
+   "cost_diff_rel_pct": 18.76580839437564,
+   "csl_diff_pp": -4.7290507111935725,
+   "csl_diff_rel_pct": -5.539457599492919,
+   "unmet_share_diff_pp": 4.7290507111935725,
+   "fill_qty_diff_pp": -6.147925743754001,
+   "doi_onhand_diff_days": -0.6994620374453859,
+   "doi_onhand_diff_rel_pct": -35.61873748793041,
+   "total_position_diff_days": -0.986803678661933
+  },
+  "l0_rule_ct_vs_a4": {
+   "base": "l0_rule_ct",
+   "other": "a4",
+   "cost_diff_mean_episode": 257.10068041682257,
+   "cost_diff_rel_pct": 20.047675906273437,
+   "csl_diff_pp": -6.157235621521339,
+   "csl_diff_rel_pct": -7.212387377190206,
+   "unmet_share_diff_pp": 6.157235621521339,
+   "fill_qty_diff_pp": -8.114218782522165,
+   "doi_onhand_diff_days": -0.8427861301307316,
+   "doi_onhand_diff_rel_pct": -42.9172368485247,
+   "total_position_diff_days": -1.2173015927574244
+  },
+  "l0_rule_ct_vs_a4_sl": {
+   "base": "l0_rule_ct",
+   "other": "a4_sl",
+   "cost_diff_mean_episode": 89.48173508689251,
+   "cost_diff_rel_pct": 6.977425425886423,
+   "csl_diff_pp": 2.641852195423622,
+   "csl_diff_rel_pct": 3.094580522479284,
+   "unmet_share_diff_pp": -2.641852195423622,
+   "fill_qty_diff_pp": 2.1028787044725994,
+   "doi_onhand_diff_days": 0.13419816558827247,
+   "doi_onhand_diff_rel_pct": 6.8337793555003525,
+   "total_position_diff_days": 0.21572905004569787
+  },
+  "l0_rule_ct_vs_b": {
+   "base": "l0_rule_ct",
+   "other": "b",
+   "cost_diff_mean_episode": 300.2881099929285,
+   "cost_diff_rel_pct": 23.415257781059204,
+   "csl_diff_pp": -19.897959183673475,
+   "csl_diff_rel_pct": -23.30782813419659,
+   "unmet_share_diff_pp": 19.897959183673475,
+   "fill_qty_diff_pp": -15.478043340968394,
+   "doi_onhand_diff_days": -1.2823773894550803,
+   "doi_onhand_diff_rel_pct": -65.30256275562981,
+   "total_position_diff_days": -1.9588942532598583
+  }
+ },
+ "leading_indicators": {
+  "label": "LEADING INDICATORS -- precedence UNVERIFIED: operational observations from the frozen official run; no claim that they predict the lagging outcomes (no lead-lag analysis performed)",
+  "forecast_freshness": {
+   "selection_forecast_cadence_days": 7,
+   "verified": "origin_idx gaps == 7 for all 120 (fold, bundle) cells",
+   "note": "weekly re-forecast at candidate-selection origins; design constant confirmed in the artifact"
+  },
+  "selection_latency_s": {
+   "median": 13.056627062615007,
+   "p05": 8.011287320684641,
+   "p95": 21.400118281436153,
+   "official_recorded_median": 13.056627062615007
+  },
+  "rollback_fallback_rate": {
+   "fallback_weeks": 130,
+   "total_weeks": 480,
+   "rate": 0.2708333333333333,
+   "note": "fallback = all candidates gate-rejected -> no-action base policy for the week (closest operational analog of a rollback)"
+  }
+ }
+}
