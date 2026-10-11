@@ -90,6 +90,7 @@
       dfl/         미분 가능 LP 계층, 결정 중심 학습 B의 학습 루프
       agent/       후보 생성 (LLM 인터페이스) · 검증 게이트 · 주간 실행기
     scripts/       적재·마트·평가·판정·대시보드 데이터 생성 실행기
+    notebooks/     A-PTO 기준선 학습 (Colab GPU, 입력 sha 검증·예산 제한 탐색)
     dashboard/     Streamlit 조회 전용 대시보드 (표시 데이터 + 무결성 검증)
     tests/         시뮬레이터 계약 (T1–T7) 포함 전체 테스트
 
