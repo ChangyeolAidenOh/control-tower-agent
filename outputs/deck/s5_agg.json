@@ -1,0 +1,174 @@
+{
+ "decision": "ST8-01 + ST8-02",
+ "purpose": "S5 deck chart technical statistics -- not used for any judgment",
+ "input_file": "outputs/stage6_eval_core_step6.json",
+ "input_sha256": "1dc0cedafc3f452865fedaa32b8b5053f8338ab9238a0612f99023eb917614ce",
+ "population": {
+  "r": 5,
+  "kappa": 1.0,
+  "scenario": {
+   "name": "core",
+   "p": 0.0,
+   "shock": "pre-registered fold-level path"
+  },
+  "n_episodes_per_policy": 480,
+  "key": "(fold, group_id, week)"
+ },
+ "aggregation": {
+  "x": "mean_episode_cost = sum(cost) / 480 (terminal attribution unchanged)",
+  "y": "pooled_sku_day_csl = sum(csl * n_sku * n_days) / sum(n_sku * n_days)"
+ },
+ "display_names": {
+  "b": "B",
+  "a1": "A1",
+  "a2": "A2",
+  "a3": "A3",
+  "a4": "A4",
+  "a4_sl": "A4-SL",
+  "apto": "A-PTO",
+  "l0_rule_ct": "L0",
+  "a5": "A5"
+ },
+ "naming_note": "evaluation JSON policy key 'l0_rule_ct' corresponds to the 'l0' column of stage6_report section 5",
+ "statistic_note": "stage6_report section 5 table statistic = unweighted episode-mean CSL (identified empirically; a2 episode mean 0.905573 -> 0.906, pooled 0.905284 -> 0.905). Chart Y axis = pooled SKU-day CSL per ST8-01; V4a cross-checks the table's own statistic. Both statistics stored per policy; they diverge at the 3rd decimal where bundle sizes differ.",
+ "v4b_note": "cost cross-check reference = outputs/stage2_asis_env_ref.json per ST6-06 (numpy environment drift, one flipped l0 order fold5 B03; original Stage 2 display totals differ accordingly and the gap is recorded below, informational only). Evaluation file's own regression gate vs env_ref: see regression_vs_stage2.",
+ "env_ref_file": "outputs/stage2_asis_env_ref.json",
+ "env_ref_sha256": "bb857c469cf696a9be2536b1b9bf29c357367d77186fa31d91e823e7932a46ef",
+ "drift_vs_stage2_display_totals": {
+  "a4": -0.09656447661109269,
+  "a4_sl": -0.0028061101911589503,
+  "l0_rule_ct": -8.769964401843026
+ },
+ "regression_vs_stage2": {
+  "checked": 4320,
+  "expected": 4320,
+  "worst_rel": 0.0,
+  "mismatches": [],
+  "env_drift_csl_quanta": {}
+ },
+ "verifications": {
+  "v1_identical_keys": true,
+  "v2_population": {
+   "r": 5,
+   "kappa": 1.0,
+   "scenario": {
+    "name": "core",
+    "p": 0.0,
+    "shock": "pre-registered fold-level path"
+   }
+  },
+  "v3_sha_match": true,
+  "v4a_reference_statistic": "episode_mean_csl",
+  "v4a_tol": 0.0005,
+  "v4b_reference": "env_ref episode sums",
+  "v4b_tol": "max(1e-6, 1e-9 * total)"
+ },
+ "policies": {
+  "a4": {
+   "display_name": "A4",
+   "mean_episode_cost": 1025.3456321573403,
+   "total_cost_480": 492165.9034355234,
+   "pooled_sku_day_csl": 0.79213048855906,
+   "episode_mean_csl": 0.7924466765873012,
+   "sku_days": 51744,
+   "n_episodes": 480
+  },
+  "a4_sl": {
+   "display_name": "A4-SL",
+   "mean_episode_cost": 1192.9645774872704,
+   "total_cost_480": 572622.9971938898,
+   "pooled_sku_day_csl": 0.8801213667285096,
+   "episode_mean_csl": 0.8803794642857125,
+   "sku_days": 51744,
+   "n_episodes": 480
+  },
+  "l0_rule_ct": {
+   "display_name": "L0",
+   "mean_episode_cost": 1282.446312574163,
+   "total_cost_480": 615574.2300355982,
+   "pooled_sku_day_csl": 0.8537028447742734,
+   "episode_mean_csl": 0.8540277777777778,
+   "sku_days": 51744,
+   "n_episodes": 480
+  },
+  "a1": {
+   "display_name": "A1",
+   "mean_episode_cost": 926.3478790339357,
+   "total_cost_480": 444646.9819362891,
+   "pooled_sku_day_csl": 0.7149621212121212,
+   "episode_mean_csl": 0.7150706845238093,
+   "sku_days": 51744,
+   "n_episodes": 480
+  },
+  "a2": {
+   "display_name": "A2",
+   "mean_episode_cost": 1284.443772895585,
+   "total_cost_480": 616533.0109898808,
+   "pooled_sku_day_csl": 0.9052837043908473,
+   "episode_mean_csl": 0.905572916666667,
+   "sku_days": 51744,
+   "n_episodes": 480
+  },
+  "b": {
+   "display_name": "B",
+   "mean_episode_cost": 982.1582025812344,
+   "total_cost_480": 471435.9372389925,
+   "pooled_sku_day_csl": 0.6547232529375386,
+   "episode_mean_csl": 0.6549627976190471,
+   "sku_days": 51744,
+   "n_episodes": 480
+  },
+  "a3": {
+   "display_name": "A3",
+   "mean_episode_cost": 1528.6430837458574,
+   "total_cost_480": 733748.6801980116,
+   "pooled_sku_day_csl": 0.3753865182436611,
+   "episode_mean_csl": 0.3763529265873024,
+   "sku_days": 51744,
+   "n_episodes": 480
+  },
+  "a5": {
+   "display_name": "A5",
+   "mean_episode_cost": 278.3877418491659,
+   "total_cost_480": 133626.11608759963,
+   "pooled_sku_day_csl": 0.9126662028447743,
+   "episode_mean_csl": 0.9133730158730159,
+   "sku_days": 51744,
+   "n_episodes": 480
+  },
+  "apto": {
+   "display_name": "A-PTO",
+   "mean_episode_cost": 986.1738185697678,
+   "total_cost_480": 473363.43291348853,
+   "pooled_sku_day_csl": 0.8424358379715523,
+   "episode_mean_csl": 0.8432142857142854,
+   "sku_days": 51744,
+   "n_episodes": 480
+  }
+ },
+ "frontier_operational": [
+  "a1",
+  "apto",
+  "a4_sl",
+  "a2"
+ ],
+ "frontier_note": "frontier is a point-estimate descriptive set; pairwise statistical judgments exist only for the pre-registered comparisons (H1: A2/A3/A4, H1-b: A-PTO)",
+ "reference_policies": [
+  "a5"
+ ],
+ "agent": {
+  "display_name": "Agent",
+  "policy_label": "agent_llm",
+  "mean_episode_cost": 1041.7848947957598,
+  "total_cost_480": 500056.74950196466,
+  "pooled_sku_day_csl": 0.8064123376623377,
+  "episode_mean_csl": 0.8067323908730147,
+  "sku_days": 51744,
+  "n_episodes": 480,
+  "source_file": "outputs/agent_llm_official.json",
+  "source_sha256": "15215d470e3cb04d11c19bab6607819b82360f791d782e5dfad387632e5e5048",
+  "decision": "ST8-02",
+  "marker_note": "realized path of the LLM-interfaced decision-support pipeline; single realization, contract-level reproducibility (model nondeterminism); displayed with its own marker, excluded from the frontier computation"
+ },
+ "agent_exclusion_reason": null
+}
