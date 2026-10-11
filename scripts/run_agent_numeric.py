@@ -155,7 +155,7 @@ def main() -> None:
             )
             hist = np.concatenate([bp.history, bp.warmup], axis=0)
 
-            def provider(w, _fold=fold, _gid=gid):
+            def provider(w, ctx, _fold=fold, _gid=gid):
                 entries = schedule["episodes"][f"f{_fold}|{_gid}|w{w}"]
                 return actions_from_entries(entries, base_tau,
                                             demand[_gid][0])

@@ -1,0 +1,103 @@
+{
+  "adapter_file": "core_pipeline/agent/llm_adapter.py",
+  "adapter_file_sha256": "a9e314333b9cbe4dafe3b9b4e8914780cc8a7ad09d7aef0b7a98c05dc501629c",
+  "anthropic_sdk_version": "1.13.0",
+  "date": "2026-10-11",
+  "exception_classes_checked": [
+    "APITimeoutError",
+    "RateLimitError",
+    "AuthenticationError",
+    "PermissionDeniedError",
+    "APIStatusError",
+    "APIConnectionError",
+    "InternalServerError"
+  ],
+  "freeze_payload": {
+    "budget_usd": 10.0,
+    "explain_max_tokens": 1024,
+    "gen_max_tokens": 8192,
+    "gen_rules_template": "Action contract:\n- tau_prime: base-stock quantile for this week, one of {taus}, or null to keep the base value {base_tau}.\n- sku_multipliers: per-SKU order multipliers for this week, each value one of {mults}; at most {max_skus} SKUs listed; unlisted SKUs stay at 1.0; 0.0 means skip ordering that SKU this week.\n- Propose up to {max_cands} candidates; only the first {max_cands} are kept. Diversity across candidates is useful because a gate rejects candidates whose simulated bundle-week service level (median over evaluation scenarios) falls below {floor} or whose orders exceed the shared capacity.\n- Costs: holding h_i per unit-day, shortage b_i per unmet unit. Ordering less saves holding but risks shortage; the base policy has tended to under-order for high-b SKUs when capacity binds.",
+    "gen_system": "You are the candidate-generation module of an inventory control tower. You propose weekly order-policy adjustments for ONE product bundle under a shared ordering-capacity constraint. You only see information observed up to the decision point; you never see future demand. Your candidates are screened by a deterministic simulator gate (capacity and service level) and ranked by simulated cost; infeasible or off-grid candidates are discarded, so strict format compliance matters.",
+    "model": "claude-haiku-5-5",
+    "price_in_per_mtok": 0.1,
+    "price_out_per_mtok": 0.5,
+    "recent_days": 28,
+    "sampling": "temperature/top_p/top_k omitted (API defaults)",
+    "schema": {
+      "additionalProperties": false,
+      "properties": {
+        "candidates": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "candidate_id": {
+                "type": "string"
+              },
+              "rationale": {
+                "type": "string"
+              },
+              "sku_multipliers": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "multiplier": {
+                      "type": "number"
+                    },
+                    "series_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "series_id",
+                    "multiplier"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "tau_prime": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "candidate_id",
+              "tau_prime",
+              "sku_multipliers",
+              "rationale"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "candidates"
+      ],
+      "type": "object"
+    },
+    "sdk_max_retries": 0,
+    "timeout_s": 60.0,
+    "wire_format": "sku_multipliers as array of {series_id, multiplier}"
+  },
+  "freeze_payload_sha256": "98c23b07278c7cb14432bd5e6dedd47c08809e0d386e68f5556e0ad8e8ba8b88",
+  "schema_sha256": "073a02570349e7becbbb6095432c61fe80707cf2ca3acff73aac0d4a5cea3e8f",
+  "smoke_episodes": {
+    "bundle_ranks": [
+      0,
+      1
+    ],
+    "fold": 1,
+    "n_calls_max": 16,
+    "n_episodes": 8,
+    "weeks": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  "task": "ST7-06 LLM adapter freeze"
+}

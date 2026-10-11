@@ -1,7 +1,8 @@
 """ST7-02 D6 verification: no-action parity with the single 28-day A4 run
 (state continuity + chaining identity, bit-level), weekly selection origins
-and provider weeks, scenario-only selection (counterfactual never advances
-real state), fallback accounting, selected action changes realized orders."""
+and provider weeks, SelectionContext integrity (information blocking, state
+isolation, prev-week summary), scenario-only selection, fallback
+accounting, selected action changes realized orders."""
 
 from pathlib import Path
 
@@ -78,7 +79,7 @@ def run(provider, scen, state, hist, test, cfg, k_g=40.0, floor=None,
 
 def test_no_action_parity_with_single_28day_a4_run(cfg):
     hist, test, scen, state = make_world()
-    res, _ = run(lambda w: [], scen, state.copy(), hist, test, cfg)
+    res, _ = run(lambda w, ctx: [], scen, state.copy(), hist, test, cfg)
     base = A4BaseStock(A4Config(tau=BASE_TAU, allocation="proportional"))
     ref = run_policy_window(
         state.copy(), test, hist, base, params(), 40.0, cfg,
@@ -99,7 +100,7 @@ def test_selection_origins_and_provider_weeks(cfg):
     hist, test, scen, state = make_world()
     weeks_seen = []
 
-    def provider(w):
+    def provider(w, ctx):
         weeks_seen.append(w)
         return []
 
@@ -109,13 +110,40 @@ def test_selection_origins_and_provider_weeks(cfg):
     assert [wk.origin_idx for wk in res.weeks] == calls
 
 
+def test_selection_context_integrity(cfg):
+    hist, test, scen, state = make_world()
+    contexts = []
+
+    def provider(w, ctx):
+        contexts.append(ctx)
+        ctx.state.inv[:] = -999.0
+        return []
+
+    res, _ = run(provider, scen, state.copy(), hist, test, cfg)
+    for w, ctx in enumerate(contexts):
+        assert ctx.week_idx == w
+        assert ctx.origin_idx == T_START - 1 + 7 * w
+        assert ctx.hist.shape[0] == hist.shape[0] + 7 * w
+        if w > 0:
+            np.testing.assert_array_equal(ctx.hist[-7:],
+                                          test[7 * (w - 1): 7 * w])
+            assert set(ctx.prev) == {"stockout_sku_days", "binding_days",
+                                     "selected_tau", "n_modified_skus"}
+            assert ctx.prev["selected_tau"] == BASE_TAU
+        else:
+            np.testing.assert_array_equal(ctx.hist, hist)
+            assert ctx.prev is None
+    ref, _ = run(lambda w, ctx: [], scen, state.copy(), hist, test, cfg)
+    assert res.window_cost == pytest.approx(ref.window_cost, abs=1e-12)
+
+
 def test_scenario_rejection_is_counterfactual_only(cfg):
     hist, test, scen, state = make_world()
     bad_scen = scen + 1000.0
     action = make_action(0.90, {}, BASE_TAU, SERIES)
-    res_bad, _ = run(lambda w: [action], bad_scen, state.copy(), hist, test,
-                     cfg, floor=0.99)
-    res_none, _ = run(lambda w: [], scen, state.copy(), hist, test, cfg)
+    res_bad, _ = run(lambda w, ctx: [action], bad_scen, state.copy(), hist,
+                     test, cfg, floor=0.99)
+    res_none, _ = run(lambda w, ctx: [], scen, state.copy(), hist, test, cfg)
     assert all(wk.fallback for wk in res_bad.weeks)
     assert res_bad.window_cost == pytest.approx(res_none.window_cost,
                                                 abs=1e-12)
@@ -126,9 +154,9 @@ def test_scenario_rejection_is_counterfactual_only(cfg):
 def test_selected_action_changes_realized_orders_and_logs(cfg):
     hist, test, scen, state = make_world()
     action = make_action(0.90, {"S_A": 1.5}, BASE_TAU, SERIES)
-    res_act, _ = run(lambda w: [action], scen, state.copy(), hist, test, cfg,
-                     k_g=1e9, floor=0.0)
-    res_base, _ = run(lambda w: [], scen, state.copy(), hist, test, cfg,
+    res_act, _ = run(lambda w, ctx: [action], scen, state.copy(), hist, test,
+                     cfg, k_g=1e9, floor=0.0)
+    res_base, _ = run(lambda w, ctx: [], scen, state.copy(), hist, test, cfg,
                       k_g=1e9)
     assert all(not wk.fallback for wk in res_act.weeks)
     assert all(wk.selected_slot == 0 for wk in res_act.weeks)
@@ -141,7 +169,7 @@ def test_fallback_then_selection_mix_keeps_state_chain(cfg):
     hist, test, scen, state = make_world()
     action = make_action(0.70, {}, BASE_TAU, SERIES)
 
-    def provider(w):
+    def provider(w, ctx):
         return [action] if w in (1, 3) else []
 
     res, _ = run(provider, scen, state.copy(), hist, test, cfg, k_g=1e9,
@@ -156,6 +184,6 @@ def test_fallback_then_selection_mix_keeps_state_chain(cfg):
 def test_bad_shapes_raise(cfg):
     hist, test, scen, state = make_world()
     with pytest.raises(ValueError):
-        run(lambda w: [], scen, state, hist, test[:21], cfg)
+        run(lambda w, ctx: [], scen, state, hist, test[:21], cfg)
     with pytest.raises(ValueError):
-        run(lambda w: [], scen[:, :, :4], state, hist, test, cfg)
+        run(lambda w, ctx: [], scen[:, :, :4], state, hist, test, cfg)
