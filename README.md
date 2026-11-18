@@ -1,120 +1,122 @@
-# SCM Control Tower — LLM 인터페이스 의사결정 지원 파이프라인
+**English** · [한국어](README.ko.md)
 
-물류센터(DC) 공유 용량 제약 아래에서 **일일 발주 의사결정**을 지원하는 파이프라인입니다. 확률 수요 예측, 결정 중심 학습(Decision-Focused Learning), 후보 조치의 자동 검증 게이트, 사람의 승인 흐름을 하나의 평가 체계로 연결하고, 사전 정의된 가설과 기준으로 성과를 검증했습니다.
+# SCM Control Tower — LLM-Interfaced Decision-Support Pipeline
 
-> 본 저장소의 모든 수치는 공개 데이터(M5) 기반 **시뮬레이션 결과**이며, 실제 고객사 성과가 아닙니다.
+A pipeline supporting **daily order decisions** under shared distribution-center (DC) ordering capacity. It connects probabilistic demand forecasting, decision-focused learning, an automated validation gate for candidate actions, and a human approval flow into a single evaluation framework, with performance verified against pre-specified hypotheses and criteria.
 
-**대시보드**: https://control-tower-agent.streamlit.app · 로컬 실행: `cd dashboard && streamlit run app.py`
+> All figures in this repository are **simulation results** on public data (M5), not actual client outcomes.
 
-![대시보드 개요](media/overview.png)
+**Dashboard**: https://control-tower-agent.streamlit.app · Run locally: `cd dashboard && streamlit run app.py`
 
-## 대시보드에서 볼 수 있는 것
+![Dashboard overview](media/overview.png)
 
-| 섹션 | 내용 |
+## What the dashboard shows
+
+| Section | Contents |
 |---|---|
-| 개요 | 핵심 가설 4종의 검증 결과와 데이터 출처(원본 산출물 식별값) |
-| 예측 | 모델별 예측 품질(WQL·WAPE·MASE), 예측구간의 실측 커버리지, 발주 입력용 리드타임 누적 수요 구간, 미리 정한 규칙으로 뽑은 fan chart |
-| DFL ablation | 9개 정책 + 파이프라인의 비용–서비스 좌표, 기준선별 쌍별 신뢰구간, 비용(H1)과 서비스(H1-SL) 가설의 병렬 판정 |
-| 승인 | 사람-승인 흐름의 역할 분담, H3·H5 판정, 저장된 실행 기록의 대표 사례 4건(게이트 내역·모델 설명 원문) |
-| 평가 | 운영 결과 지표(비용·서비스·재고일수), 재무 브리지, γ·k 가정 기반 조건부 시나리오 탐색 |
+| Overview (개요) | Verdicts on the four core hypotheses, with data provenance (identifiers of the source artifacts) |
+| Forecasting (예측) | Forecast quality by model (WQL · WAPE · MASE), realized coverage of prediction intervals, lead-time cumulative-demand intervals used as ordering inputs, and fan charts selected by a pre-set rule |
+| DFL ablation | Cost–service coordinates of 9 policies plus the pipeline, paired confidence intervals against each baseline, and parallel verdicts on the cost (H1) and service (H1-SL) hypotheses |
+| Approval (승인) | Role split in the human-approval flow, the H3 and H5 verdicts, and four representative cases from stored execution records (gate details, verbatim model explanations) |
+| Evaluation (평가) | Operational outcome metrics (cost, service, inventory days), a financial bridge, and conditional scenario exploration under explicit γ·k assumptions |
 
-대시보드는 조회 전용입니다. 모든 수치는 평가 당시 확정된 산출물에서 추출한 검증된 사본이며, 화면에서 새로운 시뮬레이션·집계·판정이 일어나지 않습니다.
+The dashboard is read-only. Every figure is a verified copy extracted from artifacts finalized at evaluation time; no new simulation, aggregation, or adjudication happens in the app.
 
 ![fan chart](media/fanchart.png)
 
-## 어떤 의사결정을 다루는가
+## The decision in scope
 
-- **대상 결정**: 묶음(주·부서 단위) 공유 발주 용량 아래에서, SKU별 일일 발주량을 28일 계획 중 첫날 실행분으로 확정 (주문 후 3일 차 도착)
-- **역할 분담**: 파이프라인은 근거 수집 → 조치 후보 생성·검증 → 승인 요청 초안·설명 작성 → 적용 후 추적을 대신하고, 사람은 조치 범위의 정의·승인(수급 계획 담당, 물류센터 관리자)·실행과 되돌리기를 유지합니다
-- **수용 기준(2층)**: ① 서비스 수준(CSL) 비열등성의 통계 검정, ② 묶음·주 단위 CSL이 하한(90%) 아래로 떨어지는 사례의 자동 차단 게이트
-- 평가에 쓰인 비용 계수·서비스 하한·용량 수준은 **가상 클라이언트 가정**이며, 실제 프로젝트에서는 첫 미팅에서 확인할 질문 목록으로 관리했습니다
+- **Target decision**: daily order quantities per SKU under shared ordering capacity at the bundle (U.S. state × department) level, committing the first day of a rolling 28-day plan (orders arrive on day 3)
+- **Division of labor**: the pipeline takes over evidence collection → candidate-action generation and validation → drafting approval requests and explanations → post-adoption tracking; humans keep the definition of the action space, approval itself (demand planner, DC manager), execution, and rollback
+- **Acceptance criteria (two layers)**: ① a statistical non-inferiority test on service level (CSL), ② an automatic gate blocking any case where bundle-week CSL falls below the 90% floor
+- Cost coefficients, the service floor, and capacity levels used in evaluation are **virtual-client assumptions**, managed as a question list for a first client meeting
 
-## 구조
+## Architecture
 
-    수요 예측 (LightGBM 분위수 / TSMixer / 적응형 구간 보정)
-      → 발주 최적화 (공유 용량 LP · 결정 중심 학습 B)
-      → 조치 후보 생성 (LLM 인터페이스) → 용량·서비스 검증 게이트
-      → 사람 승인 → 시뮬레이터 평가 (12폴드 롤링 · 480 에피소드/정책)
+    Demand forecasting (LightGBM quantiles / TSMixer / adaptive interval calibration)
+      → Order optimization (shared-capacity LP · decision-focused learning B)
+      → Candidate-action generation (LLM interface) → capacity & service validation gate
+      → Human approval → Simulator evaluation (12-fold rolling · 480 episodes/policy)
 
-평가는 재고·발주·도착을 일 단위로 전개하는 자체 NumPy 시뮬레이터에서 수행합니다. 엔진은 정책 출력의 제약 위반을 조용히 수선하지 않고 오류로 중단하는 엄격 계약을 따르며, 모든 정책이 동일한 수요 경로·초기 상태·난수를 공유하는 쌍별 비교입니다.
+Evaluation runs on a purpose-built NumPy simulator that advances inventory, orders, and arrivals day by day. The engine follows a strict contract — constraint violations in policy output abort with an error instead of being silently repaired — and all policies share identical demand paths, initial states, and random seeds for paired comparison.
 
-## 방법론 요약
+## Methodology at a glance
 
-**결정 중심 학습 (정책 B)** — 예측 정확도 대신 **하류 발주 비용**을 직접 낮추도록 예측 모델을 학습합니다. 공유 용량 LP를 미분 가능 계층(cvxpy + CvxpyLayers)으로 신경망(TSMixer)에 연결해, 28일 발주 계획의 비용 그래디언트가 예측 파라미터까지 역전파됩니다. 흔히 쓰이는 대리 손실(SPO+ 계열)은 본 문제의 제약 구조와 이론적으로 맞지 않아 사전 검토에서 배제했고, LP 해의 퇴화(동일 비용 다중 해)는 SKU별 상이한 비용 계수로 통제했습니다.
+**Decision-focused learning (policy B)** — trains the forecasting model to directly reduce **downstream ordering cost** rather than forecast accuracy. The shared-capacity LP is attached to the neural network (TSMixer) as a differentiable layer (cvxpy + CvxpyLayers), so cost gradients of the 28-day ordering plan backpropagate into the forecast parameters. Common surrogate losses (the SPO+ family) were ruled out in advance as a theoretical mismatch with this problem's constraint structure, and LP solution degeneracy (multiple optima at equal cost) was controlled with SKU-specific cost coefficients.
 
-**비교 체계** — 각 기준선은 서로 다른 질문을 통제합니다.
+**Comparison design** — each baseline controls a different question.
 
-| 정책 | 질문 |
+| Policy | Question it controls |
 |---|---|
-| A1 (점 예측 + 최적화) | 분포 정보 없이 얼마나 가능한가 |
-| A2 (비용 가중 분위수 + 최적화) | 같은 신경망 백본으로 예측-후-최적화를 하면 어디까지 가능한가 — H1의 핵심 대조군 |
-| A3 (분위수 시나리오 SAA) | 분포를 시나리오로 펼친 고전적 확률 최적화 |
-| A4 / A4-SL (운영형 재주문 정책) | 비용 선택형·서비스 지향형의 실무 기준 |
-| A-PTO (외부 대회 우승 접근 참고) | 강한 예측-후-최적화 외부 기준 |
-| A5 (완전정보) | 수요를 미리 아는 참고 상한 — 달성 가능 하한 아님 |
-| L0 (규칙 기반 운영) | 가상 클라이언트의 현행 플레이북 |
+| A1 (point forecast + optimization) | How far is possible without distributional information |
+| A2 (cost-weighted quantiles + optimization) | How far predict-then-optimize goes on the same neural backbone — the key control for H1 |
+| A3 (quantile-scenario SAA) | Classical stochastic optimization with the distribution unrolled into scenarios |
+| A4 / A4-SL (operational reorder policies) | Practical baselines — cost-selected and service-oriented |
+| A-PTO (modeled on an external competition-winning approach) | A strong external predict-then-optimize reference |
+| A5 (perfect information) | A reference bound with demand known in advance — not an attainable target |
+| L0 (rule-based operations) | The virtual client's current playbook |
 
-**LLM의 위치** — 모델은 발주량을 직접 정하지 않습니다. 기본 정책(A4)의 파라미터 조정 후보를 제안하고 설명을 작성할 뿐이며, 모든 후보는 용량·서비스 검증 게이트를 통과해야 하고, 전부 탈락하면 조치 없이 기본 정책이 적용됩니다(평가 480주 중 27.1%). 호출 총비용 상한을 미리 정했고, 실제 지출은 USD 1.10이었습니다.
+**Where the LLM sits** — the model never sets order quantities. It proposes parameter-adjustment candidates for the base policy (A4) and writes explanations; every candidate must pass the capacity–service validation gate, and when all candidates are rejected the base policy runs unchanged (27.1% of the 480 evaluation weeks). A total API spending cap was fixed in advance; actual spend was USD 1.10.
 
-## 평가 설계의 원칙
+## Evaluation principles
 
-- **가설과 기준의 사전 정의**: 비교 대상·판정 기준·실패 규칙을 결과를 보기 전에 문서로 고정하고, 이후 결과에 맞춘 변경을 금지했습니다. 평가 데이터 선별도 선택 시점 이전 구간만 사용해 선택 누수를 제거했습니다
-- **통계 처리**: 에피소드(묶음×주)는 독립이 아니므로 2주 블록 부트스트랩의 쌍별 신뢰구간으로만 판정합니다
-- **열람 통제**: 진단용으로 먼저 본 결과는 이후 단계의 튜닝에 사용하지 않았고, 비교 설정은 결과 확인 전에 고정·기록했습니다
-- **기록**: 실패한 설계와 채택하지 않은 대안도 동일한 수준으로 기록했습니다
+- **Pre-specified hypotheses and criteria**: comparisons, verdict criteria, and failure rules were fixed in writing before any results were seen, and result-driven changes were prohibited. The evaluation subset was selected using only data from before the selection point, removing selection leakage
+- **Statistics**: episodes (bundle × week) are not independent, so all verdicts use paired confidence intervals from a 2-week block bootstrap
+- **Disclosure control**: results viewed early for diagnostics were never used to tune later stages; comparison settings were fixed and recorded before outcomes were seen
+- **Record-keeping**: failed designs and rejected alternatives are documented as rigorously as successes
 
-## 핵심 결과 (사전 정의된 가설 검증)
+## Key results (pre-specified hypothesis tests)
 
-| 가설 | 결과 |
+| Hypothesis | Verdict |
 |---|---|
-| H1 — 결정 중심 학습(B)이 비교 기준선(A2·A3·A4)보다 총비용이 낮은가 | r=3·5 **충족** / r=10 미충족 |
-| H1-SL — 그 비용 우위가 서비스 수준을 유지한 채 달성됐는가 | 전 조건 **미충족** |
-| H3 — 승인 흐름을 거친 파이프라인이 규칙 기반 운영(L0)보다 총비용이 낮은가 | **충족** (비용차 95% 하한 205.7) — 단, CSL −4.73%p 하락과 병존 |
-| H5 — 같은 예산의 수치 탐색보다 더 나은 조치를 찾는가 | **미충족** (211/480 = 43.96%) |
+| H1 — Does decision-focused learning (B) achieve lower total cost than the comparison baselines (A2 · A3 · A4)? | **Met** at r=3·5 / not met at r=10 |
+| H1-SL — Is that cost advantage achieved while maintaining service level? | **Not met** under all conditions |
+| H3 — Does the pipeline with its approval flow achieve lower total cost than rule-based operations (L0)? | **Met** (95% lower bound of the cost difference: 205.7) — alongside a −4.73pp drop in CSL |
+| H5 — Does it find better actions than numeric search under the same budget? | **Not met** (211/480 = 43.96%) |
 
-- 비용만을 목적으로 학습한 결정 중심 학습은 비용을 낮추는 대신 서비스 수준을 희생했습니다. 다음 단계는 서비스 제약을 학습 목적에 직접 결합하는 설계입니다.
-- H5 결과에 따라 본 시스템을 **사람의 승인을 보조하는 의사결정 지원 파이프라인**으로 규정했습니다(자율 "에이전트"로 부르지 않음). 저장소 이름에 남은 agent는 착수 시점의 가설을, 현재 명칭은 검증 결과를 반영합니다.
-- L0 → 파이프라인 비교(r=5, 480 에피소드): 평균 비용 −18.77%, 재고일수(보유) −0.70일 — 이 개선은 **CSL −4.73%p, 수량 결품률 +6.15%p 악화와 함께** 나타났으며, 비용 절감의 내역은 보유비 −403.7 / 결품비 +182.7 / 기말 평가 −19.6의 순액입니다. 편익만 떼어 읽지 않습니다.
-- 금액(USD) 환산은 보유비용 구조의 항등식을 거친 재고자산 평가액과 명시 가정(γ·k)에 조건부인 시나리오로만 제시하며, 실제 ROI는 산출하지 않습니다.
+- Decision-focused learning trained on cost alone lowered cost at the expense of service level. The next design step is to build service constraints directly into the training objective.
+- Following the H5 result, the system is designated a **decision-support pipeline assisting human approval** — not an autonomous "agent". The word *agent* left in the repository name reflects the hypothesis at the outset; the current designation reflects the verdict.
+- L0 → pipeline comparison (r=5, 480 episodes): mean cost −18.77%, inventory days on hand −0.70 — these gains came **together with CSL −4.73pp and a +6.15pp worse quantity stockout rate**, and the cost saving is the net of holding −403.7 / stockout +182.7 / terminal valuation −19.6. Benefits are not read in isolation.
+- Dollar (USD) figures are presented only as inventory-valuation effects derived through a holding-cost identity and as scenarios conditional on explicit assumptions (γ·k); no actual ROI is computed.
 
-## 프로젝트 여정
+## Project journey
 
-완성된 결과 뒤에는 방향을 바꾼 결정들이 있습니다. 표준 대리 손실을 이론적 이유로 채택하지 않은 것, 평가 표본의 선택 누수를 발견해 154개 중 127개를 다시 뽑은 것, 선호하던 설정이 스스로 정한 규칙에 의해 탈락한 것, 비교 방식의 결함을 찾아 재설계한 것, 그리고 가설 기각에 따라 시스템의 이름을 바꾼 것 — 이런 전환점 15건을 [DECISIONS.md](DECISIONS.md)에 기록했습니다. 실패한 시도도 성공과 같은 비중으로 적었습니다.
+Behind the finished result are the decisions that changed its direction: rejecting the standard surrogate loss on theoretical grounds, finding selection leakage in the evaluation sample and re-drawing 127 of 154 SKUs, watching a preferred configuration get eliminated by rules set in advance, uncovering a flaw in the comparison design and rebuilding it, and renaming the system after a hypothesis was rejected. Fifteen such turning points are recorded in [DECISIONS.md](DECISIONS.md) (in Korean) — failed attempts written with the same weight as successes.
 
-## 저장소 구조
+## Repository layout
 
     core_pipeline/
-      data/        PostgreSQL 3계층 적재 (raw/staging/mart), 폴드·비용 테이블
-      simulator/   NumPy 일 단위 엔진 (엄격 제약 계약, 수요 경로·충격 생성)
-      forecast/    LightGBM 분위수 · TSMixer · 적응형 구간 보정 · 예측 저장소
-      dfl/         미분 가능 LP 계층, 결정 중심 학습 B의 학습 루프
-      agent/       후보 생성 (LLM 인터페이스) · 검증 게이트 · 주간 실행기
-    scripts/       적재·마트·평가·판정·대시보드 데이터 생성 실행기
-    notebooks/     A-PTO 기준선 학습 (Colab GPU, 입력 sha 검증·예산 제한 탐색)
-    dashboard/     Streamlit 조회 전용 대시보드 (표시 데이터 + 무결성 검증)
-    tests/         시뮬레이터 계약 (T1–T7) 포함 전체 테스트
+      data/        PostgreSQL 3-tier loading (raw/staging/mart), fold and cost tables
+      simulator/   Daily NumPy engine (strict constraint contract, demand paths and shocks)
+      forecast/    LightGBM quantiles · TSMixer · adaptive interval calibration · prediction store
+      dfl/         Differentiable LP layer, training loop for decision-focused policy B
+      agent/       Candidate generation (LLM interface) · validation gate · weekly runner
+    scripts/       Runners for loading, mart build, evaluation, adjudication, dashboard data
+    notebooks/     A-PTO baseline training (Colab GPU, input sha verification, budget-capped search)
+    dashboard/     Read-only Streamlit dashboard (display data + integrity checks)
+    tests/         Full test suite incl. simulator contract tests (T1–T7)
 
-## 재현
+## Reproducing
 
-원본 데이터(M5)는 용량 문제로 저장소에 포함되지 않으며, 전체 파이프라인 재현은 데이터 취득(Kaggle) 후 가능합니다. 대시보드는 저장소의 표시 데이터만으로 즉시 실행됩니다.
+The raw data (M5) is not included in the repository for size reasons; full pipeline reproduction requires acquiring it first (Kaggle). The dashboard runs immediately from the display data in the repository.
 
     python -m scripts.load_dataset --dataset m5   # PostgreSQL (docker-compose)
     python -m scripts.build_mart
-    pytest                                        # 시뮬레이터 계약 테스트 포함
-    python -m scripts.run_stage6_eval             # 정책 평가
-    python -m scripts.build_dashboard_snapshot    # 대시보드 표시 데이터
+    pytest                                        # includes simulator contract tests
+    python -m scripts.run_stage6_eval             # policy evaluation
+    python -m scripts.build_dashboard_snapshot    # dashboard display data
     python -m scripts.build_forecast_extract
 
-각 단계는 선행 산출물의 sha256을 확인하며, 평가·판정에 쓰인 산출물의 식별값은 `dashboard/assets/display_manifest.json`에 기록되어 있습니다.
+Each step verifies the sha256 of its upstream artifacts; identifiers of the artifacts used in evaluation and adjudication are recorded in `dashboard/assets/display_manifest.json`.
 
-## 한계
+## Limitations
 
-- 모든 성과는 가정된 비용 함수 아래의 **시뮬레이션 이득**이며, 실측 보관비·자본비용·서비스 페널티를 반영하지 않습니다
-- 수요는 정책과 무관한 외생 관측으로 취급합니다 — 품절이 수요 관측을 가리는 효과는 민감도 격자로만 다뤘습니다
-- 파이프라인(LLM 경로) 결과는 1회 실행 경로입니다. 설정·입력은 재현 가능하게 고정했지만 모델 출력의 비결정성이 남습니다
-- 결정 중심 학습의 비용 우위 해석에는 비교 기준선 간 학습 노출 비대칭과 학습 손실–운영 비용 불일치의 한계가 있습니다
-- M5 서브셋(10묶음·154 SKU, 식품·생활용품·취미 3개 카테고리)의 계절·규모 대표성은 제한적이며, 운영 지표(응답 시간·안전 장치 발동률)가 성과를 예측한다는 근거는 검증되지 않았습니다
+- All gains are **simulation gains under an assumed cost function**; they do not reflect measured warehousing costs, cost of capital, or service penalties
+- Demand is treated as exogenous, unaffected by policy — stockouts censoring demand observation is addressed only through a sensitivity grid
+- The pipeline (LLM-path) result is a single execution path; settings and inputs are fixed for reproducibility, but model-output nondeterminism remains
+- Interpreting the cost advantage of decision-focused learning is limited by asymmetric training exposure across baselines and by the gap between the training loss and rolling operating cost
+- The M5 subset (10 bundles, 154 SKUs across foods, household, and hobbies) has limited seasonal and scale representativeness, and there is no verified evidence that operational metrics (latency, safeguard trigger rates) predict performance
 
-## 기술 스택
+## Tech stack
 
-Python 3.11 · PostgreSQL(Docker) · NumPy 시뮬레이터 · LightGBM / PyTorch(TSMixer) · cvxpy + CvxpyLayers(미분 가능 최적화) · Anthropic API(후보 생성·설명) · Streamlit(조회 전용 대시보드) · 블록 부트스트랩 기반 쌍별 평가
+Python 3.11 · PostgreSQL (Docker) · NumPy simulator · LightGBM / PyTorch (TSMixer) · cvxpy + CvxpyLayers (differentiable optimization) · Anthropic API (candidate generation and explanations) · Streamlit (read-only dashboard) · paired evaluation via block bootstrap
