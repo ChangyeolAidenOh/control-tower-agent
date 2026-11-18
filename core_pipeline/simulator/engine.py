@@ -208,7 +208,7 @@ class Policy(Protocol):
 
 
 # --------------------------------------------------------------------------- #
-# Constraint handling (review decision: validation and projection are separate)
+# Constraint handling (design decision: validation and projection are separate)
 # --------------------------------------------------------------------------- #
 
 def weighted_sum(q: np.ndarray, w: np.ndarray) -> float:

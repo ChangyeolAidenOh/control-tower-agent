@@ -1,6 +1,6 @@
 """Unit tests for the state-transition engine (simulator_spec.md v0.1 section 11).
 
-Test timing split (review decision 2026-10-08, not a preregistration change):
+Test timing split (design decision, not a preregistration change):
   after 2-A: T1 lead time, T2 lost sales, T3 capacity, T7 determinism (this file)
   after 2-F: T4 censoring assignment
   after 2-C: T5 terminal treatment vs continuation
@@ -261,7 +261,7 @@ def test_t7_stream_independence_of_execution_order(cfg):
 
 # --------------------------------------------------------------------------- #
 # Terminal valuation: post-transition form equals pre-transition form
-# (review decision 4; supports T5 later)
+# (design decision 4; supports T5 later)
 # --------------------------------------------------------------------------- #
 
 def test_terminal_equivalence(cfg):

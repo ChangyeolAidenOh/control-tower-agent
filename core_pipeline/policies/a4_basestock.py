@@ -9,7 +9,7 @@ then, if sum_i(w_i * q_raw_i) > K_g, the pre-registered allocation rule
 reduces the orders to feasibility INSIDE the policy, so the engine's strict
 constraint contract holds (the engine never repairs policy output).
 
-Review decisions (2026-10-08):
+Design decisions:
 - Protection interval = L + 1 = 3 days: the order placed on day D arrives on
   the morning of D+3 and the next order on D+4, so D's order must carry the
   inventory position over days D+1..D+3. This is a base-stock heuristic on the

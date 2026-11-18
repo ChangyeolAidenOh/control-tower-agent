@@ -14,7 +14,7 @@ trackers only when the replay clock reaches origin + 28, i.e. once the
 whole bundle's targets are observed. Using targets at origin + h as they
 arrive would be a different protocol and is deliberately not implemented.
 
-Interval validity (reviewer-mandated safeguards, not post-hoc tuning):
+Interval validity (safeguards, not post-hoc tuning):
 - effective width w_eff = max(hi - lo, eps_i) is used on BOTH sides
   (score normalization and margin application), so a zero-width base
   interval can still be widened once the margin grows;

@@ -16,7 +16,7 @@ SAME parse_candidates path as any other source. Duplicate series_id entries
 inside one candidate's array are detected BEFORE the dict collapse and
 invalidate that candidate only (duplicate_sku_entry).
 
-Error taxonomy (ST7-06, reviewer-fixed): technical API failures (timeout,
+Error taxonomy (ST7-06): technical API failures (timeout,
 429, 5xx, connection) are recorded as tech errors with ZERO additional
 calls; auth/permission failures and budget exhaustion abort the run;
 stop_reason max_tokens or refusal fails that call (no continuation call);

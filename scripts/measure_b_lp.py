@@ -1,7 +1,7 @@
 """Stage 5 (ST5-05): measure the per-sample costs of the B training loop
 and apply the frozen budget formula.
 
-Separated timings (reviewer-corrected 5F-2): t_train = forward + LP +
+Separated timings (5F-2): t_train = forward + LP +
 backward per (bundle, origin); t_val = no-grad forward + LP + downstream
 regret; t_oracle = one solve_a5 + pricing (built once per train/valid
 sample, epoch-independent); T_compile = sum of the 10 bundle-layer

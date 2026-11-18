@@ -3,7 +3,7 @@
 Two-layer wording principle (ST9-06): internal governance vocabulary
 (frozen, re-adjudication, ST log ids) stays in internal docs; this
 module holds the external-facing phrasing. Semantics are identical to
-handoff v1.11 section 5 and business_case.md section 5.3 -- only the
+the internal documents -- only the
 wording is naturalized. Every section imports from here.
 """
 

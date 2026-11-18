@@ -344,7 +344,7 @@ def main() -> None:
             })
         comparisons[f"{base}_vs_{other}"] = c
 
-    # leading indicators -- precedence unverified (handoff section 5)
+    # leading indicators -- precedence unverified
     weeks = agent["weeks"]
     sel_times = sorted(w["selection_time_s"] for w in weeks)
     fallback_n = sum(1 for w in weeks if w["fallback"])

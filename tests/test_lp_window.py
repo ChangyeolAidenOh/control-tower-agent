@@ -1,7 +1,7 @@
 """ST5-04 boundary tests: decision-time 29-day mapping on solve_a5.
 
 Torch-free by design -- runs inside the main suite and pins the shared
-time axis at the code level (reviewer P0): first-order arrival D+3,
+time axis at the code level: first-order arrival D+3,
 pipeline slot arrivals, tail orders, day-0 bookkeeping.
 """
 

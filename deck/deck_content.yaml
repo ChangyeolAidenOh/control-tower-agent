@@ -9,7 +9,7 @@ meta:
   rules:
   - H3 단독 인용 금지 — CSL −4.7pp 병기 (S1, S6)
   - H5 보조 통계(76.7%, +15.69)는 부록 전용, 판정 비사용 라벨
-  - H1 PASS는 3단계 수용 전 r 기각과 동반 제시
+  - H1 PASS는 3단계 수용 전 r 불채택과 동반 제시
   - 'CSL 라벨: §5 표 = 에피소드 평균 / 차트·집계 = pooled SKU-일'
   - 비용 단위 = 시뮬레이터 비용 단위(설정 비용함수 기준), 금액 환산 금지
   - 'ΔWC·자본효과(USD)는 γ·k 명시 가정 조건부(A5 전용) — 시뮬레이터 비용의 금액 환산 금지는 유지, 통화는 재고 브리지 경유만'
@@ -107,8 +107,8 @@ slides:
 - id: S4
   kicker: Acceptance Criteria
   layout: criteria
-  title: 수용 기준 — 결과를 보기 전에 동결
-  headline: preregistration v1.2 (동결 2026-10-08, 독립 리뷰 3회) — δ·floor는 고객 미확정 파라미터로 [가정] 표기 유지.
+  title: 수용 기준 — 결과를 보기 전에 확정
+  headline: preregistration v1.2 (확정 2026-10-08) — δ·floor는 고객 미확정 파라미터로 [가정] 표기 유지.
   layers:
   - name: L1 · 통계 비열등
     text: CSL 비열등성, 마진 δ = 1%p — 이동 블록 부트스트랩 판정
@@ -119,7 +119,7 @@ slides:
     - L1 통과 + L2 위반 없음
   - - 조건부 채택
     - L1 통과 + L2 위반 존재 — 차단 범위 한정 운영
-  - - 기각
+  - - 불채택
     - L1 미달
   sources:
   - docs/decision_definition.md §6
@@ -151,16 +151,16 @@ slides:
   kicker: Pilot Results 1/2
   layout: judgment_matrix
   title: H1 · H3 — 비용 절감은 서비스 저하를 동반했다
-  headline: 순수 비용 DFL(B)은 비용 기준 통과(r3·r5)에도 최종 수용은 전 r 기각 — 승인 흐름 에이전트(H3)에서도 같은 구조가 반복됐다.
+  headline: 순수 비용 DFL(B)은 비용 기준 통과(r3·r5)에도 최종 수용은 전 r 불채택 — 승인 흐름 에이전트(H3)에서도 같은 구조가 반복됐다.
   matrix_frozen_rows:
   - - H1-SL (δ=1%p)
     - FAIL
     - FAIL
     - FAIL
   - - 3단계 수용 (정의서 §6)
-    - 기각(L1)
-    - 기각(L1)
-    - 기각(1차)
+    - 불채택(L1)
+    - 불채택(L1)
+    - 불채택(1차)
   matrix_note:
     frozen: H1-SL 전 r FAIL — B의 CSL 0.589–0.655 (에피소드 평균 CSL 기준)
     source: stage6_report.md §4–§5
@@ -180,8 +180,8 @@ slides:
 - id: S7
   kicker: Pilot Results 2/2
   layout: h5_breakdown
-  title: H5 실패 분석 — 동결한 판정 규칙을 그대로 적용했다
-  headline: strict-win 211/480 = 43.96% < 50% → FAIL. 판정 규칙은 결과 확인 전에 동결(ST7-09)했고, 결과를 본 뒤 바꾸지 않았다.
+  title: H5 실패 분석 — 미리 확정한 판정 규칙을 그대로 적용했다
+  headline: strict-win 211/480 = 43.96% < 50% → FAIL. 판정 규칙은 결과 확인 전에 확정(ST7-09)했고, 결과를 본 뒤 바꾸지 않았다.
   segments:
   - label: 승 211
     n: 211
@@ -202,7 +202,7 @@ slides:
     - - 미달의 지배 요인은 동률 42.7% — 그중 120주는 양쪽 모두 전 후보가 게이트에서 거절되어 결과가 완전히 동일
       - 동률을 승리로 치지 않는 보수적 규칙을 결과 확인 전에 정했고, 사후 변경하지 않았다
   - - 결론
-    - - 가치의 중심은 후보 생성 우위가 아니라 승인 흐름 전체(H3)와 설명·인터페이스
+    - - 가치의 중심은 승인 흐름 전체(H3)와 설명·인터페이스 (후보 생성 우위는 확인되지 않음)
       - '재정의: LLM 인터페이스를 가진 의사결정 지원 파이프라인'
   sources:
   - docs/agent_stage_report.md §3–§4
@@ -275,8 +275,8 @@ slides:
   - name: 결과 열람 통제 타임라인
     tone: accent
     items:
-    - LLM 설정 동결(payload sha 98c23b07278c) → 스모크 테스트(기술 검증만, 성능 미열람)
-    - 공식 양군 480주 실행 → 판정 규칙 동결(결과 확인 전) → 동시 공개
+    - LLM 설정 고정(payload sha 98c23b07278c) → 스모크 테스트(기술 검증만, 성능 미열람)
+    - 공식 양군 480주 실행 → 판정 규칙 확정(결과 확인 전) → 동시 공개
     - 오프라인 재생 검증 480/480 일치
   - name: 덱 검증 사이클 (ST8-01/02)
     tone: ink
@@ -288,14 +288,13 @@ slides:
     tone: muted
     items:
     - 재현 커맨드 7종 + 덱 집계(scripts/build_deck_s5_agg.py)
-    - 판정 근거 JSON 전부 sha 동결
+    - 판정 근거 JSON 전부 sha 고정
   - name: LLM군 재현 등급
     tone: muted
     items:
     - 완전 동일 재현이 아닌 계약 수준 재현
-    - 동결 설정 · 원시 응답 보관 · sha 추적
+    - 고정 설정 · 원시 응답 보관 · sha 추적
   sources:
-  - handoff v1.9 §2–§3
   - outputs/deck/s5_agg.json
   - docs/agent_stage_report.md §6
 - id: A3
@@ -308,7 +307,7 @@ slides:
     items:
     - 동률 제외 시 조건부 승률 76.7%
     - '실현 28일 비용 보조 비교: LLM이 평균 15.69 낮음 (209/480 우위 · 134 동일)'
-  - name: 기각 구성 차이
+  - name: 탈락 구성 차이
     tone: ink
     items:
     - 'LLM: 용량 거절 42.2% · 서비스 거절 31.1% (공격적 증량 제안 경향)'
@@ -347,7 +346,7 @@ slides:
     tone: muted
     items:
     - 'H1: 정책별 학습 정보량 차이 / 초기 상태에 검증 구간 정보 재사용 / 학습 손실 ≠ 운영 비용'
-    - 'A-PTO: 시간 예산 내 13/27 trial 탐색 / GPU 이전은 산출물 sha 동결로 재현성 대체 / 안전재고 보정이 검증 구간과 중첩'
+    - 'A-PTO: 시간 예산 내 13/27 trial 탐색 / GPU 이전은 산출물 sha 고정으로 재현성 대체 / 안전재고 보정이 검증 구간과 중첩'
   - name: 범위
     tone: muted
     items:
@@ -361,7 +360,7 @@ slides:
   layout: grid_2x2
   title: 'A5 — 비즈니스 케이스: 계산 경계 3분할 요약 (상세 docs/business_case.md)'
   panels:
-  - name: 관측 — L0 → Agent (r=5, 480ep, 동결 산출물)
+  - name: 관측 — L0 → Agent (r=5, 480ep, 고정 산출물)
     tone: accent
     items:
     - frozen: '비용 −240.66/ep (−18.77%) = 보유 −403.73 + 결품 +182.67 + 터미널 −19.59 — 절감은 전액 보유비, 결품비는 증가'
