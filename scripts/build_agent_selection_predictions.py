@@ -16,7 +16,7 @@ row against pre-existing artifacts before the parquet is written:
                     start_offset >= 0), so the conditioning history up to
                     T - 1 equals the mart history; future sales are never
                     model inputs. The gate turns this argument into a
-                    numeric check (the reviewer's reuse condition).
+                    numeric check (the reuse condition).
   origins T+6/13/20 vs the Stage 6 evaluation replay parquet
                     (outputs/predictions_eval/tsmixer_a3_core_f{fold}).
 

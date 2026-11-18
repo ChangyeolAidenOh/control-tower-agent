@@ -18,7 +18,7 @@ Two-layer contract (3-A verdict, 2026-10-09):
       A1, A2 and B share that adapter and backbone. The engineered columns
       here are NOT part of the cross-model contract.
 
-Information-set rules (handoff v1.4 SS2-7/SS4, preregistration v1.2 SS2):
+Information-set rules (preregistration v1.2 SS2):
   - Training rows satisfy origin + h <= train_end (D3); tuning rows come
     only from tuning_split() (single pre-fold-1 time split, D4). The split
     has no fold argument; the operational re-tuning ban is enforced by the

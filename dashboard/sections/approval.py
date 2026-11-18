@@ -13,15 +13,15 @@ import labels
 GATE_LABELS = {
     "evaluated_candidates": "검증한 후보 수",
     "gate_passed_candidates": "통과한 후보 수",
-    "capacity_rejected": "용량 기준 기각",
-    "csl_rejected": "서비스 기준 기각",
+    "capacity_rejected": "용량 기준 탈락",
+    "csl_rejected": "서비스 기준 탈락",
     "candidate_gate_pass_rate": "통과율",
-    "all_rejected": "전원 기각 여부",
+    "all_rejected": "전원 탈락 여부",
 }
 
 CASE_TITLES = {
     "C1_normal": "사례 1 — 일부 후보 통과, 조치 승인",
-    "C2_fallback": "사례 2 — 전원 기각, 안전 장치 발동",
+    "C2_fallback": "사례 2 — 전원 탈락, 안전 장치 발동",
     "C3_partial_gate": "사례 3 — 부분 통과 (다른 묶음)",
     "C4_full_pass": "사례 4 — 전원 통과",
 }
@@ -48,7 +48,7 @@ def render(snapshot: dict) -> None:
         "- **사람이 유지하는 단계**: 조치 범위의 정의, 승인(① 수급 계획 담당, "
         "② 물류센터 관리자), 실행과 되돌리기\n"
         "- 모든 후보 조치는 용량·서비스 기준의 검증 게이트를 거치며, 전부 "
-        "기각되면 조치 없이 기본 정책을 적용합니다(안전 장치)."
+        "탈락하면 조치 없이 기본 정책을 적용합니다(안전 장치)."
     )
 
     st.subheader(labels.VERDICT_HEADER)
@@ -85,8 +85,8 @@ def render(snapshot: dict) -> None:
     st.caption(
         f"동률을 제외한 승률은 {h5['tie_excluded_rate_auxiliary']:.1%}이지만, "
         "판정에는 사용하지 않는 보조 수치입니다. 이 결과에 따라 시스템을 "
-        "자율 '에이전트'가 아니라 사람의 승인을 보조하는 의사결정 지원 "
-        "파이프라인으로 규정합니다."
+        "사람의 승인을 보조하는 의사결정 지원 파이프라인으로 규정합니다"
+        "(자율 '에이전트'로 부르지 않음)."
     )
 
     rm = ap["run_meta"]

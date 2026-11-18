@@ -54,7 +54,7 @@ capacity:
   weight_wi: 1.0
 
 constraint_handling:
-  # Review decision (2026-10-08): the engine never silently repairs policy output.
+  # Design decision: the engine never silently repairs policy output.
   core_policies: require_feasible    # engine validates; violation > tol -> EngineError
   feasibility_tol_rel: 1.0e-6        # numerical slack, relative to K_g
   explicit_projection: policy_internal  # radial-scaling policies (A4) project inside

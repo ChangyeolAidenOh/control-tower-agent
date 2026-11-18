@@ -12,7 +12,7 @@ legality counters, spend and the per-episode selection-time median (the
 numeric arm's official time budget, ST7-01). Performance quantities are
 written to the sealed JSON with sha256, never printed (ST7-04). Raw
 responses are stored in full. Budget exhaustion (conservative guard) and
-auth failures ABORT the run (reviewer table, ST7-06); timeouts/429/5xx are
+auth failures ABORT the run (ST7-06); timeouts/429/5xx are
 recorded as tech errors with zero extra calls and the episode falls back.
 
 Run:

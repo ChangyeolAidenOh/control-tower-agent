@@ -1,5 +1,5 @@
 """Boundary tests for the delayed adaptive CQR margin tracker (ST3-07).
-Covers the reviewer-specified table: release timing, state continuity,
+Covers the specified table: release timing, state continuity,
 zero-width floor, interval validity, output-interval-based miss, future
 tampering invariance, and trailing-origin update freeze."""
 

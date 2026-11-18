@@ -127,7 +127,7 @@ def render(snapshot: dict) -> None:
         c2.metric("커버리지 (보정 후)", fmt(h2.get("coverage_after")))
         c3.metric("평균 구간 폭 (보정 후)", fmt(h2.get("mean_width_after")))
         st.caption(
-            "목표 90% 구간의 실측 커버리지입니다. 구간은 확률적 보증이 아니라 "
+            "목표 90% 구간의 실측 커버리지입니다. 구간은 확률적 보증으로 읽지 않고 "
             "실측 커버리지와 함께 읽습니다."
         )
     scalar_table(s4.get("decile9", {}), "분위수 예측 비교 (9분위 공통 집합)")
@@ -154,7 +154,7 @@ def render(snapshot: dict) -> None:
         f"폴드 {e['fold']} · {e['cat_id']} · {e['series_id']}": i
         for i, e in enumerate(entries)
     }
-    choice = st.selectbox("대상 선택 (사전 고정된 기계 규칙으로 선정)", list(options))
+    choice = st.selectbox("대상 선택 (미리 정한 기계 규칙으로 선정)", list(options))
     e = entries[options[choice]]
 
     fig = go.Figure()
